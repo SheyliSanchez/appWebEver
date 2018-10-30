@@ -20,6 +20,7 @@ import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -247,12 +248,13 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
          /* **********************************************************************************
         *                       OPERACIONES PARA SINCRONIZAR CATEGORIAS                     *
         *************************************************************************************/
-        final String rssFeedEndpointCategorias = "http://aeo.web-hn.com/WebServices/ParaSincronizarCategorias.php?estados=2";
+        final String rssFeedEndpointCategorias = "http://192.168.0.17/WebEver/public/categorias";
         Map<String, Categoria> networkEntriesCategoria = new HashMap<>();
 
         // Parse the pretend json news feed
         String jsonFeedCategoria = download(rssFeedEndpointCategorias);
-        JSONArray categoriasArray = new JSONArray(jsonFeedCategoria);
+        JSONObject categoriasObject = new JSONObject(jsonFeedCategoria);
+        JSONArray categoriasArray = categoriasObject.getJSONArray("content");
 
 
         for (int i = 0; i < categoriasArray.length(); i++) {

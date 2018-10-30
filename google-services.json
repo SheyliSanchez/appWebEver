@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "571707908843",
+    "firebase_url": "https://agendaelectronicaorienta-3fc3c.firebaseio.com",
+    "project_id": "agendaelectronicaorienta-3fc3c",
+    "storage_bucket": "agendaelectronicaorienta-3fc3c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:571707908843:android:a278aea832246068",
+        "android_client_info": {
+          "package_name": "unah.proyecto.aeo.aplicacionagendaelectronicaoriental"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "571707908843-pu2qb6t3sdfkt7ukp4uojgldp5hagqut.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "unah.proyecto.aeo.aplicacionagendaelectronicaoriental",
+            "certificate_hash": "da277f03fec48b241280ed03d43e1d4ae5cdbdbb"
+          }
+        },
+        {
+          "client_id": "571707908843-dm722c97kik9sof12fb0vc0hm2k3ahi3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBZFvnMD0HsiwUJ9LaCS2R52hrFhm6ShGk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "571707908843-dm722c97kik9sof12fb0vc0hm2k3ahi3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
