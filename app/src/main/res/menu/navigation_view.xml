@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+        <item
+            android:id="@+id/principaldos"
+            android:icon="@drawable/principal"
+            android:title="@string/principal"/>
+        <item
+            android:id="@+id/login"
+            android:icon="@drawable/login_icono"
+            android:title="@string/login"/>
+        <item
+            android:id="@+id/acercadeinfodos"
+            android:icon="@drawable/acerca"
+            android:title="@string/acercadeapp"/>
+</menu>

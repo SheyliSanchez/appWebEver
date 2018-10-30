@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+<ScrollView
+    android:id="@+id/scview"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+        <RelativeLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:context="unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAMelvin.AdministracionDePerfilesAdmin.EditarPerfil"
+            android:padding="5dp"
+            android:id="@+id/rl1">
+          <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/imagenDeOrganizacion"
+                android:layout_width="200dp"
+                android:layout_height="160dp"
+                android:layout_alignParentTop="true"
+                android:layout_centerInParent="true"
+                android:scaleType="centerCrop"
+              />
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_below="@id/imagenDeOrganizacion"
+                android:id="@+id/iptlnombreorg"
+                android:layout_marginTop="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/etnombreeorganizacion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Nombre de la Organización"
+                    android:inputType="text"/>
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/iptlnumfijo"
+                android:layout_below="@+id/iptlnombreorg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/etnumerofijo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Número fijo"
+                    android:inputType="phone"
+                    android:digits="1234567890"
+                    />
+            </android.support.design.widget.TextInputLayout>
+            <ProgressBar
+                android:id="@+id/mProgress"
+                android:layout_below="@+id/iptlnumfijo"
+                android:layout_centerInParent="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="invisible"
+                />
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/iptlnumcel"
+                android:layout_below="@+id/iptlnumfijo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/etnumerocel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Número móvil"
+                    android:inputType="phone"
+                    android:digits="1234567890"
+                    />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/iptldir"
+                android:layout_below="@+id/iptlnumcel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/etdireccion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Dirección"
+                    android:inputType="textMultiLine"/>
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/iptlemail"
+                android:layout_below="@+id/iptldir"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/etemail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="e-mail"
+                    android:inputType="textEmailAddress" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/iptldescript"
+                android:layout_below="@+id/iptlemail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/etdescripcion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Descripción de la Organizacion"
+                    android:inputType="textMultiLine"
+                    />
+            </android.support.design.widget.TextInputLayout>
+
+
+            <TextView
+                android:id="@+id/tvcat"
+                android:layout_below="@id/iptldescript"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Categoría"
+                android:textColor="@color/colorPrimary"
+                android:textSize="16sp"/>
+
+            <Spinner
+                android:id="@+id/spinercategoriaPerfil"
+                android:layout_below="@+id/tvcat"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:spinnerMode="dialog"/>
+            <TextView
+                android:id="@+id/tvreg"
+                android:layout_below="@id/spinercategoriaPerfil"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:textColor="@color/colorPrimary"
+                android:text="Región" />
+            <Spinner
+                android:id="@+id/spinerregionPerfil"
+                android:layout_below="@+id/tvreg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:spinnerMode="dropdown"/>
+            <TextView
+                android:id="@+id/tvus"
+                android:layout_below="@id/spinerregionPerfil"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Usuario"
+                android:textColor="@color/colorPrimary"
+                android:textSize="16sp"
+                android:visibility="invisible"/>
+            <Spinner
+                android:id="@+id/spinerusuariosPerfil"
+                android:layout_below="@+id/tvus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:spinnerMode="dialog"
+                android:visibility="invisible"/>
+            <TextView
+                android:id="@+id/lblub"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Ubicación"
+                android:textSize="16sp"
+                android:textColor="@color/colorPrimary"
+                android:layout_marginBottom="10dp"
+                android:layout_below="@id/spinerusuariosPerfil"/>
+
+
+            <RelativeLayout
+                android:id="@+id/lh"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/lblub"
+                >
+                <TextView
+                    android:id="@+id/etlatitud"
+                    android:layout_width="190dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:text="0"
+                    android:textAlignment="textEnd"
+                    android:textSize="16sp"
+
+                    />
+                <TextView
+                    android:id="@+id/lblatitud"
+                    android:layout_width="190dp"
+                    android:layout_height="wrap_content"
+                    android:text="Latitud"
+                    android:textSize="16sp"
+                    />
+
+                <TextView
+                    android:id="@+id/etlongitud"
+                    android:text="0"
+                    android:layout_below="@id/etlatitud"
+                    android:textAlignment="textEnd"
+                    android:layout_alignParentBottom="true"
+                    android:layout_width="190dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:textSize="16sp"
+                    />
+                <TextView
+                    android:id="@+id/lblongitud"
+                    android:text="Longitud"
+                    android:layout_below="@id/lblatitud"
+                    android:layout_alignParentBottom="true"
+                    android:textSize="16sp"
+                    android:layout_width="190dp"
+                    android:layout_height="wrap_content"
+                    />
+
+            </RelativeLayout>
+
+
+            <ImageView
+                android:layout_below="@id/lh"
+                android:id="@+id/imgUbicacionOrganizacion"
+                android:layout_width="match_parent"
+                android:layout_height="90dp"
+                app:srcCompat="@drawable/ubicacion_organizacion"
+                />
+            <Button
+                android:layout_below="@id/imgUbicacionOrganizacion"
+                android:id="@+id/btnUbicacionOrganizacion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Insertar Ubicacion"
+                app:srcCompat="@drawable/ubicacion_organizacion"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center_horizontal"
+                android:onClick="guardarUbicacionOrganizacion"
+                android:layout_marginBottom="25dp"
+
+                />
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/botonFoto"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/iptlnumfijo"
+                android:layout_alignEnd="@+id/imagenDeOrganizacion"
+                android:layout_marginBottom="74dp"
+                android:layout_marginEnd="20dp"
+                android:src="@drawable/ic_menu_camera" />
+
+
+
+        </RelativeLayout>
+
+</ScrollView>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/botonGuardar"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_width="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_save_white_24dp"
+        />
+
+
+</RelativeLayout>

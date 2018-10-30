@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/principaldos"
+        android:icon="@drawable/principal"
+        android:title="@string/principal"/>
+    <item
+        android:id="@+id/panelControlUsuario"
+        android:icon="@drawable/login_icono"
+        android:title="@string/panelcontrolUsuario" />
+    <item
+        android:id="@+id/ediciondeCuenta"
+        android:icon="@drawable/editar"
+        android:title="@string/editarcuenta" />
+    <item
+        android:id="@+id/acercadeinfodos"
+        android:icon="@drawable/acerca"
+        android:title="@string/acercadeapp"/>
+    <item
+        android:id="@+id/cerrarsecion"
+        android:icon="@drawable/cerrar"
+        android:title="@string/cerrarsecion"
+         />
+</menu>

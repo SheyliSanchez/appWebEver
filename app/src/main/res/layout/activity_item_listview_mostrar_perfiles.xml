@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:elevation="10dp"
+    >
+
+    <LinearLayout
+       android:layout_marginTop="6dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:elevation="@dimen/app_top"
+
+        >
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/iconoDeContactoEnAdministrador"
+            android:layout_width="270dp"
+            android:layout_height="70dp"
+            android:layout_weight="2.1"
+            android:layout_marginLeft="16dp"
+            android:src="@drawable/iconocontactowhite"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="16dp">
+
+            <TextView
+                android:id="@+id/mostrarperfiles"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_weight="1"
+                android:textStyle="bold"
+                android:textColor="@color/colorPrimary"
+                android:text="Perfil"
+                android:textSize="20sp"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Usuario propietario:"
+                android:layout_marginLeft="20dp"
+                android:textColor="#555"
+                />
+            <TextView
+                android:id="@+id/uspropietario"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="usuario propietario"
+                android:layout_marginLeft="20dp"
+                android:textStyle="bold"
+                android:textColor="#555"
+                />
+
+            <TextView
+                android:id="@+id/id_mostrarperfiles"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="id"
+                android:textSize="6dp"
+                android:visibility="invisible" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#BBB"
+                android:layout_marginLeft="20dp"
+                />
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

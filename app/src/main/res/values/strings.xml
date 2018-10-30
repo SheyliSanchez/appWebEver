@@ -1,0 +1,115 @@
+<resources>
+    <string name="app_name">Agenda Electrónica Oriental</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="action_settings">Settings</string>
+    <string name="nombre">Nombre:</string>
+    <string name="direccion">Dirección:</string>
+    <string name="telefono">Teléfono:</string>
+    <string name="lista_contactos">Lista de Contactos</string>
+    <string name="email">E-mail:</string>
+    <string name="apperfil">Perfil</string>
+    <string name="principal">Principal</string>
+    <string name="acercadeapp">Acerca de...</string>
+    <string name="app_correo">aeo@gmail.com</string>
+    <string name="title_activity_acerca_de">AcercaDe</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="lugares">Lugares</string>
+    <string name="todos">Todos</string>
+    <string name="danli">Danlí</string>
+    <string name="elparaiso">El Paraíso</string>
+    <string name="titulo">Titulo</string>
+    <string name="cantidad">170</string>
+    <string name="id_categorias"></string>
+    <string name="foto">Foto</string>
+    <string name="textopaneldecontrol">panel de control</string>
+    <string name="info_app">Agenda Electrónica Oriental es una App pensada para que accedas de forma
+        fácil y sencilla a los números telefónicos,
+        información y ubicación de las diferentes organizaciones ubicadas en las regiones de Danlí y
+        el Paraíso pertenecientes al departamento de El Paraíso en Honduras.
+    </string>
+    <string name="info_desarrolladores">Nosotros WebEver, equipo de desarrolladores de la App Agenda
+        Electrónica Oriental somos los únicos responsables de aceptar o denegar solicitudes de
+        actualización de las empresas aquí registradas o por registrar en el futuro.
+    </string>
+    <string name="version">Version 1.1.1.0</string>
+    <string name="celular">Celular:</string>
+    <string name="ubicacion">Ubicación</string>
+    <string name="login">Acceder a la Cuenta</string>
+    <string name="formularioRegistro">Formulario de Registro</string>
+    <string name="error_nombre_usuario">Ingrese el Nombre de Usuario</string>
+    <string name="error_nombre">Ingrese su Nombre y Apellido</string>
+    <string name="error_contrasena">Cree su Contraseña</string>
+    <string name="error_contrasena1">Ingrese de nuevo su Contraseña</string>
+    <string name="error_correo">Ingrese su correo</string>
+    <string name="error_contrasenavalidada">Ambas Contraseñas debe de conicidir</string>
+    <string name="title_activity_login">Login</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+
+
+    <string name="usuario_eliminado">El usuario fue Eliminado</string>
+    <string name="usuario_no_eliminado">El usuario no fue Eliminado</string>
+    <string name="eliminar_usuario">Eliminar Usuario</string>
+    <string name="mensaje_para_eliminar">\"Se Eliminará el usuario". \'%1$s'\ \"</string>
+    <string name="eliminarPerfil">\"Se Eliminará el perfil". \'%1$s'\ \"</string>
+    <string name="eliminar">Eliminar</string>
+    <string name="confirmar_borrar">\"Desea Eliminar todo.\"</string>
+    <string name="canselar">Cancelar</string>
+
+
+    <string name="title_activity_mapa">Map</string>
+    <string name="title_activity_nuevo_perfil">Nuevo Perfil</string>
+    <string name="title_activity_mostrar__perfiles">Perfiles</string>
+    <string name="title_activity_administracion_de_perfiles">Perfiles Activos</string>
+    <string name="title_activity_nuevas_solicitudes">Nuevas Solicitudes</string>
+    <string name="title_activity_perfiles_eliminados">Perfiles Eliminados</string>
+    <string name="title_activity_solicitudes_rechazadas">Solicitudes Rechazadas</string>
+    <string name="title_activity_editar_perfil">Edición de Perfil</string>
+    <string name="errNombreOrg">Por favor ingrese el nombre de la organización</string>
+    <string name="errNumero">Por favor ingrese al menos un tipo de número telefónico</string>
+    <string name="errDir">Por favor ingrese la dirección de su organización</string>
+    <string name="errDesc">Por favor haga una descripción de su organización</string>
+    <string name="errLat">Por favor ingrese la latitud</string>
+    <string name="errLong">Por favor ingrese la longitud</string>
+    <string name="content_authority">unah.proyecto.aeo.aplicacionagendaelectronicaoriental</string>
+    <string name="Descripcion">Descripción:</string>
+    <string name="password">Recuperación de contraseña</string>
+    <string name="recuperar">Recuperar contraseña</string>
+    <string name="recuperacion">Recuperación de contraseña</string>
+    <string name="olvidaste">¿Olvidaste tu contraseña?</string>
+    <string name="nota">Nota: Recuerda tus respuestas deben coincidir con las respuestas que nos
+        brindaste al momento de registrarte con nosotros.
+    </string>
+
+    <string name="error_usuario">Ingrese el Usuario</string>
+    <string name="error_numnovalido">Número telefónico no válido</string>
+    <string name="error_mailnovalido">E-mail no válido</string>
+
+    <string name="error_nombre_contrasena">Ingrese la Contraseña</string>
+    <string name="cerrarsecion">Cerrar Sesión</string>
+    <string name="editarcuenta">Editar Cuenta</string>
+    <string name="erremail">Ingrese el Email</string>
+    <string name="errNumeroCelular">Ingrese el Numero Celular</string>
+    <string name="title_activity_ingresar__ubicacion">Ubica la Organización</string>
+    <string name="detalle_de_marcas">(%1$.2f, %2$2f)</string>
+    <string name="abc">ABCDEFGHIJKLMNÑOPQRSTUVWXYZabcdefghijklmnñopqrstuvwxyz</string>
+    <string name="respuestaVacia">Debe contestar todas las preguntas</string>
+    <string name="error_pregunta">Error la respuesta es incorrecta</string>
+    <string name="panelcontrolUsuario">Panel de Control</string>
+    <string name="error_contrasenaingresada">Ingrese su Contraseña</string>
+    <string name="error_respuesta1">Ingrese Cuál es el nombre de tu ciudad natal</string>
+    <string name="error_respuesta2">Ingrese Cuál es el nombre de tu abuelo</string>
+    <string name="error_respuesta3">Ingrese Cuál es tu deporte favorito</string>
+    <string name="Enviar">Enviar Ubicación</string>
+
+
+    <string name="menuNuevasSolicitudes">Nuevas Solicitudes</string>
+    <string name="menuSolicitudesRechazadas">Solicitudes Rechazadas</string>
+    <string name="menuPerfilesEliminados">Perfiles Eliminados</string>
+    <string name="menuEliminarPerfil">Eliminar Perfil</string>
+    <string name="menuBusquedaAvanzada">Búsqueda avanzada</string>
+    <string name="menuActualizardatos">Actualizar datos</string>
+</resources>

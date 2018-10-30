@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAVirgilio.VerContactoOrganizacion">
+    <LinearLayout android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:orientation="vertical"
+                  android:layout_marginTop="30dp"
+    >
+
+        <ScrollView
+            android:id="@+id/scview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="20dp"
+        >
+            <LinearLayout android:layout_width="match_parent"
+                          android:layout_height="wrap_content"
+                          android:orientation="vertical"
+            >
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginLeft="10dp"
+                >
+
+                    <TextView
+                        android:id="@+id/verNombreOrganizacion"
+                        android:layout_marginTop="20dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="cargando..."
+                        android:textSize="20sp"
+                        android:gravity="center"
+                        android:textStyle="bold"
+
+                    />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="10dp"
+                    >
+                        <ImageView
+                            android:id="@+id/verImagenOrganizacion"
+                            android:layout_width="match_parent"
+                            android:layout_height="170dp"
+                            android:src="@drawable/iconocontactowhite"
+                            android:layout_marginTop="15dp"
+                            android:layout_weight="1"
+                        />
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="170dp"
+                            android:orientation="vertical"
+                            android:layout_weight="1"
+                            android:layout_gravity="center_vertical"
+                            android:gravity="center"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginLeft="6dp"
+
+                        >
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Numero Fijo:"
+                                android:textSize="15sp"
+                            />
+
+                            <TextView
+                                android:id="@+id/verNumeroFijo"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="cargando..."
+                                android:textSize="20sp"
+                                android:layout_marginTop="10dp"
+
+                            />
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="2dp"
+                                android:background="@color/colorPrimary"
+                                android:layout_marginTop="2dp"
+                            />
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Numero Celular:"
+                                android:textSize="15sp"
+                                android:layout_marginTop="20dp"
+
+                            />
+                            <TextView
+                                android:id="@+id/verNumeroCelular"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="cargando..."
+                                android:textSize="20sp"
+                                android:layout_marginTop="10dp"
+
+                            />
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="2dp"
+                                android:background="@color/colorPrimary"
+                                android:layout_marginTop="2dp"
+                            />
+
+                        </LinearLayout>
+                    </LinearLayout>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Correo Electronico:"
+                        android:textSize="15sp"
+                        android:layout_marginTop="26dp"
+
+                    />
+                    <TextView
+                        android:id="@+id/verEmailOrganizacion"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="cargando..."
+                        android:textSize="20sp"
+                        android:layout_marginTop="10dp"
+
+                    />
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="2dp"
+                        android:background="@color/colorPrimary"
+                        android:layout_marginTop="2dp"
+                    />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Dirección:"
+                        android:textSize="15sp"
+                        android:layout_marginTop="10dp"
+
+                    />
+                    <TextView
+                        android:id="@+id/verDireccionOrganizacion"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="cargando..."
+                        android:textSize="20sp"
+                        android:layout_marginTop="10dp"
+
+                    />
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="2dp"
+                        android:background="@color/colorPrimary"
+                        android:layout_marginTop="2dp"
+                    />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/Descripcion"
+                        android:textSize="15sp"
+                        android:layout_marginTop="10dp"
+
+                    />
+                    <TextView
+                        android:id="@+id/verDescripcionOrganizacion"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="cargando..."
+                        android:textSize="20sp"
+                        android:layout_marginTop="10dp"
+
+                    />
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="2dp"
+                        android:background="@color/colorPrimary"
+                        android:layout_marginTop="2dp"
+                    />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Categoría:"
+                        android:textSize="15sp"
+                        android:layout_marginTop="10dp"
+
+                    />
+                    <TextView
+                        android:id="@+id/verCategoriaOrganizacion"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="cargando..."
+                        android:textSize="20sp"
+                        android:layout_marginTop="10dp"
+
+                    />
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="2dp"
+                        android:background="@color/colorPrimary"
+                        android:layout_marginTop="2dp"
+                    />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Región:"
+                        android:textSize="15sp"
+                        android:layout_marginTop="10dp"
+
+                    />
+                    <TextView
+                        android:id="@+id/verRegionOrganizacion"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="cargando..."
+                        android:textSize="20sp"
+                        android:layout_marginTop="10dp"
+
+                    />
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="2dp"
+                        android:background="@color/colorPrimary"
+                        android:layout_marginTop="2dp"
+                    />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Ubicación:"
+                        android:textSize="20sp"
+                        android:layout_marginTop="10dp"
+                        android:gravity="center"
+                    />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_horizontal"
+                        android:layout_gravity="center_horizontal"
+                    >
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Latitud:"
+                            android:textSize="15sp"
+                            android:layout_marginTop="10dp"
+                            android:layout_weight="4"
+
+                        />
+                        <TextView
+                            android:id="@+id/verLatitudOrganizacion"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="cargando..."
+                            android:textSize="20sp"
+                            android:layout_marginTop="10dp"
+                            android:layout_weight="1"
+                        />
+
+
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_horizontal"
+                        android:layout_gravity="center_horizontal"
+                    >
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Longitud:"
+                            android:textSize="15sp"
+                            android:layout_marginTop="10dp"
+                            android:layout_weight="3"
+
+                        />
+                        <TextView
+                            android:id="@+id/verLongitudOrganizacion"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="cargando..."
+                            android:textSize="20sp"
+                            android:layout_marginTop="10dp"
+                            android:layout_weight="1"
+
+                        />
+
+
+                    </LinearLayout>
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="2dp"
+                        android:background="@color/colorPrimary"
+                        android:layout_marginTop="5dp"
+                    />
+
+
+
+
+
+                </LinearLayout>
+
+
+
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/botonEditarOrganizacion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        app:srcCompat="@drawable/editar"
+        android:onClick="editarOrganizacion"
+    />
+
+
+</RelativeLayout>

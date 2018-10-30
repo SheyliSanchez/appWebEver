@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="categorias">
+        <item>Todas las Categorías</item>
+        <item>Emergencia</item>
+        <item>Educación</item>
+        <item>Centros Asistenciales</item>
+        <item>Bancos</item>
+        <item>Hotelería y Turismo</item>
+        <item>Instituciones Públicas</item>
+        <item>Comercio de Bienes</item>
+        <item>Comercio de Servicios</item>
+        <item>Bienes y Raices</item>
+        <item>Asesoría Legal</item>
+        <item>Funerarias</item>
+    </string-array>
+</resources>

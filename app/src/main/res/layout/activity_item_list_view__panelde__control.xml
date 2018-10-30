@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="10dp"
+    android:layout_weight="10"
+    >
+
+    <ImageView
+        android:id="@+id/imagepaneldecontrol"
+        android:layout_width="0dp"
+        android:layout_gravity="center_vertical"
+        android:layout_height="30dp"
+        android:layout_weight="2"
+        android:src="@drawable/ic_menu_manage" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_weight="8">
+        <TextView
+            android:id="@+id/textopaneldecontrol"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+
+            android:textColor="@color/cardview_dark_background"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:text="@string/textopaneldecontrol" />
+        <TextView
+            android:id="@+id/descripcionpaneldecontrol"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:textColor="@color/cardview_dark_background"
+            android:textSize="14sp"
+            android:text="@string/textopaneldecontrol" />
+
+    </LinearLayout>
+
+
+
+</LinearLayout>

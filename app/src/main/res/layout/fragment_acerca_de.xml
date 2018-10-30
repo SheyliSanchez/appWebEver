@@ -1,0 +1,51 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/constraintLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    android:orientation="vertical"
+
+    tools:context="unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAVirgilio.AcercaDe$PlaceholderFragment">
+    <ScrollView android:layout_width="match_parent"
+                android:layout_height="match_parent">
+        <LinearLayout android:layout_width="match_parent"
+                      android:layout_height="match_parent"
+                      android:orientation="vertical"
+        >
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="130dp"
+                android:src="@drawable/proyecto_nuevo_icono_aeo"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="10dp"
+            />
+            <TextView
+                android:id="@+id/section_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                android:layout_marginEnd="@dimen/activity_horizontal_margin"
+                android:layout_marginStart="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:textSize="15sp"
+                android:textColor="#000"
+                android:text="@string/info_app"
+                android:layout_gravity="center_horizontal"
+            />
+            <TextView android:layout_width="match_parent"
+                      android:layout_height="match_parent"
+                      android:textSize="15dp"
+                      android:text="@string/version"
+                      android:layout_marginBottom="@dimen/activity_vertical_margin"
+                      android:layout_marginEnd="@dimen/activity_horizontal_margin"
+                      android:layout_marginStart="@dimen/activity_horizontal_margin"
+                      android:layout_marginTop="@dimen/activity_vertical_margin"
+
+            />
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

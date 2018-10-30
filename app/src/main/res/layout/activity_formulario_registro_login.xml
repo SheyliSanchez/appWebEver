@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_gravity="center"
+    tools:context="unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAVirgilio.FormularioRegistroLogin">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="25dp"
+            android:gravity="center"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:layout_marginTop="@dimen/app_top"
+            android:orientation="vertical">
+
+
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp"
+
+                >
+                <EditText
+                    android:id="@+id/txtnombre_registro_login"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Ingrese su Nombre y Apellido"
+                    android:inputType="textPersonName"
+                    android:maxLines="1"
+                    android:textSize="15sp"
+                    android:textColor="#000"
+                    />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                >
+
+                <EditText
+                    android:id="@+id/txtnombreUsuario_registro_login"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Ingrese el Nombre de Usuario"
+                    android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_ñÑ"
+                    android:inputType="textPersonName"
+                    android:maxLines="1"
+                    android:textSize="15sp"
+                    android:textColor="#000"
+                    />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp">
+
+                <EditText
+                    android:id="@+id/txtcorreo_registro_login"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Cree su Correo"
+                    android:inputType="textPersonName"
+                    android:maxLines="1"
+                    android:textColor="#000"
+                    android:textSize="15sp"
+
+
+                    />
+
+            </android.support.design.widget.TextInputLayout>
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                app:passwordToggleEnabled="true"
+                app:passwordToggleTint="@color/colorAccent"
+                >
+
+                <EditText
+                    android:id="@+id/txtcontrasena_registro_login"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Cree su Contraseña"
+                    android:inputType="textPassword"
+                    android:maxLines="1"
+                    android:textSize="15sp"
+                    android:textColor="#000"
+
+
+                    />
+
+            </android.support.design.widget.TextInputLayout>
+
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        app:passwordToggleEnabled="true"
+        app:passwordToggleTint="@color/colorAccent">
+
+        <EditText
+            android:id="@+id/txtcontrasenarepetir_registro_login"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Repita su Contraseña"
+            android:inputType="textPassword"
+            android:maxLines="1"
+            android:textColor="#000"
+            android:textSize="15sp"
+
+
+            />
+
+    </android.support.design.widget.TextInputLayout>
+
+
+
+
+
+
+            <Spinner
+                android:layout_weight="1"
+                android:id="@+id/tipousuario"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/mySpinnerItemStyle"
+                android:spinnerMode="dropdown" />
+
+
+
+            <EditText
+                android:id="@+id/txtrol_registro_login"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:hint="Ingrese el Rol"
+                android:inputType="number"
+                android:maxLines="1"
+                android:textSize="15sp"
+
+                />
+
+
+            <EditText
+                android:id="@+id/txtestado_registro_login"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:hint="Ingrese el Estado de el Usiario"
+                android:inputType="number"
+                android:maxLines="1"
+                android:textSize="15sp"
+
+                />
+
+
+
+
+
+            <LinearLayout
+                android:layout_marginTop="50dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:orientation="horizontal">
+
+
+
+
+                <Button
+                    android:id="@+id/registrar_usuario"
+                    android:layout_marginTop="10dp"
+                    android:textColor="#FFF"
+                    android:background="@drawable/rec_gradient_fb"
+                    android:textAllCaps="false"
+                    android:text="Registrarse"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

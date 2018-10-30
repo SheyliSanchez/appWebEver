@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAVirgilio.EditarUsuario">
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="20dp"
+
+    >
+
+        <LinearLayout
+            android:padding="20dp"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+        >
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="35dp"
+            >
+                <EditText
+                    android:id="@+id/EditNombre"
+                    android:hint="Ingrese su Nombre Y Apellido"
+                    android:textSize="15sp"
+                    android:ems="10"
+                    android:maxLines="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPersonName" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+
+            >
+
+                <EditText
+                    android:id="@+id/EditUsuario"
+                    android:textSize="15sp"
+                    android:ems="10"
+                    android:maxLines="1"
+                    android:hint="Ingrese su Nombre de Usuario"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPersonName"
+                    android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_ñÑ"
+                />
+
+            </android.support.design.widget.TextInputLayout>
+
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:passwordToggleTint="@color/colorAccent"
+                app:passwordToggleEnabled="true"
+                android:layout_marginTop="30dp"
+            >
+
+                <EditText
+                    android:id="@+id/Editcorreo"
+                    android:hint="Cambiar Correo"
+                    android:textSize="15sp"
+                    android:ems="10"
+                    android:maxLines="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textEmailAddress"
+
+                />
+            </android.support.design.widget.TextInputLayout>
+
+
+
+
+            <Button
+                android:id="@+id/editar"
+                android:background="@drawable/rec_gradient"
+                android:layout_marginTop="70dp"
+                android:textAllCaps="false"
+                android:textStyle="bold"
+                android:text="Guardar Cambios"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+    </ScrollView>
+
+
+
+
+
+</LinearLayout>
