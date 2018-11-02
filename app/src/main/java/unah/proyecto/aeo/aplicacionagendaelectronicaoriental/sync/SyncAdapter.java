@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.R;
+import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVASheyli.ipLocalhost;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.provider.CategoriasContract;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.provider.PerfilesContract;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.provider.RegionesContract;
@@ -54,6 +55,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     public static final int SYNC_INTERVAL = 60 * 180;
     public static final int SYNC_FLEXTIME = SYNC_INTERVAL/3;
 
+
+    ipLocalhost ip = new ipLocalhost();
     /**
      * This gives us access to our local data source.
      */
@@ -248,7 +251,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
          /* **********************************************************************************
         *                       OPERACIONES PARA SINCRONIZAR CATEGORIAS                     *
         *************************************************************************************/
-        final String rssFeedEndpointCategorias = "http://192.168.0.17/WebEver/public/categorias";
+        final String rssFeedEndpointCategorias = ip.getIp()+"categorias";
         Map<String, Categoria> networkEntriesCategoria = new HashMap<>();
 
         // Parse the pretend json news feed

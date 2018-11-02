@@ -23,6 +23,7 @@ import cz.msebera.android.httpclient.impl.client.DefaultHttpClient;
 import cz.msebera.android.httpclient.message.BasicNameValuePair;
 import cz.msebera.android.httpclient.util.EntityUtils;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.R;
+import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVASheyli.ipLocalhost;
 
 public class FormularioRegistroUsuario extends AppCompatActivity {
     private EditText nombrepropio_isertar_usuario,nombreusuario_insertar_usuario,correo_insertar_usario,contrasena_insertar_usuario,confirmarcontrasena;
@@ -31,6 +32,8 @@ public class FormularioRegistroUsuario extends AppCompatActivity {
     private Button insertar_usuario;
     private EditText respuesta1,respuesta2,respuesta3;
     String correoIgual;
+
+    ipLocalhost ip = new ipLocalhost();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,12 +147,12 @@ public class FormularioRegistroUsuario extends AppCompatActivity {
                 HttpPost httppost;
                 ArrayList<NameValuePair> parametros;
                 httpclient = new DefaultHttpClient();
-                httppost = new HttpPost("http://aeo.web-hn.com/WebServices/insertarUsuarioCliente.php");
+                httppost = new HttpPost(ip.getIp()+"crearUsuario");
                 parametros = new ArrayList<NameValuePair>();
                 parametros.add(new BasicNameValuePair("usuarionombre",nombreusuario_insertar_usuario.getText().toString()));
                 parametros.add(new BasicNameValuePair("usuariopropio",nombrepropio_isertar_usuario.getText().toString()));
                 parametros.add(new BasicNameValuePair("usuarioemail",correo_insertar_usario.getText().toString()));
-                parametros.add(new BasicNameValuePair("usariopassword",contrasena_insertar_usuario.getText().toString()));
+                parametros.add(new BasicNameValuePair("usuariopassword",contrasena_insertar_usuario.getText().toString()));
 
 
                 httppost.setEntity(new UrlEncodedFormEntity(parametros, "UTF-8"));
@@ -185,77 +188,4 @@ public class FormularioRegistroUsuario extends AppCompatActivity {
 
 
     }
-
-    //valida que el correo sea diferente
-
-    private class validarCorreoDiferente extends AsyncTask<String, Integer, Boolean> {
-        private validarCorreoDiferente() {
-        }
-
-        boolean resul = true;
-
-        @Override
-        protected Boolean doInBackground(String... strings) {
-            String correoTraido;
-
-            try {
-                // Parseamos la respuesta obtenida del servidor a un objeto JSON
-                JSONObject jsonObject = new JSONObject(EntityUtils.toString(new DefaultHttpClient().execute(new HttpPost("http://aeo.web-hn.com/WebServices/verCorreoOrganizacion.php?id_correo="+correo_insertar_usario.getText().toString())).getEntity()));
-                JSONArray jsonArray = jsonObject.getJSONArray("datos");
-                for (int i = 0; i < jsonArray.length(); i++) {
-
-                    correoTraido = jsonArray.getJSONObject(i).getString("e_mail");
-                    if (jsonArray.getJSONObject(i).getString("e_mail").isEmpty()) {
-
-
-                        if (correoTraido.equals(correo_insertar_usario.getText().toString())) {
-                            correoIgual = "igual";
-                        } else {
-                            correoIgual = "diferente";
-
-                        }
-                    }else {
-                        correoIgual = "diferente";
-                    }
-
-
-
-                }
-
-                resul = true;
-            } catch (Exception ex) {
-                Log.e("ServicioRest", "Error!", ex);
-                resul = false;
-            }
-            return resul;
-
-        }
-        protected void onPostExecute(Boolean result) {
-            if (resul) {
-                if (correoIgual.equals("igual")){
-                    correo_insertar_usario.setError(null);
-                    contrasena_insertar_usuario.setError("correo ya existe");
-                    correo_insertar_usario.requestFocus();
-                }else {
-
-                    validar();
-
-                    if (nombreusuario_insertar_usuario.getError()==null && nombrepropio_isertar_usuario.getError()==null && contrasena_insertar_usuario.getError()==null && respuesta1.getError()==null && respuesta2.getError()==null && respuesta3.getError()==null){
-
-                    }
-                }
-
-            }else {
-                Toast.makeText(getApplicationContext(), "Problemas de conexión", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-    @Override
-    public void onRestart()
-    {
-        super.onRestart();
-        finish();
-        startActivity(getIntent());
-    }
-
 }

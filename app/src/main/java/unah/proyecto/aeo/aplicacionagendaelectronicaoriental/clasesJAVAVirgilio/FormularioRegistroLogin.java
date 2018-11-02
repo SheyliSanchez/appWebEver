@@ -32,6 +32,7 @@ import cz.msebera.android.httpclient.util.EntityUtils;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.R;
 
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAAlan.Mostrar_Usuarios;
+import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVASheyli.ipLocalhost;
 
 public class FormularioRegistroLogin extends AppCompatActivity {
     private EditText id,nombrepropio_isertar,nombreusuario_insertar,correo_insertar,contrasena_insertar,contrasenarepetir,rol_insertar,estado_del_usuario;
@@ -46,6 +47,8 @@ public class FormularioRegistroLogin extends AppCompatActivity {
     private AsyncHttpClient cliente;
     Button bottonvalidar;
     ArrayList lista = new ArrayList<>();
+
+    ipLocalhost ip = new ipLocalhost();
 
 
     @Override
@@ -259,14 +262,14 @@ public class FormularioRegistroLogin extends AppCompatActivity {
                 HttpPost httppost;
                 ArrayList<NameValuePair> parametros;
                 httpclient = new DefaultHttpClient();
-                httppost = new HttpPost("http://aeo.web-hn.com/WebServices/insercion_de_usuario.php");
+                httppost = new HttpPost(ip.getIp()+"crearUsuario");
                 parametros = new ArrayList<NameValuePair>();
                 parametros.add(new BasicNameValuePair("usuarionombre",nombreusuario_insertar.getText().toString()));
                 parametros.add(new BasicNameValuePair("usuariopropio",nombrepropio_isertar.getText().toString()));
                 parametros.add(new BasicNameValuePair("usuarioemail",correo_insertar.getText().toString()));
-                parametros.add(new BasicNameValuePair("usariopassword",contrasena_insertar.getText().toString()));
+                parametros.add(new BasicNameValuePair("usuariopassword",contrasena_insertar.getText().toString()));
                 parametros.add(new BasicNameValuePair("usuariosroles",String.valueOf(id_rol)));
-                parametros.add(new BasicNameValuePair("tkn",SharedPrefManager.getInstance(FormularioRegistroLogin.this).getUSUARIO_LOGUEADO().getToken()));
+                //parametros.add(new BasicNameValuePair("tkn",SharedPrefManager.getInstance(FormularioRegistroLogin.this).getUSUARIO_LOGUEADO().getToken()));
 
 
                 httppost.setEntity(new UrlEncodedFormEntity(parametros, "UTF-8"));

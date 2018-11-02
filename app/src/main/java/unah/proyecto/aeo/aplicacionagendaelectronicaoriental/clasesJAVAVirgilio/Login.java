@@ -23,6 +23,7 @@ import android.widget.Toast;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import br.com.simplepass.loading_button_lib.customViews.CircularProgressButton;
@@ -36,6 +37,7 @@ import cz.msebera.android.httpclient.util.EntityUtils;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.R;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAAlan.ActivityCategorias;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAAlan.Panel_de_Control;
+import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVASheyli.ipLocalhost;
 
 public class Login extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     public EditText usuario, contrasena;
@@ -48,6 +50,8 @@ public class Login extends AppCompatActivity implements NavigationView.OnNavigat
     Context context=this;
 
     int id_preferencia;
+
+    ipLocalhost ip  = new ipLocalhost();
 
 
     private CircularProgressButton acceder;
@@ -162,17 +166,21 @@ public class Login extends AppCompatActivity implements NavigationView.OnNavigat
                 HttpPost httppost;
                 ArrayList<NameValuePair> parametros;
                 httpclient = new DefaultHttpClient();
-                httppost = new HttpPost("http://aeo.web-hn.com/WebServices/validar_usuario.php");
+                httppost = new HttpPost(ip.getIp()+"loginUsuario");
                 parametros = new ArrayList<NameValuePair>();
                 parametros.add(new BasicNameValuePair("nombre_usuario",usu));
                 parametros.add(new BasicNameValuePair("contrasena",pas));
                 httppost.setEntity(new UrlEncodedFormEntity(parametros, "UTF-8"));
 
                 JSONObject credencial = new JSONObject(EntityUtils.toString(httpclient.execute(httppost).getEntity()));
-                    id_usuario = credencial.getInt("idUrs");
-                    rol = credencial.getInt("rol");
-                    estado_usuario = credencial.getInt("ste");
-                    tkasig = credencial.getString("token");
+                JSONObject credencialArray = credencial.getJSONObject("content");
+
+
+                    tkasig = credencialArray.getString("token");
+                    rol = credencialArray.getInt("rol");
+                    id_usuario = credencialArray.getInt("idUrs");
+                    estado_usuario = credencialArray.getInt("ste");
+
 
 
                 if (id_usuario != 0 && rol != 0 && estado_usuario != 0) {
