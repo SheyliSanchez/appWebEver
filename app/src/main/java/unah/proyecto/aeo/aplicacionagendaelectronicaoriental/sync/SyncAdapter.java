@@ -115,7 +115,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         /* **********************************************************************************
         *                       OPERACIONES PARA SINCRONIZAR PERFILES                        *
         *************************************************************************************/
-        final String rssFeedEndpoint = "http://aeo.web-hn.com/WebServices/ParaSincronizarPerfiles.php";
+        final String rssFeedEndpoint = ip.getIp()+"listarPerfiles";
 
 
         // We need to collect all the network items in a hash table
@@ -124,7 +124,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
         // Parse the pretend json news feed
         String jsonFeed = download(rssFeedEndpoint);
-        JSONArray perfilesArray = new JSONArray(jsonFeed);
+        JSONObject perfilesObject = new JSONObject(jsonFeed);
+        JSONArray perfilesArray  = perfilesObject.getJSONArray("content");
 
 
         for (int i = 0; i < perfilesArray.length(); i++) {
@@ -256,6 +257,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
         // Parse the pretend json news feed
         String jsonFeedCategoria = download(rssFeedEndpointCategorias);
+
         JSONObject categoriasObject = new JSONObject(jsonFeedCategoria);
         JSONArray categoriasArray = categoriasObject.getJSONArray("content");
 
