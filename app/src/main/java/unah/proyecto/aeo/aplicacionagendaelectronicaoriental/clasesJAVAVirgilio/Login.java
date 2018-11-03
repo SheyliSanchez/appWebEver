@@ -46,10 +46,8 @@ public class Login extends AppCompatActivity implements NavigationView.OnNavigat
     private int id_usuario;
     private int rol;
     private int estado_usuario;
-    //private Button acceder,registrarse;
-    Context context=this;
 
-    int id_preferencia;
+    Context context=this;
 
     ipLocalhost ip  = new ipLocalhost();
 
@@ -72,7 +70,7 @@ public class Login extends AppCompatActivity implements NavigationView.OnNavigat
                 acceder.startAnimation();
 
                 if (usuario.getText().toString().isEmpty() || contrasena.getText().toString().isEmpty()) {
-                    //Toast.makeText(getApplicationContext(), "Favor ingresar todos los Campos", Toast.LENGTH_SHORT).show();
+
                     validar();
                     acceder.revertAnimation();
                     acceder.stopAnimation();
@@ -118,7 +116,7 @@ public class Login extends AppCompatActivity implements NavigationView.OnNavigat
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
+
         int id = item.getItemId();
 
         if (id == R.id.principaldos) {
@@ -263,7 +261,7 @@ public class Login extends AppCompatActivity implements NavigationView.OnNavigat
                         acceder.revertAnimation();
                         Toast.makeText(getApplicationContext(), "Usuario y/o Contraseña incorrecta", Toast.LENGTH_SHORT).show();
                     }
-                    //Toast.makeText(getApplicationContext(),"Usuario y/o Contraseña incorrecta 2",Toast.LENGTH_LONG).show();
+
                 }else if (id_usuario!=0&& rol==2&&estado_usuario==2){
                     contador=contador+1;
                     if (contador ==3){
@@ -276,7 +274,7 @@ public class Login extends AppCompatActivity implements NavigationView.OnNavigat
                         acceder.revertAnimation();
                         Toast.makeText(getApplicationContext(), "Usuario y/o Contraseña incorrecta", Toast.LENGTH_SHORT).show();
                     }
-                    //Toast.makeText(getApplicationContext(),"Usuario y/o Contraseña incorrecta 3",Toast.LENGTH_LONG).show();
+
                 } else if (nada.equals(nada)) {
                     //Toast.makeText(getApplicationContext(), "Usuario y/o Contraseña incorrecta ", Toast.LENGTH_LONG).show();
                 }if (compruebaConexion()==false){
@@ -304,7 +302,6 @@ public class Login extends AppCompatActivity implements NavigationView.OnNavigat
 
     private void validar(){
 
-        //id.setError(null);
         usuario.setError(null);
         contrasena.setError(null);
 

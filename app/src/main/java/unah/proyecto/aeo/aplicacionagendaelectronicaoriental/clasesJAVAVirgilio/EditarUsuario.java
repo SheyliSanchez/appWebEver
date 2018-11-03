@@ -36,6 +36,7 @@ import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.R;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAAlan.ActivityCategorias;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAAlan.Panel_de_Control;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAMelvin.AdministracionDePerfilesAdmin.EditarPerfil;
+import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVASheyli.ipLocalhost;
 
 public class EditarUsuario extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
@@ -45,9 +46,7 @@ public class EditarUsuario extends AppCompatActivity implements NavigationView.O
     Button bottonvalidar;
     String nombre_usuario,nombre_propio,corre_o;
 
-
-    int id_usu=-1;
-
+    ipLocalhost ip = new ipLocalhost();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -177,7 +176,6 @@ public class EditarUsuario extends AppCompatActivity implements NavigationView.O
         correo.setError(null);
 
 
-        // String idd = id.getText().toString();
         String nombusus = nombreusuario.getText().toString();
         String nomb = nombrepropio.getText().toString();
         String cor = correo.getText().toString();
@@ -230,13 +228,13 @@ public class EditarUsuario extends AppCompatActivity implements NavigationView.O
                 HttpPost httppost;
                 ArrayList<NameValuePair> parametros;
                 httpclient = new DefaultHttpClient();
-                httppost = new HttpPost("http://aeo.web-hn.com/WebServices/actualizacion_de_un_usuario.php");
+                httppost = new HttpPost(ip.getIp()+"actualizarUsuario");
                 parametros = new ArrayList<NameValuePair>();
                 parametros.add(new BasicNameValuePair("usuario",String.valueOf(usuarioEditar)));
                 parametros.add(new BasicNameValuePair("usuarionombre",nombreusuario.getText().toString()));
                 parametros.add(new BasicNameValuePair("usuariopropio",nombrepropio.getText().toString()));
                 parametros.add(new BasicNameValuePair("usuarioemail",correo.getText().toString()));
-                parametros.add(new BasicNameValuePair("tkn", SharedPrefManager.getInstance(getApplicationContext()).getUSUARIO_LOGUEADO().getToken()));
+               // parametros.add(new BasicNameValuePair("tkn", SharedPrefManager.getInstance(getApplicationContext()).getUSUARIO_LOGUEADO().getToken()));
 
                 httppost.setEntity(new UrlEncodedFormEntity(parametros, "UTF-8"));
 
@@ -335,10 +333,10 @@ public class EditarUsuario extends AppCompatActivity implements NavigationView.O
                 HttpPost httppost;
                 ArrayList<NameValuePair> parametros;
                 httpclient = new DefaultHttpClient();
-                httppost = new HttpPost("http://aeo.web-hn.com/WebServices/eliminacion_de_un_usuario.php");
+                httppost = new HttpPost(ip.getIp()+"eliminarUsuario");
                 parametros = new ArrayList<NameValuePair>();
                 parametros.add(new BasicNameValuePair("usuario",String.valueOf(SharedPrefManager.getInstance(getApplicationContext()).getUSUARIO_LOGUEADO().getId_logueado())) );
-                parametros.add(new BasicNameValuePair("tkn",SharedPrefManager.getInstance(getApplicationContext()).getUSUARIO_LOGUEADO().getToken()));
+                //parametros.add(new BasicNameValuePair("tkn",SharedPrefManager.getInstance(getApplicationContext()).getUSUARIO_LOGUEADO().getToken()));
                 httppost.setEntity(new UrlEncodedFormEntity(parametros, "UTF-8"));
                 httpclient.execute(httppost);
 

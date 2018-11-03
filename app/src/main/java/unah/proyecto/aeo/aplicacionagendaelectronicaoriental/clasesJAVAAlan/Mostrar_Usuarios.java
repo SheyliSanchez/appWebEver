@@ -14,7 +14,10 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.loopj.android.http.HttpGet;
+
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -26,6 +29,7 @@ import cz.msebera.android.httpclient.impl.client.DefaultHttpClient;
 import cz.msebera.android.httpclient.message.BasicNameValuePair;
 import cz.msebera.android.httpclient.util.EntityUtils;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.R;
+import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVASheyli.ipLocalhost;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAVirgilio.FormularioRegistroLogin;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAVirgilio.Login;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAVirgilio.SharedPrefManager;
@@ -41,8 +45,10 @@ public class Mostrar_Usuarios extends AppCompatActivity {
     private int usuarioselecionado = -1;
     int id_usuario;
     String nombre_usuario,descripcion_rol;
-Adaptador_mostrarusuarios adaptador;
+    Adaptador_mostrarusuarios adaptador;
     ProgressBar barra;
+
+    ipLocalhost ip = new ipLocalhost();
 
     public  void onCreate(Bundle b){
         super.onCreate(b);
@@ -122,21 +128,13 @@ Adaptador_mostrarusuarios adaptador;
 
             try {
 
-                HttpClient httpclient;
-                HttpPost httppost;
-                ArrayList<NameValuePair> parametros;
-                httpclient = new DefaultHttpClient();
-                httppost = new HttpPost("http://aeo.web-hn.com/WebServices/ConsultarTodosLosUsuarios.php");
-                parametros = new ArrayList<NameValuePair>();
-                parametros.add(new BasicNameValuePair("estado","1"));
-                parametros.add(new BasicNameValuePair("tkn",SharedPrefManager.getInstance(Mostrar_Usuarios.this).getUSUARIO_LOGUEADO().getToken()));
+                JSONObject jsonObject = new JSONObject(EntityUtils.toString(new DefaultHttpClient().execute(new HttpGet(ip.getIp()+"todosUsuarios")).getEntity()));
 
-                httppost.setEntity(new UrlEncodedFormEntity(parametros, "UTF-8"));
-                JSONArray respJSON = new JSONArray(EntityUtils.toString(( httpclient.execute(httppost)).getEntity()));
-                for (int i = 0; i < respJSON.length(); i++) {
-                    id_usuario = respJSON.getJSONObject(i).getInt("id_usuario");
-                    nombre_usuario = respJSON.getJSONObject(i).getString("nombre_usuario");
-                    descripcion_rol = respJSON.getJSONObject(i).getString("descripcion_rol");
+                JSONArray jsonArray = jsonObject.getJSONArray("content");
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    id_usuario = jsonArray.getJSONObject(i).getInt("id_usuario");
+                    nombre_usuario = jsonArray.getJSONObject(i).getString("nombre_usuario");
+                    descripcion_rol = jsonArray.getJSONObject(i).getString("descripcion_rol");
 
                     mostrar_usuarios.add(new Fuente_mostrarUsuarios(id_usuario, nombre_usuario,descripcion_rol));
 
