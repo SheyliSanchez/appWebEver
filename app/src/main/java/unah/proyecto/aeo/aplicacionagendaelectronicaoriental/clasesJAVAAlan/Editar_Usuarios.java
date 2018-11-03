@@ -29,6 +29,7 @@ import cz.msebera.android.httpclient.impl.client.DefaultHttpClient;
 import cz.msebera.android.httpclient.message.BasicNameValuePair;
 import cz.msebera.android.httpclient.util.EntityUtils;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.R;
+import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVASheyli.ipLocalhost;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAVirgilio.Login;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAVirgilio.SharedPrefManager;
 
@@ -47,6 +48,7 @@ public class Editar_Usuarios extends AppCompatActivity {
     String nombre_usuario,nombre_propio,correoo;
 
 
+    ipLocalhost ip = new ipLocalhost();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,15 +133,13 @@ public class Editar_Usuarios extends AppCompatActivity {
 
                 if(!nombreusuario.getText().toString().contains("Admin")){
                     if (usuarioEditar==SharedPrefManager.getInstance(Editar_Usuarios.this).getUSUARIO_LOGUEADO().getId_logueado()){
-                        //   eliminarUsuario();
+
                         //PASAMOS EL NOMBRE DE LA CLASE QUE EJECUTA LA SENTENCIA SQL DEL WEB SERVISE
                         new eliminarUsuario().execute();
                         SharedPrefManager.getInstance(Editar_Usuarios.this).limpiar();
-                        //Toast.makeText(Mostrar_Usuarios.this,R.string.usuario_eliminado,Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(getBaseContext(), ActivityCategorias.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP));
-                        //elimila la preferencia
 
-                        //Toast.makeText(getApplicationContext()," "+id_usuario_resibido,Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(getBaseContext(), ActivityCategorias.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP));
+
                         finish();
                     }else{
                         new eliminarUsuario().execute();
@@ -178,10 +178,10 @@ public class Editar_Usuarios extends AppCompatActivity {
                 HttpPost httppost;
                 ArrayList<NameValuePair> parametros;
                 httpclient = new DefaultHttpClient();
-                httppost = new HttpPost("http://aeo.web-hn.com/WebServices/eliminacion_de_un_usuario.php");
+                httppost = new HttpPost(ip.getIp()+"eliminarUsuario");
                 parametros = new ArrayList<NameValuePair>();
                 parametros.add(new BasicNameValuePair("usuario",String.valueOf(usuarioEditar)));
-                parametros.add(new BasicNameValuePair("tkn",SharedPrefManager.getInstance(Editar_Usuarios.this).getUSUARIO_LOGUEADO().getToken()));
+                //parametros.add(new BasicNameValuePair("tkn",SharedPrefManager.getInstance(Editar_Usuarios.this).getUSUARIO_LOGUEADO().getToken()));
                 httppost.setEntity(new UrlEncodedFormEntity(parametros, "UTF-8"));
 
                 httpclient.execute(httppost);
@@ -215,13 +215,12 @@ public class Editar_Usuarios extends AppCompatActivity {
 
     private void validar(){
 
-        //id.setError(null);
+
         nombreusuario.setError(null);
         nombrepropio.setError(null);
         correo.setError(null);
 
 
-        // String idd = id.getText().toString();
         String nombusus = nombreusuario.getText().toString();
         String nomb = nombrepropio.getText().toString();
        String cor = correo.getText().toString();
@@ -262,13 +261,13 @@ public class Editar_Usuarios extends AppCompatActivity {
                 HttpPost httppost;
                 ArrayList<NameValuePair> parametros;
                 httpclient = new DefaultHttpClient();
-                httppost = new HttpPost("http://aeo.web-hn.com/WebServices/actualizacion_de_un_usuario.php");
+                httppost = new HttpPost(ip.getIp()+"actualizarUsuario");
                 parametros = new ArrayList<NameValuePair>();
                 parametros.add(new BasicNameValuePair("usuario",String.valueOf(usuarioEditar)));
                 parametros.add(new BasicNameValuePair("usuarionombre",nombreusuario.getText().toString()));
                 parametros.add(new BasicNameValuePair("usuariopropio",nombrepropio.getText().toString()));
                 parametros.add(new BasicNameValuePair("usuarioemail",correo.getText().toString()));
-                parametros.add(new BasicNameValuePair("tkn",SharedPrefManager.getInstance(Editar_Usuarios.this).getUSUARIO_LOGUEADO().getToken()));
+               // parametros.add(new BasicNameValuePair("tkn",SharedPrefManager.getInstance(Editar_Usuarios.this).getUSUARIO_LOGUEADO().getToken()));
 
 
                 httppost.setEntity(new UrlEncodedFormEntity(parametros, "UTF-8"));
@@ -327,7 +326,7 @@ public class Editar_Usuarios extends AppCompatActivity {
                 httppost.setEntity(new UrlEncodedFormEntity(parametros, "UTF-8"));
                 JSONArray respJSON = new JSONArray(EntityUtils.toString(( httpclient.execute(httppost)).getEntity()));
 
-                //JSONArray respJSON = new JSONArray(EntityUtils.toString(new DefaultHttpClient().execute(new HttpPost("http://aeo.web-hn.com/WebServices/Mostar_Los_Usuarios_Editados.php?usuario="+usuarioEditar)).getEntity()));
+
                 for (int i = 0; i < respJSON.length(); i++) {
                     nombre_usuario = respJSON.getJSONObject(i).getString("nombre_usuario");
                     nombre_propio = respJSON.getJSONObject(i).getString("nombre_propio");
