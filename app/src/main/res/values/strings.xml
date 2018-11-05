@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Agenda Electrónica Oriental</string>
+    <string name="app_name">SmartBuss</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -24,13 +24,12 @@
     <string name="id_categorias"></string>
     <string name="foto">Foto</string>
     <string name="textopaneldecontrol">panel de control</string>
-    <string name="info_app">Agenda Electrónica Oriental es una App pensada para que accedas de forma
+    <string name="info_app">EsmartBuss es una App pensada para que accedas de forma
         fácil y sencilla a los números telefónicos,
         información y ubicación de las diferentes organizaciones ubicadas en las regiones de Danlí y
         el Paraíso pertenecientes al departamento de El Paraíso en Honduras.
     </string>
-    <string name="info_desarrolladores">Nosotros WebEver, equipo de desarrolladores de la App Agenda
-        Electrónica Oriental somos los únicos responsables de aceptar o denegar solicitudes de
+    <string name="info_desarrolladores">Nosotros WebEver, equipo de desarrolladores de la App SmartBuss somos los únicos responsables de aceptar o denegar solicitudes de
         actualización de las empresas aquí registradas o por registrar en el futuro.
     </string>
     <string name="version">Version 1.1.1.0</string>
