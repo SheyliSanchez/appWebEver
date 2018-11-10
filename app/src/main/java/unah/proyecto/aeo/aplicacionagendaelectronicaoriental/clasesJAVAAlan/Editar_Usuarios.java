@@ -321,7 +321,7 @@ public class Editar_Usuarios extends AppCompatActivity {
                 httppost = new HttpPost("http://aeo.web-hn.com/WebServices/Mostar_Los_Usuarios_Editados.php");
                 parametros = new ArrayList<NameValuePair>();
                 parametros.add(new BasicNameValuePair("usuario",String.valueOf(usuarioEditar) ));
-                parametros.add(new BasicNameValuePair("tkn",SharedPrefManager.getInstance(Editar_Usuarios.this).getUSUARIO_LOGUEADO().getToken()));
+                //parametros.add(new BasicNameValuePair("tkn",SharedPrefManager.getInstance(Editar_Usuarios.this).getUSUARIO_LOGUEADO().getToken()));
 
                 httppost.setEntity(new UrlEncodedFormEntity(parametros, "UTF-8"));
                 JSONArray respJSON = new JSONArray(EntityUtils.toString(( httpclient.execute(httppost)).getEntity()));

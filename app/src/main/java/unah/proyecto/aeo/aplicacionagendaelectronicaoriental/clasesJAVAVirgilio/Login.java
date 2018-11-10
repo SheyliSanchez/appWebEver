@@ -173,8 +173,6 @@ public class Login extends AppCompatActivity implements NavigationView.OnNavigat
                 JSONObject credencial = new JSONObject(EntityUtils.toString(httpclient.execute(httppost).getEntity()));
                 JSONObject credencialArray = credencial.getJSONObject("content");
 
-
-                    tkasig = credencialArray.getString("token");
                     rol = credencialArray.getInt("rol");
                     id_usuario = credencialArray.getInt("idUrs");
                     estado_usuario = credencialArray.getInt("ste");
@@ -210,7 +208,7 @@ public class Login extends AppCompatActivity implements NavigationView.OnNavigat
                         new ModeloUsuarioLogueado(
                                 id_usuario,
                                 rol,
-                                tkasig
+                                estado_usuario
                         )
                 );
 

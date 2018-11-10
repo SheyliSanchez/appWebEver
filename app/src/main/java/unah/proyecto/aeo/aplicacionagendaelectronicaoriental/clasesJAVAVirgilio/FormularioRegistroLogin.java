@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.loopj.android.http.AsyncHttpClient;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -220,7 +221,14 @@ public class FormularioRegistroLogin extends AppCompatActivity {
         protected Boolean doInBackground(String... strings) {
 
             try {
-                JSONArray respJSON = new JSONArray(EntityUtils.toString(new DefaultHttpClient().execute(new HttpPost("http://aeo.web-hn.com/WebServices/consultar_los_roles.php")).getEntity()));
+                HttpClient httpclient;
+                HttpPost httppost;
+                httpclient = new DefaultHttpClient();
+                httppost = new HttpPost(ip.getIp()+"roles");
+
+                JSONObject jsonObject = new JSONObject(EntityUtils.toString(httpclient.execute(httppost).getEntity()));
+                JSONArray respJSON = jsonObject.getJSONArray("content");
+                //JSONArray respJSON = new JSONArray(EntityUtils.toString(new DefaultHttpClient().execute(new HttpPost("http://aeo.web-hn.com/WebServices/consultar_los_roles.php")).getEntity()));
 
                 for (int i = 0; i < respJSON.length(); i++) {
                     String roles ;

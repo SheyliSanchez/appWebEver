@@ -31,13 +31,13 @@ public class SharedPrefManager{
 
         editor.putInt("id_logueado", logueado.getId_logueado());
         editor.putInt("rol_logueado", logueado.getRol_logueado());
-        editor.putString("token", logueado.getToken());
+        editor.putInt("estado_logueado", logueado.getEstado_logueado());
         editor.apply();
     }
 
     public boolean estaLogueado(){
         SharedPreferences sharedPreferences = mCtx.getSharedPreferences(SHARED_PREF_NAME,Context.MODE_PRIVATE);
-        return sharedPreferences.getString("token", null) != null;
+        return sharedPreferences.getInt("estado_logueado", -2) != -2;
     }
 
     public ModeloUsuarioLogueado getUSUARIO_LOGUEADO(){
@@ -45,7 +45,7 @@ public class SharedPrefManager{
         USUARIO_LOGUEADO = new ModeloUsuarioLogueado(
                sharedPreferences.getInt("id_logueado",-2),
                sharedPreferences.getInt("rol_logueado",-2),
-               sharedPreferences.getString("token",null)
+                sharedPreferences.getInt("estado_logueado",-2)
         );
 
         return  USUARIO_LOGUEADO;

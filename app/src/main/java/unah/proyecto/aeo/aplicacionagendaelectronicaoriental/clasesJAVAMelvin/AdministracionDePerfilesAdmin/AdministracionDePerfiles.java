@@ -363,7 +363,7 @@ public class AdministracionDePerfiles extends AppCompatActivity
                 httppost = new HttpPost("http://aeo.web-hn.com/WebServices/eliminarPerfil.php");
                 parametros = new ArrayList<NameValuePair>();
                 parametros.add(new BasicNameValuePair("cto",String.valueOf(idperf)) );
-                parametros.add(new BasicNameValuePair("tkn",SharedPrefManager.getInstance(AdministracionDePerfiles.this).getUSUARIO_LOGUEADO().getToken()));
+                //parametros.add(new BasicNameValuePair("tkn",SharedPrefManager.getInstance(AdministracionDePerfiles.this).getUSUARIO_LOGUEADO().getToken()));
                 httppost.setEntity(new UrlEncodedFormEntity(parametros, "UTF-8"));
                 httpclient.execute(httppost);
 

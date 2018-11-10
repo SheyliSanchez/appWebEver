@@ -191,6 +191,7 @@ public class ActivityCategorias extends AppCompatActivity
             SharedPrefManager.getInstance(getApplicationContext()).limpiar();
             startActivity(new Intent(this,Login.class)
                     .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK));
+
         }else if(id == R.id.panelControl){
             Intent intent = new Intent(this,Panel_de_Control.class);
             startActivity(intent);

@@ -3,12 +3,12 @@ package unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAVirgilio
 public class ModeloUsuarioLogueado {
     private int id_logueado;
     private int rol_logueado;
-    private String token;
+    private int estado_logueado;
 
-    public ModeloUsuarioLogueado(int id_logueado, int rol_logueado, String token) {
+    public ModeloUsuarioLogueado(int id_logueado, int rol_logueado, int estado_logueado) {
         this.id_logueado = id_logueado;
         this.rol_logueado = rol_logueado;
-        this.token = token;
+        this.estado_logueado = estado_logueado;
     }
 
     public int getId_logueado() {
@@ -27,11 +27,11 @@ public class ModeloUsuarioLogueado {
         this.rol_logueado = rol_logueado;
     }
 
-    public String getToken() {
-        return token;
+    public int getEstado_logueado() {
+        return estado_logueado;
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public void setEstado_logueado(int estado_logueado) {
+        this.estado_logueado = estado_logueado;
     }
 }

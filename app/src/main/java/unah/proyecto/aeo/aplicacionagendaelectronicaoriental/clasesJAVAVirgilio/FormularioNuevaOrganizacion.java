@@ -431,7 +431,7 @@ TextView lo,lat;
                 parametros.add(new BasicNameValuePair("id_categoria",String.valueOf(id_categoria)));
                 parametros.add(new BasicNameValuePair("id_region",String.valueOf(id_region)));
                 parametros.add(new BasicNameValuePair("id_usuario",String.valueOf(id_usuario)));
-                parametros.add(new BasicNameValuePair("tkn", SharedPrefManager.getInstance(getApplicationContext()).getUSUARIO_LOGUEADO().getToken()));
+                //parametros.add(new BasicNameValuePair("tkn", SharedPrefManager.getInstance(getApplicationContext()).getUSUARIO_LOGUEADO().getToken()));
 
                 if(editarFoto==true){
                     parametros.add(new BasicNameValuePair("imagen",encodeImagen));

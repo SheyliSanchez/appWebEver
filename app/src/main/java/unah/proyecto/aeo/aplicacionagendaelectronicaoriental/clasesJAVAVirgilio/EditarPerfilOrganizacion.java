@@ -469,7 +469,7 @@ public class EditarPerfilOrganizacion extends AppCompatActivity {
                 httppost = new HttpPost("http://aeo.web-hn.com/WebServices/consultarDatosDePerfilParaEditar.php");
                 parametros = new ArrayList<NameValuePair>();
                 parametros.add(new BasicNameValuePair("cto",String.valueOf(id_perfilEditar)));
-                parametros.add(new BasicNameValuePair("tkn",SharedPrefManager.getInstance(getApplicationContext()).getUSUARIO_LOGUEADO().getToken()));
+                //parametros.add(new BasicNameValuePair("tkn",SharedPrefManager.getInstance(getApplicationContext()).getUSUARIO_LOGUEADO().getToken()));
                 httppost.setEntity(new UrlEncodedFormEntity(parametros, "UTF-8"));
 
                 JSONObject respJSON = new JSONObject(EntityUtils.toString(httpclient.execute(httppost).getEntity()));
@@ -565,7 +565,7 @@ public class EditarPerfilOrganizacion extends AppCompatActivity {
                 parametros.add(new BasicNameValuePair("longitud_rec",etlongitud.getText().toString()));
                 parametros.add(new BasicNameValuePair("id_categoria",String.valueOf(id_categoria)));
                 parametros.add(new BasicNameValuePair("id_region",String.valueOf(id_region)));
-                parametros.add(new BasicNameValuePair("tkn",SharedPrefManager.getInstance(getApplicationContext()).getUSUARIO_LOGUEADO().getToken()));
+                //parametros.add(new BasicNameValuePair("tkn",SharedPrefManager.getInstance(getApplicationContext()).getUSUARIO_LOGUEADO().getToken()));
                 if(editarfoto==true){
                     parametros.add(new BasicNameValuePair("imagen",encodeImagen));
                     parametros.add(new BasicNameValuePair("nombre_imagen",etnombreeorganizacion.getText().toString().replace(" ","_")+ ""+ i +".jpg"));
@@ -682,7 +682,7 @@ public class EditarPerfilOrganizacion extends AppCompatActivity {
                 httppost = new HttpPost("http://aeo.web-hn.com/WebServices/eliminarPerfil.php");
                 parametros = new ArrayList<NameValuePair>();
                 parametros.add(new BasicNameValuePair("cto",String.valueOf(id_perfilEditar)) );
-                parametros.add(new BasicNameValuePair("tkn",SharedPrefManager.getInstance(getApplicationContext()).getUSUARIO_LOGUEADO().getToken()));
+                //parametros.add(new BasicNameValuePair("tkn",SharedPrefManager.getInstance(getApplicationContext()).getUSUARIO_LOGUEADO().getToken()));
                 httppost.setEntity(new UrlEncodedFormEntity(parametros, "UTF-8"));
                 httpclient.execute(httppost);
 

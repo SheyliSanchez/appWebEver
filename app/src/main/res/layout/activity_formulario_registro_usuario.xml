@@ -120,7 +120,7 @@
                     android:id="@+id/txtcontrasenarecuperacion_registro_login_usuario"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Cree su Contraseña"
+                    android:hint="Repita la Contraseña"
                     android:inputType="textPassword"
                     android:maxLines="1"
                     android:textSize="15sp"

@@ -403,7 +403,7 @@ public class NuevoPerfil extends AppCompatActivity {
                 httppost = new HttpPost("http://aeo.web-hn.com/WebServices/ConsultarTodosLosUsuarios.php");
                 parametros = new ArrayList<NameValuePair>();
                 parametros.add(new BasicNameValuePair("estado","1"));
-                parametros.add(new BasicNameValuePair("tkn",SharedPrefManager.getInstance(NuevoPerfil.this).getUSUARIO_LOGUEADO().getToken()));
+                //parametros.add(new BasicNameValuePair("tkn",SharedPrefManager.getInstance(NuevoPerfil.this).getUSUARIO_LOGUEADO().getToken()));
 
                 httppost.setEntity(new UrlEncodedFormEntity(parametros, "UTF-8"));
 
@@ -471,7 +471,7 @@ public class NuevoPerfil extends AppCompatActivity {
                 parametros.add(new BasicNameValuePair("id_categoria",String.valueOf(id_categoria)));
                 parametros.add(new BasicNameValuePair("id_region",String.valueOf(id_region)));
                 parametros.add(new BasicNameValuePair("id_usuario",String.valueOf(id_usuario)));
-                parametros.add(new BasicNameValuePair("tkn",SharedPrefManager.getInstance(NuevoPerfil.this).getUSUARIO_LOGUEADO().getToken()));
+               //parametros.add(new BasicNameValuePair("tkn",SharedPrefManager.getInstance(NuevoPerfil.this).getUSUARIO_LOGUEADO().getToken()));
 
                 if(editarFoto==true){
                     parametros.add(new BasicNameValuePair("imagen",encodeImagen));
