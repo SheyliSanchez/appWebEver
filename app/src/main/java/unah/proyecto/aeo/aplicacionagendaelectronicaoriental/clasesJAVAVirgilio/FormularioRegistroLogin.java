@@ -223,19 +223,23 @@ public class FormularioRegistroLogin extends AppCompatActivity {
             try {
                 HttpClient httpclient;
                 HttpPost httppost;
+                ArrayList<NameValuePair> parametros;
                 httpclient = new DefaultHttpClient();
                 httppost = new HttpPost(ip.getIp()+"roles");
+                parametros = new ArrayList<NameValuePair>();
+                parametros.add(new BasicNameValuePair("tkn",SharedPrefManager.getInstance(FormularioRegistroLogin.this).getUSUARIO_LOGUEADO().getToken()));
+                httppost.setEntity(new UrlEncodedFormEntity(parametros,"UTF-8"));
 
                 JSONObject jsonObject = new JSONObject(EntityUtils.toString(httpclient.execute(httppost).getEntity()));
                 JSONArray respJSON = jsonObject.getJSONArray("content");
                 //JSONArray respJSON = new JSONArray(EntityUtils.toString(new DefaultHttpClient().execute(new HttpPost("http://aeo.web-hn.com/WebServices/consultar_los_roles.php")).getEntity()));
-
-                for (int i = 0; i < respJSON.length(); i++) {
+                 for (int i = 0; i < respJSON.length(); i++) {
                     String roles ;
                     roles=respJSON.getJSONObject(i).getString("descripcion_rol");
 
                     lista.add(roles);
                 }
+
                 resul = true;
             } catch (Exception ex) {
                 Log.e("ServicioRest", "Error!", ex);

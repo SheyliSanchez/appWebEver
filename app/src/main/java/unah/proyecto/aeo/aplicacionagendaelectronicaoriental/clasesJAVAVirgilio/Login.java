@@ -20,10 +20,21 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.google.gson.JsonObject;
+
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import br.com.simplepass.loading_button_lib.customViews.CircularProgressButton;
@@ -155,12 +166,12 @@ public class Login extends AppCompatActivity implements NavigationView.OnNavigat
         @Override
         protected Boolean doInBackground(String... strings) {
 
-            String usu=usuario.getText().toString();
-            String pas=contrasena.getText().toString();
+
 
             try {
-
-                HttpClient httpclient;
+                String usu=usuario.getText().toString();
+                String pas=contrasena.getText().toString();
+               HttpClient httpclient;
                 HttpPost httppost;
                 ArrayList<NameValuePair> parametros;
                 httpclient = new DefaultHttpClient();
@@ -173,10 +184,11 @@ public class Login extends AppCompatActivity implements NavigationView.OnNavigat
                 JSONObject credencial = new JSONObject(EntityUtils.toString(httpclient.execute(httppost).getEntity()));
                 JSONObject credencialArray = credencial.getJSONObject("content");
 
+
                     rol = credencialArray.getInt("rol");
                     id_usuario = credencialArray.getInt("idUrs");
                     estado_usuario = credencialArray.getInt("ste");
-
+                    tkasig = credencialArray.getString("tkn");
 
 
                 if (id_usuario != 0 && rol != 0 && estado_usuario != 0) {
@@ -208,7 +220,8 @@ public class Login extends AppCompatActivity implements NavigationView.OnNavigat
                         new ModeloUsuarioLogueado(
                                 id_usuario,
                                 rol,
-                                estado_usuario
+                                estado_usuario,
+                                tkasig
                         )
                 );
 

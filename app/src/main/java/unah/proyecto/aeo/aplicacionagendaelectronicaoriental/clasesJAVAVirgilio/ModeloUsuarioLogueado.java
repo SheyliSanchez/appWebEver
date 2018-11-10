@@ -4,11 +4,13 @@ public class ModeloUsuarioLogueado {
     private int id_logueado;
     private int rol_logueado;
     private int estado_logueado;
+    private String token;
 
-    public ModeloUsuarioLogueado(int id_logueado, int rol_logueado, int estado_logueado) {
+    public ModeloUsuarioLogueado(int id_logueado, int rol_logueado, int estado_logueado, String token) {
         this.id_logueado = id_logueado;
         this.rol_logueado = rol_logueado;
         this.estado_logueado = estado_logueado;
+        this.token = token;
     }
 
     public int getId_logueado() {
@@ -33,5 +35,13 @@ public class ModeloUsuarioLogueado {
 
     public void setEstado_logueado(int estado_logueado) {
         this.estado_logueado = estado_logueado;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

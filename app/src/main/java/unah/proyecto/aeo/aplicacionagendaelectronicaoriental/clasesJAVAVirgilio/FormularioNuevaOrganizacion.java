@@ -98,10 +98,8 @@ TextView lo,lat;
     int id_usu=-1;
     //
 
-    double latitudResibida;
-    double longitudResibida;
 
-    String validemail,email,correoIgual;
+    String correoIgual;
     //
 
 

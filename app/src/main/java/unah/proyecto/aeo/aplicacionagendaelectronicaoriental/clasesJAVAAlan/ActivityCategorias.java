@@ -29,6 +29,7 @@ import java.io.IOException;
 
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.R;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAMelvin.HerramientaBusquedaAvanzada.BusquedaAvanzada;
+import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVASheyli.FuncionCerrarSesion;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAVirgilio.AcercaDe;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAVirgilio.EditarUsuario;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAVirgilio.Login;
@@ -45,9 +46,8 @@ public class ActivityCategorias extends AppCompatActivity
     Adaptador_Categoria adaptadorCategoria;
     RecyclerView contenedor;
     private static final int CATEGORIA_LOADER = 0;
-
     NavigationView navigationView;
-
+    FuncionCerrarSesion cs = new FuncionCerrarSesion();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -188,6 +188,7 @@ public class ActivityCategorias extends AppCompatActivity
                 startActivity(intent);
 
         }else if (id == R.id.cerrarsecion){
+            cs.cerrarsesion();
             SharedPrefManager.getInstance(getApplicationContext()).limpiar();
             startActivity(new Intent(this,Login.class)
                     .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK));
