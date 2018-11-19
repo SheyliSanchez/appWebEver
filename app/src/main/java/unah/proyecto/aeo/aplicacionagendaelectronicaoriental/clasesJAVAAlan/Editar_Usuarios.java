@@ -30,6 +30,7 @@ import cz.msebera.android.httpclient.impl.client.DefaultHttpClient;
 import cz.msebera.android.httpclient.message.BasicNameValuePair;
 import cz.msebera.android.httpclient.util.EntityUtils;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.R;
+import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVASheyli.FuncionCerrarSesion;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVASheyli.ipLocalhost;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAVirgilio.EditarUsuario;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAVirgilio.FormularioRegistroLogin;
@@ -52,6 +53,7 @@ public class Editar_Usuarios extends AppCompatActivity {
 
 
     ipLocalhost ip = new ipLocalhost();
+    FuncionCerrarSesion cs = new FuncionCerrarSesion();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,7 +129,7 @@ public class Editar_Usuarios extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.eliminar_usuario);
         String fmt= getResources().getString(R.string.mensaje_para_eliminar);
-        builder.setMessage(String.format(fmt,String.valueOf(usuarioEditar)));
+        builder.setMessage(String.format(fmt,String.valueOf(nombrepropiobar)));
         builder.setPositiveButton(R.string.eliminar, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -139,10 +141,13 @@ public class Editar_Usuarios extends AppCompatActivity {
 
                         //PASAMOS EL NOMBRE DE LA CLASE QUE EJECUTA LA SENTENCIA SQL DEL WEB SERVISE
                         new eliminarUsuario().execute();
+
                         SharedPrefManager.getInstance(Editar_Usuarios.this).limpiar();
+                        Intent intent = new Intent(Editar_Usuarios.this,ActivityCategorias.class);
 
-                        startActivity(new Intent(getBaseContext(), ActivityCategorias.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP));
-
+                        //startActivity(new Intent(getBaseContext(), ActivityCategorias.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP));
+                        cs.cerrarsesion();
+                        startActivity(intent);
                         finish();
                     }else{
                         new eliminarUsuario().execute();

@@ -45,7 +45,7 @@ public class PerfilDeLaOrganizacion extends AppCompatActivity implements Navigat
     String organizacionP, nombreP, direccionP, telefonoP, emailP, descripcionP, movilP;
     boolean imagenContacto;
 
-
+    FuncionCerrarSesion cs = new FuncionCerrarSesion();
 
     int id_usu=-1;
     NavigationView navigationView;
@@ -256,6 +256,7 @@ public class PerfilDeLaOrganizacion extends AppCompatActivity implements Navigat
             startActivity(intent);
 
         }else if (id == R.id.cerrarsecion){
+            cs.cerrarsesion();
             SharedPrefManager.getInstance(getApplicationContext()).limpiar();
             startActivity(new Intent(this,Login.class)
                     .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK));

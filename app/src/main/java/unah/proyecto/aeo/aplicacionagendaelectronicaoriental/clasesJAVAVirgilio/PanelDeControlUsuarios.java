@@ -42,6 +42,7 @@ import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.R;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAAlan.ActivityCategorias;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAAlan.Panel_de_Control;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAMelvin.AdministracionDePerfilesAdmin.EditarPerfil;
+import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVASheyli.FuncionCerrarSesion;
 
 public class PanelDeControlUsuarios extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
     //preferencia de imgadministrador o usuario
@@ -65,9 +66,7 @@ public class PanelDeControlUsuarios extends AppCompatActivity implements Navigat
     int id_usuario;
     ProgressBar barraProgreso;
 
-    int id_usuario_normal;
-
-
+    FuncionCerrarSesion cs = new FuncionCerrarSesion();
 
 
     @Override
@@ -180,6 +179,7 @@ public class PanelDeControlUsuarios extends AppCompatActivity implements Navigat
             startActivity(intent);
 
         }else if (id ==R.id.cerrarsecion){
+            cs.cerrarsesion();
             SharedPrefManager.getInstance(this).limpiar();
             startActivity(new Intent(this, Login.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK));
             finish();
