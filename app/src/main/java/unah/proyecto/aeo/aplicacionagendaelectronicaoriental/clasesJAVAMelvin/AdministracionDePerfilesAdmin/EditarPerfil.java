@@ -660,7 +660,6 @@ public class EditarPerfil extends AppCompatActivity {
                 httppost = new HttpGet(ip.getIp()+"regiones");
                 httppost.setHeader("Authorization",SharedPrefManager.getInstance(EditarPerfil.this).getUSUARIO_LOGUEADO().getToken());
 
-                //JSONObject regionesWS = new JSONObject(EntityUtils.toString(new DefaultHttpClient().execute(new HttpGet(ip.getIp()+"regiones")).getEntity()));
                 JSONObject regionesWS = new JSONObject(EntityUtils.toString(( httpclient.execute(httppost)).getEntity()));
                 JSONArray jsonArrayRegion = regionesWS.getJSONArray("content");
 

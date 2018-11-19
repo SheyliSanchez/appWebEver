@@ -398,24 +398,12 @@ public class NuevoPerfil extends AppCompatActivity {
         protected Boolean doInBackground(String... strings) {
 
             try {
-
-                /*HttpClient httpclient;
-                HttpGet httppost;
-                httpclient = new DefaultHttpClient();
-                httppost = new HttpGet(ip.getIp()+"regiones");
-                httppost.setHeader("Authorization",SharedPrefManager.getInstance(NuevoPerfil.this).getUSUARIO_LOGUEADO().getToken());
-
-                JSONObject regionesWS = new JSONObject(EntityUtils.toString(( httpclient.execute(httppost)).getEntity()));
-                JSONArray jsonArrayRegion = regionesWS.getJSONArray("content");*/
-
                 JSONObject regionesWS = new JSONObject(EntityUtils.toString(new DefaultHttpClient().execute(new HttpGet(ip.getIp()+"regiones")).getEntity()));
                 JSONArray jsonArrayRegion = regionesWS.getJSONArray("content");
 
                 JSONObject categoriasWS = new JSONObject(EntityUtils.toString(new DefaultHttpClient().execute(new HttpGet(ip.getIp()+"categorias")).getEntity()));
                 JSONArray jsonArrayCategoria = categoriasWS.getJSONArray("content");
 
-                //JSONArray regionesWS = new JSONArray(EntityUtils.toString(new DefaultHttpClient().execute(new HttpPost("http://aeo.web-hn.com/WebServices/consultarRegiones.php")).getEntity()));
-                //JSONArray categoriasWS = new JSONArray(EntityUtils.toString(new DefaultHttpClient().execute(new HttpPost("http://aeo.web-hn.com/WebServices/consultarCategorias.php")).getEntity()));
 
                 HttpClient httpclient;
                 HttpPost httppost;
@@ -429,8 +417,6 @@ public class NuevoPerfil extends AppCompatActivity {
 
                 JSONObject jsonObject = new JSONObject(EntityUtils.toString(httpclient.execute(httppost).getEntity()));
                 JSONArray usuariosWS = jsonObject.getJSONArray("content");
-                //JSONArray usuariosWS = new JSONArray(EntityUtils.toString(httpclient.execute(httppost).getEntity()));
-
 
                 //array regiones
                 for (int i = 0; i < jsonArrayRegion.length(); i++) {

@@ -49,6 +49,7 @@ import java.util.ArrayList;
 import cz.msebera.android.httpclient.NameValuePair;
 import cz.msebera.android.httpclient.client.HttpClient;
 import cz.msebera.android.httpclient.client.entity.UrlEncodedFormEntity;
+import cz.msebera.android.httpclient.client.methods.HttpGet;
 import cz.msebera.android.httpclient.client.methods.HttpPost;
 import cz.msebera.android.httpclient.impl.client.DefaultHttpClient;
 import cz.msebera.android.httpclient.message.BasicNameValuePair;
@@ -59,7 +60,9 @@ import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAAlan.Acti
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAAlan.Panel_de_Control;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVABessy.Ingresar_Ubicacion;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAMelvin.AdministracionDePerfilesAdmin.AdaptadorPersonalizadoSpinner;
+import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAMelvin.AdministracionDePerfilesAdmin.EditarPerfil;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAMelvin.AdministracionDePerfilesAdmin.ModeloSpinner;
+import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVASheyli.ipLocalhost;
 
 public class EditarPerfilOrganizacion extends AppCompatActivity {
 
@@ -104,6 +107,8 @@ public class EditarPerfilOrganizacion extends AppCompatActivity {
 
     int id_usu=-1;
     int nu;
+
+    ipLocalhost ip = new ipLocalhost();
 
     Double lat,log;
     @Override
@@ -462,19 +467,9 @@ public class EditarPerfilOrganizacion extends AppCompatActivity {
         protected Boolean doInBackground(String... strings) {
 
             try {
-                HttpClient httpclient;
-                HttpPost httppost;
-                ArrayList<NameValuePair> parametros;
-                httpclient = new DefaultHttpClient();
-                httppost = new HttpPost("http://aeo.web-hn.com/WebServices/consultarDatosDePerfilParaEditar.php");
-                parametros = new ArrayList<NameValuePair>();
-                parametros.add(new BasicNameValuePair("cto",String.valueOf(id_perfilEditar)));
-                //parametros.add(new BasicNameValuePair("tkn",SharedPrefManager.getInstance(getApplicationContext()).getUSUARIO_LOGUEADO().getToken()));
-                httppost.setEntity(new UrlEncodedFormEntity(parametros, "UTF-8"));
+                JSONObject respJSON = new JSONObject(EntityUtils.toString(new DefaultHttpClient().execute(new HttpGet(ip.getIp()+"obtenerPerfil?cto="+id_perfilEditar)).getEntity()));
+                JSONArray jsonArray = respJSON.getJSONArray("content");
 
-                JSONObject respJSON = new JSONObject(EntityUtils.toString(httpclient.execute(httppost).getEntity()));
-                //JSONObject respJSON = new JSONObject(EntityUtils.toString(new DefaultHttpClient().execute(new HttpPost("http://aeo.web-hn.com/WebServices/consultarDatosDePerfilParaEditar.php?cto="+id_usuario_resibido_usuario)).getEntity()));
-                JSONArray jsonArray = respJSON.getJSONArray("perfiles");
                 for (int i = 0; i < jsonArray.length(); i++) {
                     nomborg_rec = jsonArray.getJSONObject(i).getString("nombre_organizacion");
                     numtel_rec = jsonArray.getJSONObject(i).getString("numero_fijo");
@@ -552,7 +547,8 @@ public class EditarPerfilOrganizacion extends AppCompatActivity {
                 HttpPost httppost;
                 ArrayList<NameValuePair> parametros;
                 httpclient = new DefaultHttpClient();
-                httppost = new HttpPost("http://aeo.web-hn.com/WebServices/actualizarPerfil.php");
+                httppost = new HttpPost(ip.getIp()+"actualizarPerfil");
+                httppost.setHeader("Authorization",SharedPrefManager.getInstance(EditarPerfilOrganizacion.this).getUSUARIO_LOGUEADO().getToken());
                 parametros = new ArrayList<NameValuePair>();
                 parametros.add(new BasicNameValuePair("cto", String.valueOf(id_perfilEditar)));
                 parametros.add(new BasicNameValuePair("nomborg_rec",etnombreeorganizacion.getText().toString()));
@@ -612,15 +608,26 @@ public class EditarPerfilOrganizacion extends AppCompatActivity {
 
             try {
 
-                JSONArray regionesWS = new JSONArray(EntityUtils.toString(new DefaultHttpClient().execute(new HttpPost("http://aeo.web-hn.com/WebServices/consultarRegiones.php")).getEntity()));
-                JSONArray categoriasWS = new JSONArray(EntityUtils.toString(new DefaultHttpClient().execute(new HttpPost("http://aeo.web-hn.com/WebServices/consultarCategorias.php")).getEntity()));
+                HttpClient httpclient;
+                HttpGet httppost;
+                httpclient = new DefaultHttpClient();
+                httppost = new HttpGet(ip.getIp()+"regiones");
+                httppost.setHeader("Authorization",SharedPrefManager.getInstance(EditarPerfilOrganizacion.this).getUSUARIO_LOGUEADO().getToken());
+                JSONObject regionesWS = new JSONObject(EntityUtils.toString(( httpclient.execute(httppost)).getEntity()));
+                JSONArray jsonArrayRegion = regionesWS.getJSONArray("content");
 
-                for (int i = 0; i < regionesWS.length(); i++) {
-                    listaRegiones.add(new ModeloSpinner(regionesWS.getJSONObject(i).getString("nombre_region"),Integer.parseInt(regionesWS.getJSONObject(i).getString("id_region")))
+                for (int i = 0; i < jsonArrayRegion.length(); i++) {
+                    listaRegiones.add(new ModeloSpinner(jsonArrayRegion.getJSONObject(i).getString("nombre_region"),Integer.parseInt(jsonArrayRegion.getJSONObject(i).getString("id_region")))
                     );
                 }
-                for (int i=0;i<categoriasWS.length();i++){
-                    listaCategorias.add(new ModeloSpinner(categoriasWS.getJSONObject(i).getString("nombre_categoria"), Integer.parseInt(categoriasWS.getJSONObject(i).getString("id_categoria"))));
+
+
+                JSONObject categoriasWS = new JSONObject(EntityUtils.toString(new DefaultHttpClient().execute(new HttpGet(ip.getIp()+"categorias")).getEntity()));
+                JSONArray jsonArrayCategoria = categoriasWS.getJSONArray("content");
+
+
+                for (int i=0;i<jsonArrayCategoria.length();i++){
+                    listaCategorias.add(new ModeloSpinner(jsonArrayCategoria.getJSONObject(i).getString("nombre_categoria"), Integer.parseInt(jsonArrayCategoria.getJSONObject(i).getString("id_categoria"))));
                 }
 
                 resul = true;
@@ -674,20 +681,18 @@ public class EditarPerfilOrganizacion extends AppCompatActivity {
 
             try {
 
-
+                //se ejecuta la consulta al webservice y se pasa el id del perfil seleccionado
                 HttpClient httpclient;
                 HttpPost httppost;
                 ArrayList<NameValuePair> parametros;
                 httpclient = new DefaultHttpClient();
-                httppost = new HttpPost("http://aeo.web-hn.com/WebServices/eliminarPerfil.php");
+                httppost = new HttpPost(ip.getIp()+"eliminarPerfil");
+                httppost.setHeader("Authorization",SharedPrefManager.getInstance(EditarPerfilOrganizacion.this).getUSUARIO_LOGUEADO().getToken());
                 parametros = new ArrayList<NameValuePair>();
                 parametros.add(new BasicNameValuePair("cto",String.valueOf(id_perfilEditar)) );
-                //parametros.add(new BasicNameValuePair("tkn",SharedPrefManager.getInstance(getApplicationContext()).getUSUARIO_LOGUEADO().getToken()));
                 httppost.setEntity(new UrlEncodedFormEntity(parametros, "UTF-8"));
                 httpclient.execute(httppost);
 
-                //se ejecuta la consulta al webservice y se pasa el id del perfil seleccionado
-                //EntityUtils.toString(new DefaultHttpClient().execute(new HttpPost("http://aeo.web-hn.com/WebServices/eliminarPerfil.php?cto="+idperf)).getEntity());
                 resul = true;
             } catch (Exception ex) {
                 Log.e("ServicioRest", "Error!", ex);
