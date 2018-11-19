@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import cz.msebera.android.httpclient.NameValuePair;
 import cz.msebera.android.httpclient.client.HttpClient;
 import cz.msebera.android.httpclient.client.entity.UrlEncodedFormEntity;
+import cz.msebera.android.httpclient.client.methods.HttpGet;
 import cz.msebera.android.httpclient.client.methods.HttpPost;
 import cz.msebera.android.httpclient.impl.client.DefaultHttpClient;
 import cz.msebera.android.httpclient.message.BasicNameValuePair;
@@ -42,7 +43,7 @@ import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.R;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAAlan.ActivityCategorias;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAAlan.Panel_de_Control;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAMelvin.AdministracionDePerfilesAdmin.EditarPerfil;
-import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVASheyli.FuncionCerrarSesion;
+import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVASheyli.ipLocalhost;
 
 public class PanelDeControlUsuarios extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
     //preferencia de imgadministrador o usuario
@@ -66,7 +67,11 @@ public class PanelDeControlUsuarios extends AppCompatActivity implements Navigat
     int id_usuario;
     ProgressBar barraProgreso;
 
-    FuncionCerrarSesion cs = new FuncionCerrarSesion();
+    int id_usuario_normal;
+
+    ipLocalhost  ip = new ipLocalhost();
+
+
 
 
     @Override
@@ -179,7 +184,6 @@ public class PanelDeControlUsuarios extends AppCompatActivity implements Navigat
             startActivity(intent);
 
         }else if (id ==R.id.cerrarsecion){
-            cs.cerrarsesion();
             SharedPrefManager.getInstance(this).limpiar();
             startActivity(new Intent(this, Login.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK));
             finish();
@@ -214,7 +218,7 @@ public class PanelDeControlUsuarios extends AppCompatActivity implements Navigat
             //int prueba = preferences.getInt("usuario_ingreso",0);
 
             try {
-                HttpClient httpclient;
+                /*HttpClient httpclient;
                 HttpPost httppost;
                 ArrayList<NameValuePair> parametros;
                 httpclient = new DefaultHttpClient();
@@ -223,10 +227,10 @@ public class PanelDeControlUsuarios extends AppCompatActivity implements Navigat
                 parametros.add(new BasicNameValuePair("id_usuario",String.valueOf(id_usu)));
 
                 httppost.setEntity(new UrlEncodedFormEntity(parametros, "UTF-8"));
-                JSONArray respJSON = new JSONArray(EntityUtils.toString(( httpclient.execute(httppost)).getEntity()));
+                JSONArray respJSON = new JSONArray(EntityUtils.toString(( httpclient.execute(httppost)).getEntity()));*/
 
-
-                 //JSONArray respJSON = new JSONArray(EntityUtils.toString(new DefaultHttpClient().execute(new HttpPost("http://aeo.web-hn.com/WebServices/consultarOrganizacionesUsuarioLogeados.php?id_usuario="+id_usuario_resibido_usuario)).getEntity()));
+                JSONObject jsonObject = new JSONObject(EntityUtils.toString(new DefaultHttpClient().execute(new HttpGet(ip.getIp()+"listarPerfiles?ste=2")).getEntity()));
+                JSONArray respJSON = jsonObject.getJSONArray("content");
                 //recorre el array para asignar los resultados a las variables
                 for (int i = 0; i < respJSON.length(); i++) {
 
@@ -241,10 +245,6 @@ public class PanelDeControlUsuarios extends AppCompatActivity implements Navigat
                         estadoOrganizacion ="Pendiente";
                     }else if (2 == Integer.parseInt(estadoOrganizacion)){
                         estadoOrganizacion ="Activo";
-                    }else if(3 == Integer.parseInt(estadoOrganizacion)){
-                        estadoOrganizacion = "Rechazado";
-                    }else if (4 == Integer.parseInt(estadoOrganizacion)){
-                        estadoOrganizacion ="Eliminado";
                     }
                     //envia los datos ala clase pojo de el item lista
 
