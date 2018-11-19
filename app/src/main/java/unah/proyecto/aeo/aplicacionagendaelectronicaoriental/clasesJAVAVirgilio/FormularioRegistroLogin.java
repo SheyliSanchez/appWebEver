@@ -145,8 +145,6 @@ public class FormularioRegistroLogin extends AppCompatActivity {
         String cont = contrasena_insertar.getText().toString();
         String contr = contrasenarepetir.getText().toString();
 
-        
-
 
 //server
 //RECIVIMOS LOS USUARIOS QUE VIENEN DEL SERVIDOR Y LOS ADAPTAMOS ALOS COMPONENTES VISIALUES
@@ -207,11 +205,6 @@ public class FormularioRegistroLogin extends AppCompatActivity {
     }
 
 
-
-
-
-
-
     //METODO PARA LLENAR EL ESPINNER DESDE EL WEB SERVER
     private class llenarEspinner extends AsyncTask<String, Integer, Boolean> {
         private llenarEspinner(){}
@@ -223,16 +216,12 @@ public class FormularioRegistroLogin extends AppCompatActivity {
             try {
                 HttpClient httpclient;
                 HttpPost httppost;
-                ArrayList<NameValuePair> parametros;
                 httpclient = new DefaultHttpClient();
                 httppost = new HttpPost(ip.getIp()+"roles");
-                parametros = new ArrayList<NameValuePair>();
-                parametros.add(new BasicNameValuePair("tkn",SharedPrefManager.getInstance(FormularioRegistroLogin.this).getUSUARIO_LOGUEADO().getToken()));
-                httppost.setEntity(new UrlEncodedFormEntity(parametros,"UTF-8"));
+                httppost.setHeader("Authorization",SharedPrefManager.getInstance(FormularioRegistroLogin.this).getUSUARIO_LOGUEADO().getToken());
 
                 JSONObject jsonObject = new JSONObject(EntityUtils.toString(httpclient.execute(httppost).getEntity()));
                 JSONArray respJSON = jsonObject.getJSONArray("content");
-                //JSONArray respJSON = new JSONArray(EntityUtils.toString(new DefaultHttpClient().execute(new HttpPost("http://aeo.web-hn.com/WebServices/consultar_los_roles.php")).getEntity()));
                  for (int i = 0; i < respJSON.length(); i++) {
                     String roles ;
                     roles=respJSON.getJSONObject(i).getString("descripcion_rol");
@@ -281,8 +270,6 @@ public class FormularioRegistroLogin extends AppCompatActivity {
                 parametros.add(new BasicNameValuePair("usuarioemail",correo_insertar.getText().toString()));
                 parametros.add(new BasicNameValuePair("usuariopassword",contrasena_insertar.getText().toString()));
                 parametros.add(new BasicNameValuePair("usuariosroles",String.valueOf(id_rol)));
-                //parametros.add(new BasicNameValuePair("tkn",SharedPrefManager.getInstance(FormularioRegistroLogin.this).getUSUARIO_LOGUEADO().getToken()));
-
 
                 httppost.setEntity(new UrlEncodedFormEntity(parametros, "UTF-8"));
 
@@ -307,9 +294,6 @@ public class FormularioRegistroLogin extends AppCompatActivity {
                     Intent data = new Intent();
                     setResult(Mostrar_Usuarios.RESULT_OK, data);
                     finish();
-
-
-
 
             }else {
                 Toast.makeText(getApplicationContext(), "Problemas de conexión", Toast.LENGTH_SHORT).show();

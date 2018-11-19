@@ -127,10 +127,16 @@ public class Mostrar_Usuarios extends AppCompatActivity {
         protected Boolean doInBackground(String... strings) {
 
             try {
+                HttpClient httpclient;
+                HttpPost httppost;
+                //ArrayList<NameValuePair> parametros;
+                httpclient = new DefaultHttpClient();
+                httppost = new HttpPost(ip.getIp()+"todosUsuarios");
+                httppost.setHeader("Authorization",SharedPrefManager.getInstance(Mostrar_Usuarios.this).getUSUARIO_LOGUEADO().getToken());
 
-                JSONObject jsonObject = new JSONObject(EntityUtils.toString(new DefaultHttpClient().execute(new HttpGet(ip.getIp()+"todosUsuarios")).getEntity()));
-
+                JSONObject jsonObject = new JSONObject(EntityUtils.toString(httpclient.execute(httppost).getEntity()));
                 JSONArray jsonArray = jsonObject.getJSONArray("content");
+
                 for (int i = 0; i < jsonArray.length(); i++) {
                     id_usuario = jsonArray.getJSONObject(i).getInt("id_usuario");
                     nombre_usuario = jsonArray.getJSONObject(i).getString("nombre_usuario");
@@ -162,7 +168,6 @@ public class Mostrar_Usuarios extends AppCompatActivity {
                 return;
             }
             Toast.makeText(getApplicationContext(), "Problemas de conexión", Toast.LENGTH_SHORT).show();
-           // Toast.makeText(getApplicationContext(),""+traidotk,Toast.LENGTH_SHORT).show();
         }
 
 

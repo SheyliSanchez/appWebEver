@@ -115,7 +115,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         /* **********************************************************************************
         *                       OPERACIONES PARA SINCRONIZAR PERFILES                        *
         *************************************************************************************/
-        final String rssFeedEndpoint = ip.getIp()+"listarPerfiles";
+        final String rssFeedEndpoint = ip.getIp()+"listarPerfiles?ste=2";
 
 
         // We need to collect all the network items in a hash table
@@ -345,12 +345,14 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
          /* **********************************************************************************
         *                       OPERACIONES PARA SINCRONIZAR REGIONES                      *
         *************************************************************************************/
-        final String rssFeedEndpointRegiones= "http://aeo.web-hn.com/WebServices/ParaSincronizarRegiones.php";
+        final String rssFeedEndpointRegiones=  ip.getIp()+"regiones";
         Map<String, Region> networkEntriesRegion = new HashMap<>();
 
         // Parse the pretend json news feed
         String jsonFeedRegion = download(rssFeedEndpointRegiones);
-        JSONArray regionesArray = new JSONArray(jsonFeedRegion);
+
+        JSONObject jsonObject = new JSONObject(jsonFeedRegion);
+        JSONArray regionesArray = jsonObject.getJSONArray("content");
 
 
         for (int i = 0; i < regionesArray.length(); i++) {

@@ -24,18 +24,22 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
 import cz.msebera.android.httpclient.NameValuePair;
 import cz.msebera.android.httpclient.client.HttpClient;
 import cz.msebera.android.httpclient.client.entity.UrlEncodedFormEntity;
+import cz.msebera.android.httpclient.client.methods.HttpGet;
 import cz.msebera.android.httpclient.client.methods.HttpPost;
 import cz.msebera.android.httpclient.impl.client.DefaultHttpClient;
 import cz.msebera.android.httpclient.message.BasicNameValuePair;
 import cz.msebera.android.httpclient.util.EntityUtils;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.R;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAAlan.ActivityCategorias;
+import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAAlan.Editar_Usuarios;
+import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVASheyli.ipLocalhost;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAVirgilio.AcercaDe;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAVirgilio.Login;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAVirgilio.PanelDeControlUsuarios;
@@ -60,7 +64,7 @@ public class AdministracionDePerfiles extends AppCompatActivity
     private static final int PASAR_A_NUEVO = 200;
     public static Handler h;
 
-
+    ipLocalhost ip = new ipLocalhost();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -256,17 +260,8 @@ public class AdministracionDePerfiles extends AppCompatActivity
         protected Boolean doInBackground(String... strings) {
 
             try {
-                //se conecta al webservice y almacena el resultado en un array tipo json
-                HttpClient httpclient;
-                HttpPost httppost;
-                ArrayList<NameValuePair> parametros;
-                httpclient = new DefaultHttpClient();
-                httppost = new HttpPost("http://aeo.web-hn.com/WebServices/consultarPerfilesParaAdministracionPerfiles.php");
-                parametros = new ArrayList<NameValuePair>();
-                parametros.add(new BasicNameValuePair("ste","2"));
-                httppost.setEntity(new UrlEncodedFormEntity(parametros, "UTF-8"));
-
-                JSONArray respJSON = new JSONArray(EntityUtils.toString(httpclient.execute(httppost).getEntity()));
+                JSONObject jsonObject = new JSONObject(EntityUtils.toString(new DefaultHttpClient().execute(new HttpGet(ip.getIp()+"listarPerfiles?ste=2")).getEntity()));
+                JSONArray respJSON = jsonObject.getJSONArray("content");
                 //recorre el array para asignar los resultados a las variables
                 for (int i = 0; i < respJSON.length(); i++) {
                     id_contacto = respJSON.getJSONObject(i).getInt("id_contacto");

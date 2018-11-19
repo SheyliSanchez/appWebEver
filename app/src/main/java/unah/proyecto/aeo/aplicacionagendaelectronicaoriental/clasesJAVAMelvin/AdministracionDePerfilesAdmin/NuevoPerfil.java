@@ -29,6 +29,7 @@ import android.util.Base64;
 import com.bumptech.glide.Glide;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
@@ -38,6 +39,7 @@ import java.util.ArrayList;
 import cz.msebera.android.httpclient.NameValuePair;
 import cz.msebera.android.httpclient.client.HttpClient;
 import cz.msebera.android.httpclient.client.entity.UrlEncodedFormEntity;
+import cz.msebera.android.httpclient.client.methods.HttpGet;
 import cz.msebera.android.httpclient.client.methods.HttpPost;
 import cz.msebera.android.httpclient.impl.client.DefaultHttpClient;
 import cz.msebera.android.httpclient.message.BasicNameValuePair;
@@ -45,6 +47,7 @@ import cz.msebera.android.httpclient.util.EntityUtils;
 import de.hdodenhof.circleimageview.CircleImageView;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.R;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVABessy.Ingresar_Ubicacion;
+import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVASheyli.ipLocalhost;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAVirgilio.Login;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAVirgilio.SharedPrefManager;
 
@@ -66,6 +69,9 @@ public class NuevoPerfil extends AppCompatActivity {
     Uri imageUri;
 
     String encodeImagen;
+
+
+           ipLocalhost ip = new ipLocalhost();
     //
 
 
@@ -393,29 +399,48 @@ public class NuevoPerfil extends AppCompatActivity {
 
             try {
 
-                JSONArray regionesWS = new JSONArray(EntityUtils.toString(new DefaultHttpClient().execute(new HttpPost("http://aeo.web-hn.com/WebServices/consultarRegiones.php")).getEntity()));
-                JSONArray categoriasWS = new JSONArray(EntityUtils.toString(new DefaultHttpClient().execute(new HttpPost("http://aeo.web-hn.com/WebServices/consultarCategorias.php")).getEntity()));
+                /*HttpClient httpclient;
+                HttpGet httppost;
+                httpclient = new DefaultHttpClient();
+                httppost = new HttpGet(ip.getIp()+"regiones");
+                httppost.setHeader("Authorization",SharedPrefManager.getInstance(NuevoPerfil.this).getUSUARIO_LOGUEADO().getToken());
+
+                JSONObject regionesWS = new JSONObject(EntityUtils.toString(( httpclient.execute(httppost)).getEntity()));
+                JSONArray jsonArrayRegion = regionesWS.getJSONArray("content");*/
+
+                JSONObject regionesWS = new JSONObject(EntityUtils.toString(new DefaultHttpClient().execute(new HttpGet(ip.getIp()+"regiones")).getEntity()));
+                JSONArray jsonArrayRegion = regionesWS.getJSONArray("content");
+
+                JSONObject categoriasWS = new JSONObject(EntityUtils.toString(new DefaultHttpClient().execute(new HttpGet(ip.getIp()+"categorias")).getEntity()));
+                JSONArray jsonArrayCategoria = categoriasWS.getJSONArray("content");
+
+                //JSONArray regionesWS = new JSONArray(EntityUtils.toString(new DefaultHttpClient().execute(new HttpPost("http://aeo.web-hn.com/WebServices/consultarRegiones.php")).getEntity()));
+                //JSONArray categoriasWS = new JSONArray(EntityUtils.toString(new DefaultHttpClient().execute(new HttpPost("http://aeo.web-hn.com/WebServices/consultarCategorias.php")).getEntity()));
 
                 HttpClient httpclient;
                 HttpPost httppost;
                 ArrayList<NameValuePair> parametros;
                 httpclient = new DefaultHttpClient();
-                httppost = new HttpPost("http://aeo.web-hn.com/WebServices/ConsultarTodosLosUsuarios.php");
+                httppost = new HttpPost(ip.getIp()+"todosUsuarios");
+                httppost.setHeader("Authorization",SharedPrefManager.getInstance(NuevoPerfil.this).getUSUARIO_LOGUEADO().getToken());
                 parametros = new ArrayList<NameValuePair>();
-                parametros.add(new BasicNameValuePair("estado","1"));
-                //parametros.add(new BasicNameValuePair("tkn",SharedPrefManager.getInstance(NuevoPerfil.this).getUSUARIO_LOGUEADO().getToken()));
-
+                parametros.add(new BasicNameValuePair("ste","1"));
                 httppost.setEntity(new UrlEncodedFormEntity(parametros, "UTF-8"));
 
+                JSONObject jsonObject = new JSONObject(EntityUtils.toString(httpclient.execute(httppost).getEntity()));
+                JSONArray usuariosWS = jsonObject.getJSONArray("content");
+                //JSONArray usuariosWS = new JSONArray(EntityUtils.toString(httpclient.execute(httppost).getEntity()));
 
-                JSONArray usuariosWS = new JSONArray(EntityUtils.toString(httpclient.execute(httppost).getEntity()));
 
-                for (int i = 0; i < regionesWS.length(); i++) {
-                    listaRegiones.add(new ModeloSpinner(regionesWS.getJSONObject(i).getString("nombre_region"),Integer.parseInt(regionesWS.getJSONObject(i).getString("id_region")))
+                //array regiones
+                for (int i = 0; i < jsonArrayRegion.length(); i++) {
+                    listaRegiones.add(new ModeloSpinner(jsonArrayRegion.getJSONObject(i).getString("nombre_region"),Integer.parseInt(jsonArrayRegion.getJSONObject(i).getString("id_region")))
                     );                }
-                for (int i=0;i<categoriasWS.length();i++){
-                    listaCategorias.add(new ModeloSpinner(categoriasWS.getJSONObject(i).getString("nombre_categoria"), Integer.parseInt(categoriasWS.getJSONObject(i).getString("id_categoria"))));
+                //array categorias
+                for (int i=0;i<jsonArrayCategoria.length();i++){
+                    listaCategorias.add(new ModeloSpinner(jsonArrayCategoria.getJSONObject(i).getString("nombre_categoria"), Integer.parseInt(jsonArrayCategoria.getJSONObject(i).getString("id_categoria"))));
                 }
+                //array usuarios
                 for (int i=0;i<usuariosWS.length();i++){
                     listaUsuarios.add(new ModeloSpinner(usuariosWS.getJSONObject(i).getString("nombre_usuario"),Integer.parseInt(usuariosWS.getJSONObject(i).getString("id_usuario"))));
                 }
@@ -458,7 +483,8 @@ public class NuevoPerfil extends AppCompatActivity {
                 HttpPost httppost;
                 ArrayList<NameValuePair> parametros;
                 httpclient = new DefaultHttpClient();
-                httppost = new HttpPost("http://aeo.web-hn.com/WebServices/crearPerfil.php");
+                httppost = new HttpPost(ip.getIp()+"crearPerfil");
+                httppost.setHeader("Authorization",SharedPrefManager.getInstance(NuevoPerfil.this).getUSUARIO_LOGUEADO().getToken());
                 parametros = new ArrayList<NameValuePair>();
                 parametros.add(new BasicNameValuePair("nomborg_rec",etnombreeorganizacion.getText().toString()));
                 parametros.add(new BasicNameValuePair("numtel_rec",etnumerofijo.getText().toString()));
@@ -471,6 +497,7 @@ public class NuevoPerfil extends AppCompatActivity {
                 parametros.add(new BasicNameValuePair("id_categoria",String.valueOf(id_categoria)));
                 parametros.add(new BasicNameValuePair("id_region",String.valueOf(id_region)));
                 parametros.add(new BasicNameValuePair("id_usuario",String.valueOf(id_usuario)));
+                parametros.add(new BasicNameValuePair("id_estado",String.valueOf(2)));
                //parametros.add(new BasicNameValuePair("tkn",SharedPrefManager.getInstance(NuevoPerfil.this).getUSUARIO_LOGUEADO().getToken()));
 
                 if(editarFoto==true){

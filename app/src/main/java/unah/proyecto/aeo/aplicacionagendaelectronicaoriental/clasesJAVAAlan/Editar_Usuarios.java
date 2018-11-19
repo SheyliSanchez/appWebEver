@@ -18,6 +18,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -30,6 +31,8 @@ import cz.msebera.android.httpclient.message.BasicNameValuePair;
 import cz.msebera.android.httpclient.util.EntityUtils;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.R;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVASheyli.ipLocalhost;
+import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAVirgilio.EditarUsuario;
+import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAVirgilio.FormularioRegistroLogin;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAVirgilio.Login;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAVirgilio.SharedPrefManager;
 
@@ -180,8 +183,8 @@ public class Editar_Usuarios extends AppCompatActivity {
                 httpclient = new DefaultHttpClient();
                 httppost = new HttpPost(ip.getIp()+"eliminarUsuario");
                 parametros = new ArrayList<NameValuePair>();
+                httppost.setHeader("Authorization",SharedPrefManager.getInstance(Editar_Usuarios.this).getUSUARIO_LOGUEADO().getToken());
                 parametros.add(new BasicNameValuePair("usuario",String.valueOf(usuarioEditar)));
-                //parametros.add(new BasicNameValuePair("tkn",SharedPrefManager.getInstance(Editar_Usuarios.this).getUSUARIO_LOGUEADO().getToken()));
                 httppost.setEntity(new UrlEncodedFormEntity(parametros, "UTF-8"));
 
                 httpclient.execute(httppost);
@@ -262,13 +265,12 @@ public class Editar_Usuarios extends AppCompatActivity {
                 ArrayList<NameValuePair> parametros;
                 httpclient = new DefaultHttpClient();
                 httppost = new HttpPost(ip.getIp()+"actualizarUsuario");
+                httppost.setHeader("Authorization",SharedPrefManager.getInstance(Editar_Usuarios.this).getUSUARIO_LOGUEADO().getToken());
                 parametros = new ArrayList<NameValuePair>();
                 parametros.add(new BasicNameValuePair("usuario",String.valueOf(usuarioEditar)));
                 parametros.add(new BasicNameValuePair("usuarionombre",nombreusuario.getText().toString()));
                 parametros.add(new BasicNameValuePair("usuariopropio",nombrepropio.getText().toString()));
                 parametros.add(new BasicNameValuePair("usuarioemail",correo.getText().toString()));
-               // parametros.add(new BasicNameValuePair("tkn",SharedPrefManager.getInstance(Editar_Usuarios.this).getUSUARIO_LOGUEADO().getToken()));
-
 
                 httppost.setEntity(new UrlEncodedFormEntity(parametros, "UTF-8"));
 
@@ -318,19 +320,19 @@ public class Editar_Usuarios extends AppCompatActivity {
                 HttpPost httppost;
                 ArrayList<NameValuePair> parametros;
                 httpclient = new DefaultHttpClient();
-                httppost = new HttpPost("http://aeo.web-hn.com/WebServices/Mostar_Los_Usuarios_Editados.php");
+                httppost = new HttpPost(ip.getIp()+"obtenerUsuario");
+                httppost.setHeader("Authorization",SharedPrefManager.getInstance(Editar_Usuarios.this).getUSUARIO_LOGUEADO().getToken());
                 parametros = new ArrayList<NameValuePair>();
                 parametros.add(new BasicNameValuePair("usuario",String.valueOf(usuarioEditar) ));
-                //parametros.add(new BasicNameValuePair("tkn",SharedPrefManager.getInstance(Editar_Usuarios.this).getUSUARIO_LOGUEADO().getToken()));
-
                 httppost.setEntity(new UrlEncodedFormEntity(parametros, "UTF-8"));
-                JSONArray respJSON = new JSONArray(EntityUtils.toString(( httpclient.execute(httppost)).getEntity()));
 
+                JSONObject respJSON = new JSONObject(EntityUtils.toString(( httpclient.execute(httppost)).getEntity()));
+                JSONArray jsonArray = respJSON.getJSONArray("content");
 
-                for (int i = 0; i < respJSON.length(); i++) {
-                    nombre_usuario = respJSON.getJSONObject(i).getString("nombre_usuario");
-                    nombre_propio = respJSON.getJSONObject(i).getString("nombre_propio");
-                    correoo = respJSON.getJSONObject(i).getString("correo");
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    nombre_usuario = jsonArray.getJSONObject(i).getString("nombre_usuario");
+                    nombre_propio = jsonArray.getJSONObject(i).getString("nombre_propio");
+                    correoo = jsonArray.getJSONObject(i).getString("correo");
                 }
 
                 resul = true;
