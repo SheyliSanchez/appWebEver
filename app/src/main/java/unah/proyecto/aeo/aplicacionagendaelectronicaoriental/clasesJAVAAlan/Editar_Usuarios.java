@@ -66,7 +66,6 @@ public class Editar_Usuarios extends AppCompatActivity {
         Bundle extras = this.getIntent().getExtras();
         if(extras!=null) {
             usuarioEditar = extras.getInt("id");
-
         }
         bottonvalidar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -129,7 +128,7 @@ public class Editar_Usuarios extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.eliminar_usuario);
         String fmt= getResources().getString(R.string.mensaje_para_eliminar);
-        builder.setMessage(String.format(fmt,String.valueOf(nombrepropiobar)));
+        builder.setMessage(String.format(fmt,String.valueOf(nombreusuariobar)));
         builder.setPositiveButton(R.string.eliminar, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -139,15 +138,15 @@ public class Editar_Usuarios extends AppCompatActivity {
                 if(!nombreusuario.getText().toString().contains("Admin")){
                     if (usuarioEditar==SharedPrefManager.getInstance(Editar_Usuarios.this).getUSUARIO_LOGUEADO().getId_logueado()){
 
+
                         //PASAMOS EL NOMBRE DE LA CLASE QUE EJECUTA LA SENTENCIA SQL DEL WEB SERVISE
                         new eliminarUsuario().execute();
 
                         SharedPrefManager.getInstance(Editar_Usuarios.this).limpiar();
                         Intent intent = new Intent(Editar_Usuarios.this,ActivityCategorias.class);
-
                         //startActivity(new Intent(getBaseContext(), ActivityCategorias.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP));
-                        cs.cerrarsesion();
                         startActivity(intent);
+                        setResult(Mostrar_Usuarios.RESULT_OK,intent);
                         finish();
                     }else{
                         new eliminarUsuario().execute();
@@ -207,6 +206,7 @@ public class Editar_Usuarios extends AppCompatActivity {
         protected void onPostExecute(Boolean result) {
 
             if (resul) {
+
                 Toast.makeText(getApplicationContext(),"Usuario Eliminado",Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent();
                 setResult(Mostrar_Usuarios.RESULT_OK,intent);
