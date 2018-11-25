@@ -218,19 +218,19 @@ public class PanelDeControlUsuarios extends AppCompatActivity implements Navigat
             //int prueba = preferences.getInt("usuario_ingreso",0);
 
             try {
-                /*HttpClient httpclient;
+                HttpClient httpclient;
                 HttpPost httppost;
                 ArrayList<NameValuePair> parametros;
                 httpclient = new DefaultHttpClient();
-                httppost = new HttpPost("http://aeo.web-hn.com/WebServices/consultarOrganizacionesUsuarioLogeados.php");
+                httppost = new HttpPost(ip.getIp()+"obtenerPerfilesCliente");
+                httppost.setHeader("Authorization",SharedPrefManager.getInstance(PanelDeControlUsuarios.this).getUSUARIO_LOGUEADO().getToken());
                 parametros = new ArrayList<NameValuePair>();
-                parametros.add(new BasicNameValuePair("id_usuario",String.valueOf(id_usu)));
-
+                parametros.add(new BasicNameValuePair("id",String.valueOf(id_usu)));
                 httppost.setEntity(new UrlEncodedFormEntity(parametros, "UTF-8"));
-                JSONArray respJSON = new JSONArray(EntityUtils.toString(( httpclient.execute(httppost)).getEntity()));*/
 
-                JSONObject jsonObject = new JSONObject(EntityUtils.toString(new DefaultHttpClient().execute(new HttpGet(ip.getIp()+"listarPerfiles?ste=2")).getEntity()));
+                JSONObject jsonObject = new JSONObject(EntityUtils.toString(( httpclient.execute(httppost)).getEntity()));
                 JSONArray respJSON = jsonObject.getJSONArray("content");
+
                 //recorre el array para asignar los resultados a las variables
                 for (int i = 0; i < respJSON.length(); i++) {
 
