@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -28,19 +29,26 @@ import android.util.Base64;
 
 import com.bumptech.glide.Glide;
 
+//import org.apache.http.entity.mime.MultipartEntity;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
+import cz.msebera.android.httpclient.HttpEntity;
 import cz.msebera.android.httpclient.NameValuePair;
 import cz.msebera.android.httpclient.client.HttpClient;
 import cz.msebera.android.httpclient.client.entity.UrlEncodedFormEntity;
 import cz.msebera.android.httpclient.client.methods.HttpGet;
 import cz.msebera.android.httpclient.client.methods.HttpPost;
+import cz.msebera.android.httpclient.entity.mime.HttpMultipartMode;
+import cz.msebera.android.httpclient.entity.mime.MultipartEntityBuilder;
+import cz.msebera.android.httpclient.entity.mime.content.FileBody;
+import cz.msebera.android.httpclient.entity.mime.content.StringBody;
 import cz.msebera.android.httpclient.impl.client.DefaultHttpClient;
 import cz.msebera.android.httpclient.message.BasicNameValuePair;
 import cz.msebera.android.httpclient.util.EntityUtils;
@@ -71,7 +79,7 @@ public class NuevoPerfil extends AppCompatActivity {
     String encodeImagen;
 
 
-           ipLocalhost ip = new ipLocalhost();
+    ipLocalhost ip = new ipLocalhost();
     //
 
 
@@ -164,21 +172,6 @@ public class NuevoPerfil extends AppCompatActivity {
         botonGuardar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(editarFoto==true){
-                    imagenBitmap = ((BitmapDrawable)imagenOrg.getDrawable()).getBitmap();
-                    new AsyncTask<Void, Void, String>(){
-                        @Override
-                        protected String doInBackground(Void... voids) {
-                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                            imagenBitmap.compress(Bitmap.CompressFormat.JPEG,100,baos);
-                            byte b []= baos.toByteArray();
-
-                            encodeImagen = Base64.encodeToString(b,Base64.DEFAULT);
-
-                            return null;
-                        }
-                    }.execute();
-                }
 
                 validar();
                 if (etnombreeorganizacion.getError()==null &&
@@ -254,8 +247,10 @@ public class NuevoPerfil extends AppCompatActivity {
     }
 
     private void openGallery(){
-        Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
-        startActivityForResult(gallery, PICK_IMAGE);
+        Intent gallery = new Intent();
+        gallery.setType("image/*");
+        gallery.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(gallery,  "Seleccione una imagen"),PICK_IMAGE);
     }
     @Override
     protected void onStart() {
@@ -269,19 +264,13 @@ public class NuevoPerfil extends AppCompatActivity {
         }
     }
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
-        if(resultCode == RESULT_OK && requestCode == PICK_IMAGE){
+        if(resultCode == RESULT_OK && requestCode == PICK_IMAGE && data.getData()!=null){
 
             try {
-                Uri imageUri = data.getData();
-                InputStream imageStream = getContentResolver().openInputStream(imageUri);
-                Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
-
-                selectedImage = getResizedBitmap(selectedImage, 500);// 400 is for example, replace with desired size
-
-                imagenOrg.setImageBitmap(selectedImage);
-
-
-            } catch (FileNotFoundException e) {
+                imageUri = data.getData();
+                imagenBitmap = MediaStore.Images.Media.getBitmap(getContentResolver(),imageUri);
+                imagenOrg.setImageBitmap(imagenBitmap);
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }else if (requestCode == 1) {
@@ -294,6 +283,22 @@ public class NuevoPerfil extends AppCompatActivity {
 
             }
         }
+    }
+    private String getPath(Uri uri){
+        Cursor cursor = getContentResolver().query(uri,null,null,null,null);
+        cursor.moveToFirst();
+        String document_id = cursor.getString(0);
+        document_id=document_id.substring(document_id.lastIndexOf(":")+1);
+        cursor.close();
+
+        cursor=getContentResolver().query(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                null, MediaStore.Images.Media._ID+" = ?", new String[]{document_id},null
+        );
+        cursor.moveToFirst();
+        String path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
+        cursor.close();
+        return path;
     }
 
     @Override
@@ -398,15 +403,10 @@ public class NuevoPerfil extends AppCompatActivity {
         protected Boolean doInBackground(String... strings) {
 
             try {
-                JSONObject regionesWS = new JSONObject(EntityUtils.toString(new DefaultHttpClient().execute(new HttpGet(ip.getIp()+"regiones")).getEntity()));
-                JSONArray jsonArrayRegion = regionesWS.getJSONArray("content");
-
-                JSONObject categoriasWS = new JSONObject(EntityUtils.toString(new DefaultHttpClient().execute(new HttpGet(ip.getIp()+"categorias")).getEntity()));
-                JSONArray jsonArrayCategoria = categoriasWS.getJSONArray("content");
-
-
                 HttpClient httpclient;
                 HttpPost httppost;
+                HttpGet regiones= new HttpGet(ip.getIp()+"regiones");
+                HttpGet categorias= new HttpGet(ip.getIp()+"categorias");
                 ArrayList<NameValuePair> parametros;
                 httpclient = new DefaultHttpClient();
                 httppost = new HttpPost(ip.getIp()+"todosUsuarios");
@@ -415,9 +415,12 @@ public class NuevoPerfil extends AppCompatActivity {
                 parametros.add(new BasicNameValuePair("ste","1"));
                 httppost.setEntity(new UrlEncodedFormEntity(parametros, "UTF-8"));
 
+                JSONObject regionesWS = new JSONObject(EntityUtils.toString(httpclient.execute(regiones).getEntity()));
+                JSONArray jsonArrayRegion = regionesWS.getJSONArray("content");
                 JSONObject jsonObject = new JSONObject(EntityUtils.toString(httpclient.execute(httppost).getEntity()));
                 JSONArray usuariosWS = jsonObject.getJSONArray("content");
-
+                JSONObject categoriasWS = new JSONObject(EntityUtils.toString(httpclient.execute(categorias).getEntity()));
+                JSONArray jsonArrayCategoria = categoriasWS.getJSONArray("content");
                 //array regiones
                 for (int i = 0; i < jsonArrayRegion.length(); i++) {
                     listaRegiones.add(new ModeloSpinner(jsonArrayRegion.getJSONObject(i).getString("nombre_region"),Integer.parseInt(jsonArrayRegion.getJSONObject(i).getString("id_region")))
@@ -465,34 +468,32 @@ public class NuevoPerfil extends AppCompatActivity {
         protected Boolean doInBackground(String... strings) {
 
             try {
+
                 HttpClient httpclient;
                 HttpPost httppost;
-                ArrayList<NameValuePair> parametros;
+                File img=new File(getPath(imageUri));
+                MultipartEntityBuilder multipartEntity = MultipartEntityBuilder.create();
+                multipartEntity.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
                 httpclient = new DefaultHttpClient();
                 httppost = new HttpPost(ip.getIp()+"crearPerfil");
                 httppost.setHeader("Authorization",SharedPrefManager.getInstance(NuevoPerfil.this).getUSUARIO_LOGUEADO().getToken());
-                parametros = new ArrayList<NameValuePair>();
-                parametros.add(new BasicNameValuePair("nomborg_rec",etnombreeorganizacion.getText().toString()));
-                parametros.add(new BasicNameValuePair("numtel_rec",etnumerofijo.getText().toString()));
-                parametros.add(new BasicNameValuePair("numcel_rec",etnumerocel.getText().toString()));
-                parametros.add(new BasicNameValuePair("direccion_rec",etdireccion.getText().toString()));
-                parametros.add(new BasicNameValuePair("email_rec",etemail.getText().toString()));
-                parametros.add(new BasicNameValuePair("desc_rec",etdescripcion.getText().toString()));
-                parametros.add(new BasicNameValuePair("lat_rec",etlatitud.getText().toString()));
-                parametros.add(new BasicNameValuePair("longitud_rec",etlongitud.getText().toString()));
-                parametros.add(new BasicNameValuePair("id_categoria",String.valueOf(id_categoria)));
-                parametros.add(new BasicNameValuePair("id_region",String.valueOf(id_region)));
-                parametros.add(new BasicNameValuePair("id_usuario",String.valueOf(id_usuario)));
-                parametros.add(new BasicNameValuePair("id_estado",String.valueOf(2)));
-               //parametros.add(new BasicNameValuePair("tkn",SharedPrefManager.getInstance(NuevoPerfil.this).getUSUARIO_LOGUEADO().getToken()));
 
-                if(editarFoto==true){
-                    parametros.add(new BasicNameValuePair("imagen",encodeImagen));
-                    parametros.add(new BasicNameValuePair("nombre_imagen",etnombreeorganizacion.getText().toString().replace(" ","_") +".jpg"));
-                }
+                multipartEntity.addPart("nomborg_rec", new StringBody(etnombreeorganizacion.getText().toString()));
+                multipartEntity.addPart("numtel_rec",new StringBody(etnumerofijo.getText().toString()));
+                multipartEntity.addPart("numcel_rec",new StringBody(etnumerocel.getText().toString()));
+                multipartEntity.addPart("direccion_rec",new StringBody(etdireccion.getText().toString()));
+                multipartEntity.addPart("email_rec",new StringBody(etemail.getText().toString()));
+                multipartEntity.addPart("desc_rec",new StringBody(etdescripcion.getText().toString()));
+                multipartEntity.addPart("lat_rec",new StringBody(etlatitud.getText().toString()));
+                multipartEntity.addPart("longitud_rec",new StringBody(etlongitud.getText().toString()));
+                multipartEntity.addPart("id_categoria",new StringBody(String.valueOf(id_categoria)));
+                multipartEntity.addPart("id_region",new StringBody(String.valueOf(id_region)));
+                multipartEntity.addPart("id_usuario",new StringBody(String.valueOf(id_usuario)));
+                multipartEntity.addPart("id_estado",new StringBody(String.valueOf(2)));
+                multipartEntity.addPart("imagen", new FileBody(img));
 
-
-                httppost.setEntity(new UrlEncodedFormEntity(parametros, "UTF-8"));
+                HttpEntity entity = multipartEntity.build();
+                httppost.setEntity(entity);
                 httpclient.execute(httppost);
 
                 resul = true;
