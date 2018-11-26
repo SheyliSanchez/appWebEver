@@ -29,6 +29,7 @@ import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAAlan.Pane
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAMelvin.AdministracionDePerfilesAdmin.AdaptadorPersonalizadoSpinner;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAMelvin.AdministracionDePerfilesAdmin.ModeloSpinner;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAMelvin.PerfilesBreves.PerfilBreve;
+import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVASheyli.FuncionCerrarSesion;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAVirgilio.AcercaDe;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAVirgilio.EditarUsuario;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAVirgilio.Login;
@@ -60,7 +61,7 @@ public class BusquedaAvanzada extends AppCompatActivity
     ArrayList<PerfilBreve> lista =new ArrayList<PerfilBreve>();
     RelativeLayout root;
     //preferencias
-
+    FuncionCerrarSesion cs = new FuncionCerrarSesion();
     int id_usu=-1;
     NavigationView navigationView;
     /**********************************************************************************************
@@ -348,10 +349,13 @@ public class BusquedaAvanzada extends AppCompatActivity
             startActivity(intent);
             finish();
         }else if (id == R.id.login) {
-            startActivity(new Intent(this,Log.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+            Intent intent = new Intent(this,Login.class);
+            startActivity(intent);
+            finish();
 
+            //startActivity(new Intent(this,Log.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK));
         }else if (id == R.id.cerrarsecion){
-
+            cs.cerrarsesion();
             SharedPrefManager.getInstance(getApplicationContext()).limpiar();
             startActivity(new Intent(this,Login.class)
                     .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK));

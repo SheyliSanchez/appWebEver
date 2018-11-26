@@ -24,6 +24,7 @@ import android.view.ViewGroup;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.R;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAAlan.ActivityCategorias;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAAlan.Panel_de_Control;
+import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVASheyli.FuncionCerrarSesion;
 
 public class AcercaDe extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener  {
 
@@ -46,7 +47,7 @@ public class AcercaDe extends AppCompatActivity implements NavigationView.OnNavi
     int id_usu=-1;
     NavigationView navigationView;
 
-
+    FuncionCerrarSesion cs = new FuncionCerrarSesion();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -141,7 +142,7 @@ public class AcercaDe extends AppCompatActivity implements NavigationView.OnNavi
 
 
         }else if (id == R.id.cerrarsecion){
-
+            cs.cerrarsesion();
             SharedPrefManager.getInstance(this).limpiar();
             startActivity(new Intent(this, Login.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK));
             finish();

@@ -20,6 +20,7 @@ import android.widget.ListView;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.R;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAMelvin.PerfilesBreves.ListaDeContactos;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAMelvin.AdministracionDePerfilesAdmin.AdministracionDePerfiles;
+import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVASheyli.FuncionCerrarSesion;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAVirgilio.AcercaDe;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAVirgilio.Login;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAVirgilio.PanelDeControlUsuarios;
@@ -35,7 +36,7 @@ public class Panel_de_Control extends AppCompatActivity implements NavigationVie
     Context context=this;
     public static Handler h;
 
-
+    FuncionCerrarSesion cs = new FuncionCerrarSesion();
 
     public Fuente_Panel_de_control[] fuente_panel_de_control;
     @Override
@@ -144,7 +145,7 @@ public class Panel_de_Control extends AppCompatActivity implements NavigationVie
             startActivity(intent);
 
         }else if (id ==R.id.cerrarsecion){
-
+            cs.cerrarsesion();
             SharedPrefManager.getInstance(this).limpiar();
             startActivity(new Intent(this, Login.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK));
             finish();

@@ -31,6 +31,7 @@ import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAAlan.Pane
 
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAMelvin.HerramientaBusquedaAvanzada.BusquedaAvanzada;
 
+import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVASheyli.FuncionCerrarSesion;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAVirgilio.AcercaDe;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAVirgilio.EditarUsuario;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAVirgilio.Login;
@@ -61,7 +62,7 @@ public class ListaDeContactos extends AppCompatActivity
     /**********************************************************************************************
      *                                      MÉTODO ONCREATE
      **********************************************************************************************/
-
+    FuncionCerrarSesion cs = new FuncionCerrarSesion();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -189,6 +190,7 @@ public class ListaDeContactos extends AppCompatActivity
             startActivity(intent);
                     //finish();
         }else if (id == R.id.cerrarsecion){
+            cs.cerrarsesion();
             SharedPrefManager.getInstance(getApplicationContext()).limpiar();
             startActivity(new Intent(this,Login.class)
                     .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK));

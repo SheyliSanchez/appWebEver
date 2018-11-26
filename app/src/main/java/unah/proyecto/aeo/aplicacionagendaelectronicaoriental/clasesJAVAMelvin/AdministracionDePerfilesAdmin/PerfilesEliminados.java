@@ -34,6 +34,8 @@ import cz.msebera.android.httpclient.message.BasicNameValuePair;
 import cz.msebera.android.httpclient.util.EntityUtils;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.R;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAAlan.ActivityCategorias;
+import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAAlan.Panel_de_Control;
+import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVASheyli.FuncionCerrarSesion;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVASheyli.ipLocalhost;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAVirgilio.AcercaDe;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAVirgilio.Login;
@@ -52,6 +54,8 @@ public class PerfilesEliminados extends AppCompatActivity  implements Navigation
     int id_usu=-1;
 
     ipLocalhost ip = new ipLocalhost();
+
+    FuncionCerrarSesion cs = new FuncionCerrarSesion();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,12 +95,13 @@ public class PerfilesEliminados extends AppCompatActivity  implements Navigation
             finish();
 
         }else if (id ==R.id.cerrarsecion){
+            cs.cerrarsesion();
             SharedPrefManager.getInstance(getApplicationContext()).limpiar();
             startActivity(new Intent(this,Login.class)
                     .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK));
 
         }else if (id == R.id.panelControl){
-            Intent intent = new Intent(this, PanelDeControlUsuarios.class);
+            Intent intent = new Intent(this, Panel_de_Control.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
             finish();

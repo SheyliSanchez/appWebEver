@@ -1,6 +1,7 @@
 package unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAVirgilio;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -48,6 +49,7 @@ import cz.msebera.android.httpclient.util.EntityUtils;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.R;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAAlan.ActivityCategorias;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAAlan.Panel_de_Control;
+import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVASheyli.FuncionCerrarSesion;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVASheyli.ipLocalhost;
 
 public class Login extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -61,7 +63,7 @@ public class Login extends AppCompatActivity implements NavigationView.OnNavigat
     Context context=this;
 
     ipLocalhost ip  = new ipLocalhost();
-
+    FuncionCerrarSesion cs = new FuncionCerrarSesion();
 
     private CircularProgressButton acceder;
     String nada,dato,tkasig;
@@ -78,13 +80,16 @@ public class Login extends AppCompatActivity implements NavigationView.OnNavigat
         acceder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                acceder.startAnimation();
+                //acceder.startAnimation();
 
                 if (usuario.getText().toString().isEmpty() || contrasena.getText().toString().isEmpty()) {
 
                     validar();
-                    acceder.revertAnimation();
-                    acceder.stopAnimation();
+                    //acceder.revertAnimation();
+                    //acceder.stopAnimation();
+
+
+
                 } else {
                     new LoginValidadoWeb().execute();//si existe el usuario y la contraseña son correctas el accedera
 
@@ -226,8 +231,8 @@ public class Login extends AppCompatActivity implements NavigationView.OnNavigat
                 );
 
 
-                acceder.stopAnimation();
-                acceder.revertAnimation();
+               // acceder.stopAnimation();
+                //acceder.revertAnimation();
 
                  if (rol == 1 && estado_usuario ==1) {
                     Intent intent = new Intent(Login.this,Panel_de_Control.class);
@@ -244,8 +249,8 @@ public class Login extends AppCompatActivity implements NavigationView.OnNavigat
                 }
 
             } else {
-                acceder.stopAnimation();
-                acceder.revertAnimation();
+                //acceder.stopAnimation();
+                //acceder.revertAnimation();
 
                 if (id_usuario==0){
                     contador=contador+1;
