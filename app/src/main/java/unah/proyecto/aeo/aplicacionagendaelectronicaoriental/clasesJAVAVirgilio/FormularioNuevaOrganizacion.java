@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -41,17 +42,23 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import cz.msebera.android.httpclient.HttpEntity;
 import cz.msebera.android.httpclient.NameValuePair;
 import cz.msebera.android.httpclient.client.HttpClient;
 import cz.msebera.android.httpclient.client.entity.UrlEncodedFormEntity;
 import cz.msebera.android.httpclient.client.methods.HttpGet;
 import cz.msebera.android.httpclient.client.methods.HttpPost;
+import cz.msebera.android.httpclient.entity.mime.HttpMultipartMode;
+import cz.msebera.android.httpclient.entity.mime.MultipartEntityBuilder;
+import cz.msebera.android.httpclient.entity.mime.content.FileBody;
+import cz.msebera.android.httpclient.entity.mime.content.StringBody;
 import cz.msebera.android.httpclient.impl.client.DefaultHttpClient;
 import cz.msebera.android.httpclient.message.BasicNameValuePair;
 import cz.msebera.android.httpclient.util.EntityUtils;
@@ -68,7 +75,6 @@ import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVASheyli.ip
 
 
 public class FormularioNuevaOrganizacion extends AppCompatActivity {
-
     EditText nombreOrganizacion;
     EditText telefonoFijo;
     EditText telefonoCelular;
@@ -95,7 +101,7 @@ public class FormularioNuevaOrganizacion extends AppCompatActivity {
 
     String encodeImagen,cantidadDigitos;
 
-TextView lo,lat;
+    TextView lo,lat;
     //preferencias
 
     int id_usu=-1;
@@ -115,24 +121,23 @@ TextView lo,lat;
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-
+        imageButton = findViewById(R.id.imagenOrganizacionUsuario);
+        imagenOrganizacion = (CircleImageView) findViewById(R.id.imagenDeOrganizacion);
+        guardar = (FloatingActionButton) findViewById(R.id.btnGuardar);
         nombreOrganizacion = (EditText) findViewById(R.id.txtNombreOrganizacion);
         telefonoFijo = (EditText) findViewById(R.id.txtNumeroTelefonoFijo);
         telefonoCelular = (EditText) findViewById(R.id.txtNumeroTelefonoCelular);
         direccionOrganizacion = (EditText) findViewById(R.id.txtDireccion);
         emailOrganizacion = (EditText) findViewById(R.id.txtEmail);
         descrpcionOrganizacion = (EditText) findViewById(R.id.txtDescripcion);
-        latitudOrganizacion = (EditText) findViewById(R.id.txtlatitudOrganizacion);
-        imageButton = findViewById(R.id.imagenOrganizacionUsuario);
         lat =findViewById(R.id.latitiResibida);
         lo =findViewById(R.id.longitudResibida);
-        longitudOrganizacion = (EditText) findViewById(R.id.txtlongitudOrganizacion);
-        imagenOrganizacion = (CircleImageView) findViewById(R.id.imagenDeOrganizacion);
-        guardar = (FloatingActionButton) findViewById(R.id.btnGuardar);
+        //latitudOrganizacion = (EditText) findViewById(R.id.txtlatitudOrganizacion);
+        //longitudOrganizacion = (EditText) findViewById(R.id.txtlongitudOrganizacion);
         spinnerCategorias = (Spinner) findViewById(R.id.spinercategoriaOrganizacion);
         spinnerRgiones = (Spinner) findViewById(R.id.spinerregionOrganizacion);
-        ubicacion = (Button) findViewById(R.id.btnUbicacionOrganizacion);
 
+        ubicacion = (Button) findViewById(R.id.btnUbicacionOrganizacion);
         //Ingresar la ubicacion
         ubicacion.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -142,9 +147,21 @@ TextView lo,lat;
             }
         });
 
-        //llenado de spiner categorias y regiones
         listaCategorias=new ArrayList<ModeloSpinner>();
         listaRegiones=new ArrayList<ModeloSpinner>();
+
+        new llenarSpinnersNuevoPerfil().execute();
+        if (SharedPrefManager.getInstance(getApplicationContext()).getUSUARIO_LOGUEADO().getId_logueado()!=-2){
+            id_usuario = SharedPrefManager.getInstance(getApplicationContext()).getUSUARIO_LOGUEADO().getId_logueado();
+        }
+
+        int permissionCheck = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        int permissionCheck1 = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE);
+        if (ContextCompat.checkSelfPermission(getApplicationContext(),
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+        }
+
         spinnerCategorias.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -156,6 +173,7 @@ TextView lo,lat;
 
             }
         });
+
         spinnerRgiones.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -167,11 +185,6 @@ TextView lo,lat;
 
             }
         });
-        //
-        new llenarSpinnersNuevoPerfil().execute();
-        if (SharedPrefManager.getInstance(getApplicationContext()).getUSUARIO_LOGUEADO().getId_logueado()!=-2){
-            id_usuario = SharedPrefManager.getInstance(getApplicationContext()).getUSUARIO_LOGUEADO().getId_logueado();
-        }
 
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -184,21 +197,6 @@ TextView lo,lat;
         guardar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(editarFoto==true){
-                    imagenBitmap = ((BitmapDrawable)imagenOrganizacion.getDrawable()).getBitmap();
-                    new AsyncTask<Void, Void, String>(){
-                        @Override
-                        protected String doInBackground(Void... voids) {
-                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                            imagenBitmap.compress(Bitmap.CompressFormat.JPEG,100,baos);
-                            byte b []= baos.toByteArray();
-
-                            encodeImagen = Base64.encodeToString(b,Base64.DEFAULT);
-
-                            return null;
-                        }
-                    }.execute();
-                }
 
                 validar();
                 if (nombreOrganizacion.getError()==null &&
@@ -207,66 +205,23 @@ TextView lo,lat;
                         direccionOrganizacion.getError()==null &&
                         emailOrganizacion.getError()==null &&
                         descrpcionOrganizacion.getError()==null &&
-                        latitudOrganizacion.getError()==null &&
-                        longitudOrganizacion.getError()==null) {
+                        lat.getError()==null &&
+                        lo.getError()==null) {
                     guardar.setClickable(false);
-
-                    final ProgressDialog progressDialog = new ProgressDialog(FormularioNuevaOrganizacion.this);
-                    progressDialog.setTitle("Procesando...");
-                    progressDialog.setMessage("Por favor espere");
-                    progressDialog.setCancelable(false);
-                    progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                    //Toast.makeText(getApplicationContext(),"Procesando... Por favor espere",Toast.LENGTH_SHORT).show();
-
-                    progressDialog.show();
+                    Toast.makeText(getApplicationContext(),"Procesando... Espere",Toast.LENGTH_SHORT).show();
                     new crearPerfil().execute();
-
                 }
 
 
             }
         });
 
-    }
-    @Override
-    protected void onStart() {
-        super.onStart();
-        if (SharedPrefManager.getInstance(this).estaLogueado()){
 
-
-        }else{
-            startActivity(new Intent(this, Login.class)
-                    .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK)) ;
-        }
     }
 
-    protected void onActivityResult(int requestCode, int resultCode, Intent data){
-        if(resultCode == RESULT_OK && requestCode == PICK_IMAGE){
-
-            try {
-                Uri imageUri = data.getData();
-                InputStream imageStream = getContentResolver().openInputStream(imageUri);
-                Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
-
-                selectedImage = getResizedBitmap(selectedImage, 500);// 400 is for example, replace with desired size
-
-                imagenOrganizacion.setImageBitmap(selectedImage);
-
-
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-        }else if (requestCode == 1) {
-            if (resultCode == RESULT_OK) {
-
-                String latitud = data.getStringExtra("latitud");
-                String longitud = data.getStringExtra("longitud");
-                lat.setText(latitud);
-                lo.setText(longitud);
-
-            }
-        }
-    }
+    /**********************************************************************************************
+     *                         MÉTODO PARA RECORTAR PESO DE LA IMAGEN SELECCIONADA
+     **********************************************************************************************/
     public Bitmap getResizedBitmap(Bitmap image, int maxSize) {
         int width = image.getWidth();
         int height = image.getHeight();
@@ -280,6 +235,12 @@ TextView lo,lat;
             width = (int) (height * bitmapRatio);
         }
         return Bitmap.createScaledBitmap(image, width, height, true);
+    }
+
+    public  void  guardarUbicacionOrganizacion(View view){
+
+        Intent ubicacion1 = new Intent(getApplicationContext(),Ingresar_Ubicacion.class);
+        startActivityForResult(ubicacion1,1);
     }
 
     public void requestRead() {
@@ -311,19 +272,69 @@ TextView lo,lat;
     }
 
     private void openGallery(){
-        Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
-        startActivityForResult(gallery, PICK_IMAGE);
+        Intent gallery = new Intent();
+        gallery.setType("image/*");
+        gallery.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(gallery,  "Seleccione una imagen"),PICK_IMAGE);
     }
-//9873298475923487858342905
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (SharedPrefManager.getInstance(this).estaLogueado()){
+
+
+        }else{
+            startActivity(new Intent(this, Login.class)
+                    .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK)) ;
+        }
+    }
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        if(resultCode == RESULT_OK && requestCode == PICK_IMAGE && data.getData()!=null){
+
+            try {
+                imageUri = data.getData();
+                imagenBitmap = MediaStore.Images.Media.getBitmap(getContentResolver(),imageUri);
+                imagenOrganizacion.setImageBitmap(imagenBitmap);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }else if (requestCode == 1) {
+            if (resultCode == RESULT_OK) {
+
+                String latitud = data.getStringExtra("latitud");
+                String longitud = data.getStringExtra("longitud");
+                lat.setText(latitud);
+                lo.setText(longitud);
+
+            }
+        }
+    }
+    private String getPath(Uri uri){
+        Cursor cursor = getContentResolver().query(uri,null,null,null,null);
+        cursor.moveToFirst();
+        String document_id = cursor.getString(0);
+        document_id=document_id.substring(document_id.lastIndexOf(":")+1);
+        cursor.close();
+
+        cursor=getContentResolver().query(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                null, MediaStore.Images.Media._ID+" = ?", new String[]{document_id},null
+        );
+        cursor.moveToFirst();
+        String path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
+        cursor.close();
+        return path;
+    }
+
     @Override
     public void onBackPressed() {
+
         super.onBackPressed();
+
     }
 
-
-
-
     private void validar(){
+        //id.setError(null);
         nombreOrganizacion.setError(null);
         telefonoFijo.setError(null);
         telefonoCelular.setError(null);
@@ -333,6 +344,7 @@ TextView lo,lat;
         lat.setError(null);
         lo.setError(null);
 
+        // String idd = id.getText().toString();
         String nomborg = nombreOrganizacion.getText().toString();
         String numtel = telefonoFijo.getText().toString();
         String numcel = telefonoCelular.getText().toString();
@@ -345,7 +357,7 @@ TextView lo,lat;
         if(TextUtils.isEmpty(mail)){
 
         }else{
-            if(!mail.contains("@") && !mail.contains(".") ){
+            if(!mail.contains("@") || !mail.contains(".")){
                 emailOrganizacion.setError(getString(R.string.error_mailnovalido));
                 emailOrganizacion.requestFocus();
                 return;
@@ -408,70 +420,6 @@ TextView lo,lat;
 
     }
 
-    private class crearPerfil extends AsyncTask<String, Integer, Boolean> {
-        private crearPerfil(){}
-        boolean resul = true;
-
-        @Override
-        protected Boolean doInBackground(String... strings) {
-
-            try {
-                HttpClient httpclient;
-                HttpPost httppost;
-                ArrayList<NameValuePair> parametros;
-                httpclient = new DefaultHttpClient();
-                httppost = new HttpPost(ip.getIp()+"crearPerfil");
-                httppost.setHeader("Authorization",SharedPrefManager.getInstance(FormularioNuevaOrganizacion.this).getUSUARIO_LOGUEADO().getToken());
-                parametros = new ArrayList<NameValuePair>();
-                parametros.add(new BasicNameValuePair("nomborg_rec",nombreOrganizacion.getText().toString()));
-                parametros.add(new BasicNameValuePair("numtel_rec",telefonoFijo.getText().toString()));
-                parametros.add(new BasicNameValuePair("numcel_rec",telefonoCelular.getText().toString()));
-                parametros.add(new BasicNameValuePair("direccion_rec",direccionOrganizacion.getText().toString()));
-                parametros.add(new BasicNameValuePair("desc_rec",descrpcionOrganizacion.getText().toString()));
-                parametros.add(new BasicNameValuePair("email_rec",emailOrganizacion.getText().toString()));
-                parametros.add(new BasicNameValuePair("lat_rec",lat.getText().toString()));
-                parametros.add(new BasicNameValuePair("longitud_rec",lo.getText().toString()));
-                parametros.add(new BasicNameValuePair("id_categoria",String.valueOf(id_categoria)));
-                parametros.add(new BasicNameValuePair("id_region",String.valueOf(id_region)));
-                parametros.add(new BasicNameValuePair("id_usuario",String.valueOf(id_usuario)));
-                parametros.add(new BasicNameValuePair("id_estado",String.valueOf(1)));
-
-                if(editarFoto==true){
-                    parametros.add(new BasicNameValuePair("imagen",encodeImagen));
-                    parametros.add(new BasicNameValuePair("nombre_imagen",nombreOrganizacion.getText().toString().replace(" ","_") +".jpg"));
-                }
-                httppost.setEntity(new UrlEncodedFormEntity(parametros, "UTF-8"));
-
-                httpclient.execute(httppost);
-
-                resul = true;
-            } catch (Exception ex) {
-                Log.e("ServicioRest", "Error!", ex);
-                resul = false;
-            }
-            return resul;
-
-        }
-
-
-        protected void onPostExecute(Boolean result) {
-            if (resul) {
-                validar();
-                if (nombreOrganizacion.getError()==null && telefonoFijo.getError()==null && telefonoCelular.getError()==null && direccionOrganizacion.getError()==null && emailOrganizacion.getError()==null && descrpcionOrganizacion.getError()==null && lat.getError()==null && lo.getError()==null){
-                    Toast.makeText(getApplicationContext(),"Perfil Creado Correctamente",Toast.LENGTH_SHORT).show();
-                    setResult(PanelDeControlUsuarios.RESULT_OK);
-                    finish();
-                }
-
-            }else {
-                Toast.makeText(getApplicationContext(), "Problemas de conexión", Toast.LENGTH_SHORT).show();
-                guardar.setClickable(true);
-            }
-        }
-
-    }
-
-
     private class llenarSpinnersNuevoPerfil extends AsyncTask<String, Integer, Boolean> {
         private llenarSpinnersNuevoPerfil(){}
         boolean resul = true;
@@ -518,40 +466,41 @@ TextView lo,lat;
 
     }
 
-
-    private class validarCorreoDiferente extends AsyncTask<String, Integer, Boolean> {
-        private validarCorreoDiferente() {
-        }
-
+    private class crearPerfil extends AsyncTask<String, Integer, Boolean> {
+        private crearPerfil(){}
         boolean resul = true;
 
         @Override
         protected Boolean doInBackground(String... strings) {
-            String correoTraido;
 
             try {
-                // Parseamos la respuesta obtenida del servidor a un objeto JSON
-                JSONObject jsonObject = new JSONObject(EntityUtils.toString(new DefaultHttpClient().execute(new HttpPost("http://aeo.web-hn.com/verCorreoOrganizacion.php?id_correo="+emailOrganizacion.getText().toString())).getEntity()));
-                JSONArray jsonArray = jsonObject.getJSONArray("datos");
-                for (int i = 0; i < jsonArray.length(); i++) {
 
-                    correoTraido = jsonArray.getJSONObject(i).getString("e_mail");
-                    if (jsonArray.getJSONObject(i).getString("e_mail").isEmpty()) {
+                HttpClient httpclient;
+                HttpPost httppost;
+                File img=new File(getPath(imageUri));
+                MultipartEntityBuilder multipartEntity = MultipartEntityBuilder.create();
+                multipartEntity.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+                httpclient = new DefaultHttpClient();
+                httppost = new HttpPost(ip.getIp()+"crearPerfil");
+                httppost.setHeader("Authorization",SharedPrefManager.getInstance(FormularioNuevaOrganizacion.this).getUSUARIO_LOGUEADO().getToken());
 
+                multipartEntity.addPart("nomborg_rec", new StringBody(nombreOrganizacion.getText().toString()));
+                multipartEntity.addPart("numtel_rec",new StringBody(telefonoFijo.getText().toString()));
+                multipartEntity.addPart("numcel_rec",new StringBody(telefonoCelular.getText().toString()));
+                multipartEntity.addPart("direccion_rec",new StringBody(direccionOrganizacion.getText().toString()));
+                multipartEntity.addPart("email_rec",new StringBody(emailOrganizacion.getText().toString()));
+                multipartEntity.addPart("desc_rec",new StringBody(descrpcionOrganizacion.getText().toString()));
+                multipartEntity.addPart("lat_rec",new StringBody(lat.getText().toString()));
+                multipartEntity.addPart("longitud_rec",new StringBody(lo.getText().toString()));
+                multipartEntity.addPart("id_categoria",new StringBody(String.valueOf(id_categoria)));
+                multipartEntity.addPart("id_region",new StringBody(String.valueOf(id_region)));
+                multipartEntity.addPart("id_usuario",new StringBody(String.valueOf(id_usuario)));
+                multipartEntity.addPart("id_estado",new StringBody(String.valueOf(1)));
+                multipartEntity.addPart("imagen", new FileBody(img));
 
-                        if (correoTraido.equals(emailOrganizacion.getText().toString())) {
-                            correoIgual = "igual";
-                        } else {
-                            correoIgual = "diferente";
-
-                        }
-                    }else {
-                        correoIgual = "diferente";
-                    }
-
-
-
-                }
+                HttpEntity entity = multipartEntity.build();
+                httppost.setEntity(entity);
+                httpclient.execute(httppost);
 
                 resul = true;
             } catch (Exception ex) {
@@ -561,25 +510,21 @@ TextView lo,lat;
             return resul;
 
         }
+
+
         protected void onPostExecute(Boolean result) {
             if (resul) {
-                if (correoIgual.equals("igual")){
-                    emailOrganizacion.setError("correo ya existe");
-                    emailOrganizacion.requestFocus();
-                }else {
 
-                    validar();
-
-                    if (nombreOrganizacion.getError() == null && telefonoFijo.getError() == null && telefonoCelular.getError() == null && direccionOrganizacion.getError() == null && emailOrganizacion.getError() == null && descrpcionOrganizacion.getError() == null && latitudOrganizacion.getError() == null && longitudOrganizacion.getError() == null) {
-
-                    }
-                }
+                Toast.makeText(getApplicationContext(),"Perfil Creado Correctamente",Toast.LENGTH_SHORT).show();
+                Intent data = new Intent();
+                setResult(AdministracionDePerfiles.RESULT_OK, data);
+                finish();
 
             }else {
                 Toast.makeText(getApplicationContext(), "Problemas de conexión", Toast.LENGTH_SHORT).show();
+                guardar.setClickable(true);
             }
         }
+
     }
-
-
 }
