@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -41,6 +42,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -51,6 +53,10 @@ import cz.msebera.android.httpclient.client.HttpClient;
 import cz.msebera.android.httpclient.client.entity.UrlEncodedFormEntity;
 import cz.msebera.android.httpclient.client.methods.HttpGet;
 import cz.msebera.android.httpclient.client.methods.HttpPost;
+import cz.msebera.android.httpclient.entity.mime.HttpMultipartMode;
+import cz.msebera.android.httpclient.entity.mime.MultipartEntityBuilder;
+import cz.msebera.android.httpclient.entity.mime.content.FileBody;
+import cz.msebera.android.httpclient.entity.mime.content.StringBody;
 import cz.msebera.android.httpclient.impl.client.DefaultHttpClient;
 import cz.msebera.android.httpclient.message.BasicNameValuePair;
 import cz.msebera.android.httpclient.params.BasicHttpParams;
@@ -60,6 +66,7 @@ import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.R;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAAlan.Editar_Usuarios;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVABessy.Ingresar_Ubicacion;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVASheyli.ipLocalhost;
+import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAVirgilio.EditarPerfilOrganizacion;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAVirgilio.Login;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAVirgilio.SharedPrefManager;
 
@@ -339,6 +346,23 @@ public class EditarPerfil extends AppCompatActivity {
 
     }
 
+    private String getPath(Uri uri){
+        Cursor cursor = getContentResolver().query(uri,null,null,null,null);
+        cursor.moveToFirst();
+        String document_id = cursor.getString(0);
+        document_id=document_id.substring(document_id.lastIndexOf(":")+1);
+        cursor.close();
+
+        cursor=getContentResolver().query(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                null, MediaStore.Images.Media._ID+" = ?", new String[]{document_id},null
+        );
+        cursor.moveToFirst();
+        String path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
+        cursor.close();
+        return path;
+    }
+
     /**********************************************************************************************
      *                                  MÉTODO PARA VALIDAR LOS CAMPOS
      **********************************************************************************************/
@@ -579,34 +603,30 @@ public class EditarPerfil extends AppCompatActivity {
 
                 HttpClient httpclient;
                 HttpPost httppost;
-                ArrayList<NameValuePair> parametros;
+                File img=new File(getPath(imageUri));
+                MultipartEntityBuilder multipartEntity = MultipartEntityBuilder.create();
+                multipartEntity.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
                 httpclient = new DefaultHttpClient();
                 httppost = new HttpPost(ip.getIp()+"actualizarPerfil");
                 httppost.setHeader("Authorization",SharedPrefManager.getInstance(EditarPerfil.this).getUSUARIO_LOGUEADO().getToken());
-                parametros = new ArrayList<NameValuePair>();
-                parametros.add(new BasicNameValuePair("cto", String.valueOf(id_perfilEditar)));
-                parametros.add(new BasicNameValuePair("nomborg_rec",etnombreeorganizacion.getText().toString()));
-                parametros.add(new BasicNameValuePair("numtel_rec",etnumerofijo.getText().toString()));
-                parametros.add(new BasicNameValuePair("numcel_rec",etnumerocel.getText().toString()));
-                parametros.add(new BasicNameValuePair("direccion_rec",etdireccion.getText().toString()));
-                parametros.add(new BasicNameValuePair("email_rec",etemail.getText().toString()));
-                parametros.add(new BasicNameValuePair("desc_rec",etdescripcion.getText().toString()));
-                parametros.add(new BasicNameValuePair("lat_rec",etlatitud.getText().toString()));
-                parametros.add(new BasicNameValuePair("longitud_rec",etlongitud.getText().toString()));
-                parametros.add(new BasicNameValuePair("id_categoria",String.valueOf(id_categoria)));
-                parametros.add(new BasicNameValuePair("id_region",String.valueOf(id_region)));
-                //parametros.add(new BasicNameValuePair("tkn",SharedPrefManager.getInstance(EditarPerfil.this).getUSUARIO_LOGUEADO().getToken()));
 
-                if(editarFoto==true){
-                    parametros.add(new BasicNameValuePair("imagen",encodeImagen));
-                    parametros.add(new BasicNameValuePair("nombre_imagen",etnombreeorganizacion.getText().toString().replace(" ","_")+ ""+ i +".jpg"));
-                }else {
-                    parametros.add(new BasicNameValuePair("imagen",imagen_rec));
+                multipartEntity.addPart("cto",new StringBody(String.valueOf(id_perfilEditar)));
+                multipartEntity.addPart("nomborg_rec", new StringBody(etnombreeorganizacion.getText().toString()));
+                multipartEntity.addPart("numtel_rec",new StringBody(etnumerofijo.getText().toString()));
+                multipartEntity.addPart("numcel_rec",new StringBody(etnumerocel.getText().toString()));
+                multipartEntity.addPart("direccion_rec",new StringBody(etdireccion.getText().toString()));
+                multipartEntity.addPart("email_rec",new StringBody(etemail.getText().toString()));
+                multipartEntity.addPart("desc_rec",new StringBody(etdescripcion.getText().toString()));
+                multipartEntity.addPart("lat_rec",new StringBody(etlatitud.getText().toString()));
+                multipartEntity.addPart("longitud_rec",new StringBody(etlongitud.getText().toString()));
+                multipartEntity.addPart("id_categoria",new StringBody(String.valueOf(id_categoria)));
+                multipartEntity.addPart("id_region",new StringBody(String.valueOf(id_region)));
+                multipartEntity.addPart("imagen", new FileBody(img));
 
-                }
-
-                httppost.setEntity(new UrlEncodedFormEntity(parametros, "UTF-8"));
+                HttpEntity entity = multipartEntity.build();
+                httppost.setEntity(entity);
                 httpclient.execute(httppost);
+
                 resul = true;
             } catch (Exception ex) {
                 Log.e("ServicioRest", "Error!", ex);

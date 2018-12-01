@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -42,15 +43,21 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
+import cz.msebera.android.httpclient.HttpEntity;
 import cz.msebera.android.httpclient.NameValuePair;
 import cz.msebera.android.httpclient.client.HttpClient;
 import cz.msebera.android.httpclient.client.entity.UrlEncodedFormEntity;
 import cz.msebera.android.httpclient.client.methods.HttpGet;
 import cz.msebera.android.httpclient.client.methods.HttpPost;
+import cz.msebera.android.httpclient.entity.mime.HttpMultipartMode;
+import cz.msebera.android.httpclient.entity.mime.MultipartEntityBuilder;
+import cz.msebera.android.httpclient.entity.mime.content.FileBody;
+import cz.msebera.android.httpclient.entity.mime.content.StringBody;
 import cz.msebera.android.httpclient.impl.client.DefaultHttpClient;
 import cz.msebera.android.httpclient.message.BasicNameValuePair;
 import cz.msebera.android.httpclient.util.EntityUtils;
@@ -143,7 +150,6 @@ public class EditarPerfilOrganizacion extends AppCompatActivity {
         Toast.makeText(getApplicationContext(),"Cargando...",Toast.LENGTH_SHORT).show();
 
         new llenarEditTexEditarPerfil().execute();
-
         new llenarSpinnersPerfil().execute();
 
 
@@ -161,7 +167,6 @@ public class EditarPerfilOrganizacion extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 editarfoto=true;
-
                 requestRead();
             }
         });
@@ -193,8 +198,8 @@ public class EditarPerfilOrganizacion extends AppCompatActivity {
         botonGuardar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (editarfoto==true){
 
+                if(editarfoto==true){
                     imagenBitmap = ((BitmapDrawable)imagenOrg.getDrawable()).getBitmap();
 
                     new AsyncTask<Void, Void, String>(){
@@ -209,8 +214,6 @@ public class EditarPerfilOrganizacion extends AppCompatActivity {
                             return null;
                         }
                     }.execute();
-
-
                 }
                 validar();
                 if (etnombreeorganizacion.getError()==null &&
@@ -221,12 +224,14 @@ public class EditarPerfilOrganizacion extends AppCompatActivity {
                         etdescripcion.getError()==null &&
                         etlatitud.getError()==null &&
                         etlongitud.getError()==null){
+                    botonGuardar.setClickable(false);
                     i ++;
                     new actualizarPerfil().execute();
                 }
-
             }
         });
+
+
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         //setSupportActionBar(toolbar);
@@ -234,30 +239,50 @@ public class EditarPerfilOrganizacion extends AppCompatActivity {
 
 
     }
+
+
+    /**********************************************************************************************
+     *            creación de menú
+     **********************************************************************************************/
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.borrar_perfil, menu);
+        return true;
+    }
+
     @Override
-    protected void onStart() {
-        super.onStart();
-        if (SharedPrefManager.getInstance(this).estaLogueado()){
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
 
+        if (id == R.id.eliminarPerfil) {
+            new eliminarPerfil().execute();
 
-        }else{
-            startActivity(new Intent(this, Login.class)
-                    .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK)) ;
         }
-    }
-    @Override
-    public void onBackPressed() {
 
-        super.onBackPressed();
-
+        return super.onOptionsItemSelected(item);
     }
 
+    /**********************************************************************************************
+     *                         MÉTODO PARA RECORTAR PESO DE LA IMAGEN SELECCIONADA
+     **********************************************************************************************/
+    public Bitmap getResizedBitmap(Bitmap image, int maxSize) {
+        int width = image.getWidth();
+        int height = image.getHeight();
 
+        float bitmapRatio = (float)width / (float) height;
+        if (bitmapRatio > 1) {
+            width = maxSize;
+            height = (int) (width / bitmapRatio);
+        } else {
+            height = maxSize;
+            width = (int) (height * bitmapRatio);
+        }
+        return Bitmap.createScaledBitmap(image, width, height, true);
+    }
 
-   /* public void guardarUbicacionOrganizacion(View v){
-        Intent ubicacion1 = new Intent(getApplicationContext(), Ingresar_Ubicacion.class);
-        startActivityForResult(ubicacion1,1);
-    }*/
     public  void  guardarUbicacionOrganizacion(View view){
         Double latitudParaubicar=Double.valueOf(etlatitud.getText().toString());
         Double longitudParaubicar=Double.valueOf(etlongitud.getText().toString());
@@ -267,7 +292,6 @@ public class EditarPerfilOrganizacion extends AppCompatActivity {
         ubicacion1.putExtra("longitud", longitudParaubicar);
         startActivityForResult(ubicacion1,1);
     }
-
 
     public void requestRead() {
         if (ContextCompat.checkSelfPermission(this,
@@ -302,28 +326,16 @@ public class EditarPerfilOrganizacion extends AppCompatActivity {
         startActivityForResult(gallery, PICK_IMAGE);
     }
 
-    /**********************************************************************************************
-     *            creación de menú
-     **********************************************************************************************/
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.borrar_perfil, menu);
-        return true;
-    }
-
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+    protected void onStart() {
+        super.onStart();
+        if (SharedPrefManager.getInstance(this).estaLogueado()){
 
-        if (id == R.id.eliminarPerfil) {
-            new eliminarPerfil().execute();
 
+        }else{
+            startActivity(new Intent(this, Login.class)
+                    .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK)) ;
         }
-
-        return super.onOptionsItemSelected(item);
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
@@ -353,27 +365,32 @@ public class EditarPerfilOrganizacion extends AppCompatActivity {
         }
 
 
-    }//aqiiiiiiiiiiiiiiiiiiiiiiiiiiiii
+    }
+    private String getPath(Uri uri){
+        Cursor cursor = getContentResolver().query(uri,null,null,null,null);
+        cursor.moveToFirst();
+        String document_id = cursor.getString(0);
+        document_id=document_id.substring(document_id.lastIndexOf(":")+1);
+        cursor.close();
 
-    public Bitmap getResizedBitmap(Bitmap image, int maxSize) {
-        int width = image.getWidth();
-        int height = image.getHeight();
-
-        float bitmapRatio = (float)width / (float) height;
-        if (bitmapRatio > 1) {
-            width = maxSize;
-            height = (int) (width / bitmapRatio);
-        } else {
-            height = maxSize;
-            width = (int) (height * bitmapRatio);
-        }
-        return Bitmap.createScaledBitmap(image, width, height, true);
+        cursor=getContentResolver().query(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                null, MediaStore.Images.Media._ID+" = ?", new String[]{document_id},null
+        );
+        cursor.moveToFirst();
+        String path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
+        cursor.close();
+        return path;
     }
 
+    @Override
+    public void onBackPressed() {
 
+        super.onBackPressed();
+
+    }
 
     private void validar(){
-
         //id.setError(null);
         etnombreeorganizacion.setError(null);
         etnumerofijo.setError(null);
@@ -384,6 +401,7 @@ public class EditarPerfilOrganizacion extends AppCompatActivity {
         etlatitud.setError(null);
         etlongitud.setError(null);
 
+        // String idd = id.getText().toString();
         String nomborg = etnombreeorganizacion.getText().toString();
         String numtel = etnumerofijo.getText().toString();
         String numcel = etnumerocel.getText().toString();
@@ -396,7 +414,7 @@ public class EditarPerfilOrganizacion extends AppCompatActivity {
         if(TextUtils.isEmpty(mail)){
 
         }else{
-            if(!mail.contains("@") && !mail.contains(".")){
+            if(!mail.contains("@") || !mail.contains(".")){
                 etemail.setError(getString(R.string.error_mailnovalido));
                 etemail.requestFocus();
                 return;
@@ -545,33 +563,30 @@ public class EditarPerfilOrganizacion extends AppCompatActivity {
 
                 HttpClient httpclient;
                 HttpPost httppost;
-                ArrayList<NameValuePair> parametros;
+                File img=new File(getPath(imageUri));
+                MultipartEntityBuilder multipartEntity = MultipartEntityBuilder.create();
+                multipartEntity.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
                 httpclient = new DefaultHttpClient();
                 httppost = new HttpPost(ip.getIp()+"actualizarPerfil");
                 httppost.setHeader("Authorization",SharedPrefManager.getInstance(EditarPerfilOrganizacion.this).getUSUARIO_LOGUEADO().getToken());
-                parametros = new ArrayList<NameValuePair>();
-                parametros.add(new BasicNameValuePair("cto", String.valueOf(id_perfilEditar)));
-                parametros.add(new BasicNameValuePair("nomborg_rec",etnombreeorganizacion.getText().toString()));
-                parametros.add(new BasicNameValuePair("numtel_rec",etnumerofijo.getText().toString()));
-                parametros.add(new BasicNameValuePair("numcel_rec",etnumerocel.getText().toString()));
-                parametros.add(new BasicNameValuePair("direccion_rec",etdireccion.getText().toString()));
-                parametros.add(new BasicNameValuePair("email_rec",etemail.getText().toString()));
-                parametros.add(new BasicNameValuePair("desc_rec",etdescripcion.getText().toString()));
-                parametros.add(new BasicNameValuePair("lat_rec",etlatitud.getText().toString()));
-                parametros.add(new BasicNameValuePair("longitud_rec",etlongitud.getText().toString()));
-                parametros.add(new BasicNameValuePair("id_categoria",String.valueOf(id_categoria)));
-                parametros.add(new BasicNameValuePair("id_region",String.valueOf(id_region)));
-                //parametros.add(new BasicNameValuePair("tkn",SharedPrefManager.getInstance(getApplicationContext()).getUSUARIO_LOGUEADO().getToken()));
-                if(editarfoto==true){
-                    parametros.add(new BasicNameValuePair("imagen",encodeImagen));
-                    parametros.add(new BasicNameValuePair("nombre_imagen",etnombreeorganizacion.getText().toString().replace(" ","_")+ ""+ i +".jpg"));
-                }else {
-                    parametros.add(new BasicNameValuePair("imagen",imagen_rec));
 
-                }
+                multipartEntity.addPart("cto",new StringBody(String.valueOf(id_perfilEditar)));
+                multipartEntity.addPart("nomborg_rec", new StringBody(etnombreeorganizacion.getText().toString()));
+                multipartEntity.addPart("numtel_rec",new StringBody(etnumerofijo.getText().toString()));
+                multipartEntity.addPart("numcel_rec",new StringBody(etnumerocel.getText().toString()));
+                multipartEntity.addPart("direccion_rec",new StringBody(etdireccion.getText().toString()));
+                multipartEntity.addPart("email_rec",new StringBody(etemail.getText().toString()));
+                multipartEntity.addPart("desc_rec",new StringBody(etdescripcion.getText().toString()));
+                multipartEntity.addPart("lat_rec",new StringBody(etlatitud.getText().toString()));
+                multipartEntity.addPart("longitud_rec",new StringBody(etlongitud.getText().toString()));
+                multipartEntity.addPart("id_categoria",new StringBody(String.valueOf(id_categoria)));
+                multipartEntity.addPart("id_region",new StringBody(String.valueOf(id_region)));
+                multipartEntity.addPart("imagen", new FileBody(img));
 
-                httppost.setEntity(new UrlEncodedFormEntity(parametros, "UTF-8"));
+                HttpEntity entity = multipartEntity.build();
+                httppost.setEntity(entity);
                 httpclient.execute(httppost);
+
                 resul = true;
             } catch (Exception ex) {
                 Log.e("ServicioRest", "Error!", ex);
