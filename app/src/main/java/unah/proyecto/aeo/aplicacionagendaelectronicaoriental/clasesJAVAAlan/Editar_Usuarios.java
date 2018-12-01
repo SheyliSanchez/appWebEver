@@ -136,18 +136,21 @@ public class Editar_Usuarios extends AppCompatActivity {
 
 
                 if(!nombreusuario.getText().toString().contains("Admin")){
-                    if (usuarioEditar==SharedPrefManager.getInstance(Editar_Usuarios.this).getUSUARIO_LOGUEADO().getId_logueado()){
+                    if (usuarioEditar == SharedPrefManager.getInstance(Editar_Usuarios.this).getUSUARIO_LOGUEADO().getId_logueado()){
 
 
                         //PASAMOS EL NOMBRE DE LA CLASE QUE EJECUTA LA SENTENCIA SQL DEL WEB SERVISE
                         new eliminarUsuario().execute();
-
+                       // Intent intent = new Intent(Editar_Usuarios.this,ActivityCategorias.class);
+                        cs.cerrarsesion();
+                        startActivity(new Intent(getBaseContext(), ActivityCategorias.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP));
                         SharedPrefManager.getInstance(Editar_Usuarios.this).limpiar();
-                        Intent intent = new Intent(Editar_Usuarios.this,ActivityCategorias.class);
-                        //startActivity(new Intent(getBaseContext(), ActivityCategorias.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP));
-                        startActivity(intent);
-                        setResult(Mostrar_Usuarios.RESULT_OK,intent);
-                        finish();
+
+                        //setResult(Mostrar_Usuarios.RESULT_OK,intent);
+                        //startActivity(intent);
+                        //finish();
+
+
                     }else{
                         new eliminarUsuario().execute();
                     }
@@ -211,6 +214,7 @@ public class Editar_Usuarios extends AppCompatActivity {
                 Intent intent = new Intent();
                 setResult(Mostrar_Usuarios.RESULT_OK,intent);
                 finish();
+
             }else {
                 Toast.makeText(getApplicationContext(), "Problemas de conexión", Toast.LENGTH_SHORT).show();
             }

@@ -59,7 +59,7 @@ public class Login extends AppCompatActivity implements NavigationView.OnNavigat
     private int id_usuario;
     private int rol;
     private int estado_usuario;
-
+    ProgressDialog dialog;
     Context context=this;
 
     ipLocalhost ip  = new ipLocalhost();
@@ -75,6 +75,9 @@ public class Login extends AppCompatActivity implements NavigationView.OnNavigat
         usuario = (EditText) findViewById(R.id.usuario_login);
         contrasena = (EditText) findViewById(R.id.contrasena_login);
         //Preferencias de imgadministrador y usuario
+        dialog = new ProgressDialog(Login.this);
+        dialog.setTitle("Verificando....");
+        dialog.setMessage("Espere por favor.");
 
         acceder = (CircularProgressButton) findViewById(R.id.ingresar_login);
         acceder.setOnClickListener(new View.OnClickListener() {
@@ -91,6 +94,8 @@ public class Login extends AppCompatActivity implements NavigationView.OnNavigat
 
 
                 } else {
+                    dialog.show();
+
                     new LoginValidadoWeb().execute();//si existe el usuario y la contraseña son correctas el accedera
 
 
@@ -230,13 +235,14 @@ public class Login extends AppCompatActivity implements NavigationView.OnNavigat
                         )
                 );
 
-
                // acceder.stopAnimation();
                 //acceder.revertAnimation();
 
                  if (rol == 1 && estado_usuario ==1) {
                     Intent intent = new Intent(Login.this,Panel_de_Control.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    intent.putExtra("id",id_usuario);
+                     dialog.cancel();
                     startActivity(intent);
                     finish();
 
@@ -244,11 +250,16 @@ public class Login extends AppCompatActivity implements NavigationView.OnNavigat
 
                     Intent intent = new Intent(Login.this,PanelDeControlUsuarios.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                     dialog.cancel();
                     startActivity(intent);
                     finish();
-                }
+
+                 }else if(rol ==2 && estado_usuario ==2 || rol ==1 && estado_usuario ==2){
+                     Toast.makeText(getApplicationContext(), "Usuario y/o Contraseña incorrecta", Toast.LENGTH_SHORT).show();
+                 }
 
             } else {
+                dialog.cancel();
                 //acceder.stopAnimation();
                 //acceder.revertAnimation();
 
@@ -286,8 +297,8 @@ public class Login extends AppCompatActivity implements NavigationView.OnNavigat
                         Toast.makeText(getApplicationContext(), "Limite de intentos agotados", Toast.LENGTH_SHORT).show();
                         finish();
                     }else {
-                        acceder.stopAnimation();
-                        acceder.revertAnimation();
+                        //acceder.stopAnimation();
+                        //acceder.revertAnimation();
                         Toast.makeText(getApplicationContext(), "Usuario y/o Contraseña incorrecta", Toast.LENGTH_SHORT).show();
                     }
 
@@ -326,12 +337,16 @@ public class Login extends AppCompatActivity implements NavigationView.OnNavigat
 
 
         if(TextUtils.isEmpty(us)){
+            dialog.cancel();
             usuario.setError(getString(R.string.error_usuario));
             usuario.requestFocus();
+
             return;
         }if(TextUtils.isEmpty(cont)){
+            dialog.cancel();
             contrasena.setError(getString(R.string.error_contrasenaingresada));
             contrasena.requestFocus();
+
             return;
 
         }
