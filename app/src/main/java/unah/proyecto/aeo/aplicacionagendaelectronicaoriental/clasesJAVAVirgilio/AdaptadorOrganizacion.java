@@ -17,6 +17,7 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.R;
+import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVASheyli.ipLocalhost;
 
 /**
  * Created by melvinrivera on 3/4/18.
@@ -26,7 +27,7 @@ public class AdaptadorOrganizacion extends BaseAdapter {
     private List<EntidadOrganizacion> listaobjetos;
     private Context context;
     LayoutInflater lsinflater;
-
+    private  String BASE_URL=new ipLocalhost().getIp().substring(0,19);
     //constructor
 
 
@@ -64,11 +65,11 @@ public class AdaptadorOrganizacion extends BaseAdapter {
        // textid.setText(""+perfiles.get(i).getId());
         nombre.setText(listaobjetos.get(i).getTitulo().toString());
         estado.setText(listaobjetos.get(i).getEstado().toString());
-        if (listaobjetos.get(i).getImagen().isEmpty()){
-            Imagen.setImageResource(R.drawable.iconocontactowhite);
+        if (listaobjetos.get(i).getImagen().equals("null")){
+            Glide.with(context).load(R.drawable.iconocontactowhite).into(Imagen);
 
         }else {
-            Picasso.get().load(listaobjetos.get(i).getImagen()).
+            Picasso.get().load(BASE_URL+listaobjetos.get(i).getImagen()).
             placeholder(R.drawable.wait).
                     into(Imagen);
         }

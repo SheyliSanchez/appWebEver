@@ -263,6 +263,9 @@ public class NuevoPerfil extends AppCompatActivity {
                     .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK)) ;
         }
     }
+    /**********************************************************************************************
+     *            MÉTODO QUE EJECUTA CCIONES A PARTIR DE RESULTADOS DE ACTIVITIES
+     **********************************************************************************************/
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         if(resultCode == RESULT_OK && requestCode == PICK_IMAGE && data.getData()!=null){
 

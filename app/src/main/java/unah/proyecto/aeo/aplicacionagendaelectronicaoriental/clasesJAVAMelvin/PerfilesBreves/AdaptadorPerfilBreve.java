@@ -35,6 +35,7 @@ import java.net.URL;
 import de.hdodenhof.circleimageview.CircleImageView;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.R;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVASheyli.PerfilDeLaOrganizacion;
+import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVASheyli.ipLocalhost;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.provider.PerfilesContract;
 
 /**
@@ -45,7 +46,7 @@ public class AdaptadorPerfilBreve extends RecyclerView.Adapter<AdaptadorPerfilBr
     /**********************************************************************************************
      *                                       DECLARACIÓN DE VARIABLES
      **********************************************************************************************/
-
+    private  String BASE_URL=new ipLocalhost().getIp().substring(0,19);
     Cursor dataCursor;
     Context context;
     private static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE=1;
@@ -131,6 +132,7 @@ public class AdaptadorPerfilBreve extends RecyclerView.Adapter<AdaptadorPerfilBr
 
         dataCursor.moveToPosition(position);
 
+
         holder.nombrePerfilBreve.setText(dataCursor.getString(dataCursor.getColumnIndex(PerfilesContract.ContactosEntry.COLUMN_NOMBRE)));
         holder.direccionPerfilBreve.setText(dataCursor.getString(dataCursor.getColumnIndex(PerfilesContract.ContactosEntry.COLUMN_NOMBRE_REGION)));
         if(dataCursor.getString(dataCursor.getColumnIndex(PerfilesContract.ContactosEntry.COLUMN_NUMERO_TELEFONO)).isEmpty()){
@@ -141,9 +143,9 @@ public class AdaptadorPerfilBreve extends RecyclerView.Adapter<AdaptadorPerfilBr
 
         holder.id_perfilBreve.setText(""+dataCursor.getInt(dataCursor.getColumnIndex(PerfilesContract.ContactosEntry.COLUMN_PERFILID)));
 
-    if (!dataCursor.getString(dataCursor.getColumnIndex(PerfilesContract.ContactosEntry.COLUMN_IMAGEN_PATH)).isEmpty()){
+    if (!dataCursor.getString(dataCursor.getColumnIndex(PerfilesContract.ContactosEntry.COLUMN_IMAGEN_PATH)).equals("null")){
         Picasso.get().
-                load(
+                load(BASE_URL+
                         dataCursor.getString(
                                 dataCursor.getColumnIndex(PerfilesContract.ContactosEntry.COLUMN_IMAGEN_PATH))).
             memoryPolicy(MemoryPolicy.NO_CACHE).networkPolicy(NetworkPolicy.NO_CACHE).placeholder(R.drawable.wait).

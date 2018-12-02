@@ -15,6 +15,7 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.R;
+import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVASheyli.ipLocalhost;
 
 /**
  * Created by melvinrivera on 3/4/18.
@@ -23,6 +24,7 @@ import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.R;
 public class AdaptadorMostrarPerfiles extends BaseAdapter {
     private List<Fuente_mostrarPerfiles> perfiles;
     private Context context;
+    private  String BASE_URL=new ipLocalhost().getIp().substring(0,19);
 
     //constructor
 
@@ -60,8 +62,8 @@ public class AdaptadorMostrarPerfiles extends BaseAdapter {
 
         CircleImageView icono = v.findViewById(R.id.iconoDeContactoEnAdministrador);
 
-        if(!perfiles.get(i).getImagen().isEmpty()){
-            Picasso.get().load(perfiles.get(i).getImagen()).
+        if(!perfiles.get(i).getImagen().equals("null")){
+            Picasso.get().load(BASE_URL+perfiles.get(i).getImagen()).
                     placeholder(R.drawable.wait).
             into(icono);
         }else {

@@ -13,6 +13,7 @@ import java.util.List;
 
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.R;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAMelvin.PerfilesBreves.PerfilBreve;
+import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVASheyli.ipLocalhost;
 
 /**
  * Created by melvinrivera on 22/2/18.
@@ -24,7 +25,7 @@ public class AdaptadorParaBusquedaAvanzada extends RecyclerView.Adapter<ViewHold
      **********************************************************************************************/
 
     List<PerfilBreve> listaObjetos;
-
+    private  String BASE_URL=new ipLocalhost().getIp().substring(0,19);
     /**********************************************************************************************
      *                                       CONSTRUCTOR
      **********************************************************************************************/
@@ -52,9 +53,9 @@ public class AdaptadorParaBusquedaAvanzada extends RecyclerView.Adapter<ViewHold
         holder.direccionPerfilBreve.setText(listaObjetos.get(position).getDireccion().toString());
         holder.numeroTelefonoPerfilBreve.setText(listaObjetos.get(position).getNumeroTelefono().toString());
         holder.id_perfilBreve.setText(""+listaObjetos.get(position).getId());
-        if(!listaObjetos.get(position).getImagen().isEmpty()){
+        if(!listaObjetos.get(position).getImagen().equals("null")){
             Glide.with(holder.context).
-                    load(listaObjetos.get(position).getImagen()).
+                    load(BASE_URL + listaObjetos.get(position).getImagen()).
                     placeholder(R.drawable.wait).
                     into(holder.imagenPerfilBreve);
         }else{

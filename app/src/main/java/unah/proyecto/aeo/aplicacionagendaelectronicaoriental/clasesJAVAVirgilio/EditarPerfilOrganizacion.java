@@ -116,6 +116,7 @@ public class EditarPerfilOrganizacion extends AppCompatActivity {
     int nu;
 
     ipLocalhost ip = new ipLocalhost();
+    private  String BASE_URL=new ipLocalhost().getIp().substring(0,19);
 
     Double lat,log;
     @Override
@@ -341,16 +342,10 @@ public class EditarPerfilOrganizacion extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         if(resultCode == RESULT_OK && requestCode == PICK_IMAGE){
             try {
-                Uri imageUri = data.getData();
-                InputStream imageStream = getContentResolver().openInputStream(imageUri);
-                Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
-
-                selectedImage = getResizedBitmap(selectedImage, 200);// 400 is for example, replace with desired size
-
-                imagenOrg.setImageBitmap(selectedImage);
-
-
-            } catch (FileNotFoundException e) {
+                imageUri = data.getData();
+                imagenBitmap = MediaStore.Images.Media.getBitmap(getContentResolver(),imageUri);
+                imagenOrg.setImageBitmap(imagenBitmap);
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }else if (requestCode == 1) {
@@ -493,7 +488,7 @@ public class EditarPerfilOrganizacion extends AppCompatActivity {
                     numtel_rec = jsonArray.getJSONObject(i).getString("numero_fijo");
                     numcel_rec = jsonArray.getJSONObject(i).getString("numero_movil");
                     direccion_rec = jsonArray.getJSONObject(i).getString("direccion");
-                    if(jsonArray.getJSONObject(i).getString("imagen").isEmpty()){
+                    if(jsonArray.getJSONObject(i).getString("imagen").equals("null")){
                         tieneImagen=false;
                     }else{
                         imagen_rec = jsonArray.getJSONObject(i).getString("imagen");
@@ -523,7 +518,7 @@ public class EditarPerfilOrganizacion extends AppCompatActivity {
                 if(tieneImagen==true){
 
                     Picasso.get().
-                            load(imagen_rec).
+                            load(BASE_URL+imagen_rec).
                             networkPolicy(NetworkPolicy.NO_CACHE).
                             memoryPolicy(MemoryPolicy.NO_CACHE).placeholder(R.drawable.wait).
                             into(imagenOrg);

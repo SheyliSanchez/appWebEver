@@ -44,7 +44,7 @@ public class PerfilDeLaOrganizacion extends AppCompatActivity implements Navigat
     FloatingActionButton ubicacion;
     String organizacionP, nombreP, direccionP, telefonoP, emailP, descripcionP, movilP;
     boolean imagenContacto;
-
+    private  String BASE_URL=new ipLocalhost().getIp().substring(0,19);
     FuncionCerrarSesion cs = new FuncionCerrarSesion();
 
     int id_usu=-1;
@@ -111,9 +111,9 @@ public class PerfilDeLaOrganizacion extends AppCompatActivity implements Navigat
 
 
         while (cursor.moveToNext()) {
-            if (!cursor.getString(cursor.getColumnIndex(PerfilesContract.ContactosEntry.COLUMN_IMAGEN_PATH)).isEmpty()) {
+            if (!cursor.getString(cursor.getColumnIndex(PerfilesContract.ContactosEntry.COLUMN_IMAGEN_PATH)).equals("null")) {
                 Picasso.get().
-                        load(cursor.getString(cursor.getColumnIndex(PerfilesContract.ContactosEntry.COLUMN_IMAGEN_PATH))).
+                        load(BASE_URL+cursor.getString(cursor.getColumnIndex(PerfilesContract.ContactosEntry.COLUMN_IMAGEN_PATH))).
                         into(organizacion);
             } else {
                 Picasso.get().

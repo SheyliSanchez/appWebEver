@@ -27,6 +27,7 @@ import java.util.List;
 
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.R;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAMelvin.PerfilesBreves.ListaDeContactos;
+import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVASheyli.ipLocalhost;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.provider.CategoriasContract;
 
 /**
@@ -38,8 +39,7 @@ public class Adaptador_Categoria extends RecyclerView.Adapter<Adaptador_Categori
 
     Cursor dataCursor;
     Context context;
-
-
+    private  String BASE_URL=new ipLocalhost().getIp().substring(0,19);
     public  class ViewHolder extends RecyclerView.ViewHolder{
         public     ImageView imagen;
         public     TextView titulo;
@@ -93,7 +93,7 @@ public class Adaptador_Categoria extends RecyclerView.Adapter<Adaptador_Categori
         holder.cantidad.setText( dataCursor.getString(dataCursor.getColumnIndex(CategoriasContract.CategoriasEntry.COLUMN_CANTIDAD))+" Contactos");
         holder.id_categoria.setText(dataCursor.getString(dataCursor.getColumnIndex(CategoriasContract.CategoriasEntry.COLUMN_ID_CATEGORIA)));
 
-        if(!dataCursor.getString(dataCursor.getColumnIndex(CategoriasContract.CategoriasEntry.COLUMN_IMAGEN_CATEGORIA)).isEmpty()){
+        if(!dataCursor.getString(dataCursor.getColumnIndex(CategoriasContract.CategoriasEntry.COLUMN_IMAGEN_CATEGORIA)).equals("null")){
 
 
             Picasso.get().load(dataCursor.getString(dataCursor.getColumnIndex(CategoriasContract.CategoriasEntry.COLUMN_IMAGEN_CATEGORIA))).networkPolicy(

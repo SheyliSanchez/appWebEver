@@ -154,9 +154,7 @@ public class Editar_Usuarios extends AppCompatActivity {
                     }else{
                         new eliminarUsuario().execute();
                     }
-
                 }else  {
-
                     Toast.makeText(getApplicationContext(),"No se puede eliminar el usuario Administrador",Toast.LENGTH_SHORT).show();
                 }
             }
