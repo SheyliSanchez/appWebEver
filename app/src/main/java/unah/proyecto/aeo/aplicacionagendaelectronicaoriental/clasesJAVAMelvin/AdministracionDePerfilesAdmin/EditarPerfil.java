@@ -88,7 +88,7 @@ public class EditarPerfil extends AppCompatActivity {
     ArrayList<ModeloSpinner> listaCategorias, listaRegiones;
     private static final int PICK_IMAGE = 100;
     Uri imageUri;
-    private final String BASE_URL="http://192.168.0.13/";
+    private final String BASE_URL=new ipLocalhost().getBASE_URL();
     ProgressBar progressBar;
 
     ipLocalhost ip = new ipLocalhost();

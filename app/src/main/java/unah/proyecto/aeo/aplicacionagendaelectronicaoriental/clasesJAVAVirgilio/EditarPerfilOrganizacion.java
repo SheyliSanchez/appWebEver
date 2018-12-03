@@ -116,7 +116,7 @@ public class EditarPerfilOrganizacion extends AppCompatActivity {
     int nu;
 
     ipLocalhost ip = new ipLocalhost();
-    private  String BASE_URL=new ipLocalhost().getIp().substring(0,19);
+    private  String BASE_URL=new ipLocalhost().getBASE_URL();
 
     Double lat,log;
     @Override

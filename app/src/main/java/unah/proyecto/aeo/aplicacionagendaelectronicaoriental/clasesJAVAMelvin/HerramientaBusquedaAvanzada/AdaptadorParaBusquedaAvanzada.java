@@ -25,7 +25,7 @@ public class AdaptadorParaBusquedaAvanzada extends RecyclerView.Adapter<ViewHold
      **********************************************************************************************/
 
     List<PerfilBreve> listaObjetos;
-    private  String BASE_URL=new ipLocalhost().getIp().substring(0,19);
+    private  String BASE_URL=new ipLocalhost().getBASE_URL();
     /**********************************************************************************************
      *                                       CONSTRUCTOR
      **********************************************************************************************/

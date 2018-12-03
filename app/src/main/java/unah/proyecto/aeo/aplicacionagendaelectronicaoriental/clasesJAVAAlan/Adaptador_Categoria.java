@@ -39,7 +39,7 @@ public class Adaptador_Categoria extends RecyclerView.Adapter<Adaptador_Categori
 
     Cursor dataCursor;
     Context context;
-    private  String BASE_URL=new ipLocalhost().getIp().substring(0,19);
+    private  String BASE_URL=new ipLocalhost().getBASE_URL();
     public  class ViewHolder extends RecyclerView.ViewHolder{
         public     ImageView imagen;
         public     TextView titulo;

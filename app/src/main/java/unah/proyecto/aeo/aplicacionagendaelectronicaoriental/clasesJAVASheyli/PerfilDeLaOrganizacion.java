@@ -44,7 +44,7 @@ public class PerfilDeLaOrganizacion extends AppCompatActivity implements Navigat
     FloatingActionButton ubicacion;
     String organizacionP, nombreP, direccionP, telefonoP, emailP, descripcionP, movilP;
     boolean imagenContacto;
-    private  String BASE_URL=new ipLocalhost().getIp().substring(0,19);
+    private  String BASE_URL=new ipLocalhost().getBASE_URL();
     FuncionCerrarSesion cs = new FuncionCerrarSesion();
 
     int id_usu=-1;

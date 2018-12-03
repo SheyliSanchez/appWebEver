@@ -24,7 +24,7 @@ import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVASheyli.ip
 public class AdaptadorMostrarPerfiles extends BaseAdapter {
     private List<Fuente_mostrarPerfiles> perfiles;
     private Context context;
-    private  String BASE_URL=new ipLocalhost().getIp().substring(0,19);
+    private  String BASE_URL=new ipLocalhost().getBASE_URL();
 
     //constructor
 
