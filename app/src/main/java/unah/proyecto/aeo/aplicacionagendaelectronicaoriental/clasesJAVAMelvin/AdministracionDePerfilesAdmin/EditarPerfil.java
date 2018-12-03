@@ -595,7 +595,7 @@ public class EditarPerfil extends AppCompatActivity {
 
                 HttpClient httpclient;
                 HttpPost httppost;
-                File img=new File(getPath(imageUri));
+
                 MultipartEntityBuilder multipartEntity = MultipartEntityBuilder.create();
                 multipartEntity.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
                 httpclient = new DefaultHttpClient();
@@ -613,7 +613,11 @@ public class EditarPerfil extends AppCompatActivity {
                 multipartEntity.addPart("longitud_rec",new StringBody(etlongitud.getText().toString()));
                 multipartEntity.addPart("id_categoria",new StringBody(String.valueOf(id_categoria)));
                 multipartEntity.addPart("id_region",new StringBody(String.valueOf(id_region)));
-                multipartEntity.addPart("imagen", new FileBody(img));
+                if(editarFoto){
+                    File img=new File(getPath(imageUri));
+                    multipartEntity.addPart("imagen", new FileBody(img));
+                }
+
 
                 HttpEntity entity = multipartEntity.build();
                 httppost.setEntity(entity);

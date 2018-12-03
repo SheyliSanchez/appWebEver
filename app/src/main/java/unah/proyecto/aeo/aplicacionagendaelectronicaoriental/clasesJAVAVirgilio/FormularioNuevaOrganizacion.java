@@ -477,27 +477,29 @@ public class FormularioNuevaOrganizacion extends AppCompatActivity {
 
                 HttpClient httpclient;
                 HttpPost httppost;
-                File img=new File(getPath(imageUri));
+
                 MultipartEntityBuilder multipartEntity = MultipartEntityBuilder.create();
                 multipartEntity.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
                 httpclient = new DefaultHttpClient();
-                httppost = new HttpPost(ip.getIp()+"crearPerfil");
-                httppost.setHeader("Authorization",SharedPrefManager.getInstance(FormularioNuevaOrganizacion.this).getUSUARIO_LOGUEADO().getToken());
+                httppost = new HttpPost(ip.getIp() + "crearPerfil");
+                httppost.setHeader("Authorization", SharedPrefManager.getInstance(FormularioNuevaOrganizacion.this).getUSUARIO_LOGUEADO().getToken());
 
                 multipartEntity.addPart("nomborg_rec", new StringBody(nombreOrganizacion.getText().toString()));
-                multipartEntity.addPart("numtel_rec",new StringBody(telefonoFijo.getText().toString()));
-                multipartEntity.addPart("numcel_rec",new StringBody(telefonoCelular.getText().toString()));
-                multipartEntity.addPart("direccion_rec",new StringBody(direccionOrganizacion.getText().toString()));
-                multipartEntity.addPart("email_rec",new StringBody(emailOrganizacion.getText().toString()));
-                multipartEntity.addPart("desc_rec",new StringBody(descrpcionOrganizacion.getText().toString()));
-                multipartEntity.addPart("lat_rec",new StringBody(lat.getText().toString()));
-                multipartEntity.addPart("longitud_rec",new StringBody(lo.getText().toString()));
-                multipartEntity.addPart("id_categoria",new StringBody(String.valueOf(id_categoria)));
-                multipartEntity.addPart("id_region",new StringBody(String.valueOf(id_region)));
-                multipartEntity.addPart("id_usuario",new StringBody(String.valueOf(id_usuario)));
-                multipartEntity.addPart("id_estado",new StringBody(String.valueOf(1)));
-                multipartEntity.addPart("imagen", new FileBody(img));
-
+                multipartEntity.addPart("numtel_rec", new StringBody(telefonoFijo.getText().toString()));
+                multipartEntity.addPart("numcel_rec", new StringBody(telefonoCelular.getText().toString()));
+                multipartEntity.addPart("direccion_rec", new StringBody(direccionOrganizacion.getText().toString()));
+                multipartEntity.addPart("email_rec", new StringBody(emailOrganizacion.getText().toString()));
+                multipartEntity.addPart("desc_rec", new StringBody(descrpcionOrganizacion.getText().toString()));
+                multipartEntity.addPart("lat_rec", new StringBody(lat.getText().toString()));
+                multipartEntity.addPart("longitud_rec", new StringBody(lo.getText().toString()));
+                multipartEntity.addPart("id_categoria", new StringBody(String.valueOf(id_categoria)));
+                multipartEntity.addPart("id_region", new StringBody(String.valueOf(id_region)));
+                multipartEntity.addPart("id_usuario", new StringBody(String.valueOf(id_usuario)));
+                multipartEntity.addPart("id_estado", new StringBody(String.valueOf(1)));
+                if(editarFoto){
+                    File img = new File(getPath(imageUri));
+                    multipartEntity.addPart("imagen", new FileBody(img));
+                }
                 HttpEntity entity = multipartEntity.build();
                 httppost.setEntity(entity);
                 httpclient.execute(httppost);

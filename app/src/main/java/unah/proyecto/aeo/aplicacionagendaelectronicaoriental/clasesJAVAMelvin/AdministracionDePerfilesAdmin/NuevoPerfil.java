@@ -474,7 +474,8 @@ public class NuevoPerfil extends AppCompatActivity {
 
                 HttpClient httpclient;
                 HttpPost httppost;
-                File img=new File(getPath(imageUri));
+
+
                 MultipartEntityBuilder multipartEntity = MultipartEntityBuilder.create();
                 multipartEntity.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
                 httpclient = new DefaultHttpClient();
@@ -493,7 +494,11 @@ public class NuevoPerfil extends AppCompatActivity {
                 multipartEntity.addPart("id_region",new StringBody(String.valueOf(id_region)));
                 multipartEntity.addPart("id_usuario",new StringBody(String.valueOf(id_usuario)));
                 multipartEntity.addPart("id_estado",new StringBody(String.valueOf(2)));
-                multipartEntity.addPart("imagen", new FileBody(img));
+                if(editarFoto){
+                    File img=new File(getPath(imageUri));
+                    multipartEntity.addPart("imagen", new FileBody(img));
+                }
+
 
                 HttpEntity entity = multipartEntity.build();
                 httppost.setEntity(entity);
