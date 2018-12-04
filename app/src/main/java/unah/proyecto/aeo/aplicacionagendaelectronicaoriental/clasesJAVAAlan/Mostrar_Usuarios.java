@@ -21,6 +21,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import cz.msebera.android.httpclient.HttpResponse;
 import cz.msebera.android.httpclient.NameValuePair;
 import cz.msebera.android.httpclient.client.HttpClient;
 import cz.msebera.android.httpclient.client.entity.UrlEncodedFormEntity;
@@ -29,6 +30,7 @@ import cz.msebera.android.httpclient.impl.client.DefaultHttpClient;
 import cz.msebera.android.httpclient.message.BasicNameValuePair;
 import cz.msebera.android.httpclient.util.EntityUtils;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.R;
+import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVASheyli.FuncionCerrarSesion;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVASheyli.ipLocalhost;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAVirgilio.FormularioRegistroLogin;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAVirgilio.Login;
@@ -47,7 +49,7 @@ public class Mostrar_Usuarios extends AppCompatActivity {
     String nombre_usuario,descripcion_rol;
     Adaptador_mostrarusuarios adaptador;
     ProgressBar barra;
-
+    FuncionCerrarSesion cs = new FuncionCerrarSesion();
     ipLocalhost ip = new ipLocalhost();
 
     public  void onCreate(Bundle b){
@@ -58,7 +60,7 @@ public class Mostrar_Usuarios extends AppCompatActivity {
         setContentView(R.layout.mostrar_usuario);
 
 
-       new ArrayList<>();
+        new ArrayList<>();
         //flecha atras
         android.support.v7.app.ActionBar actionBar= getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -69,7 +71,7 @@ public class Mostrar_Usuarios extends AppCompatActivity {
 
         //LLENAMOS LA LISTA QUEVIENE DESDE EL SERVIDOR.
         new llenarLista().execute();
-       // llenarLista();
+        // llenarLista();
         onclick();
 
         FloatingActionButton floatingActionButton = (FloatingActionButton)findViewById(R.id.fab);
@@ -119,12 +121,12 @@ public class Mostrar_Usuarios extends AppCompatActivity {
 
 
     //LLENAR EL LIST VIEW DESDE EL WEB SERVER.
-    private class llenarLista extends AsyncTask<String, Integer, Boolean> {
+    private class llenarLista extends AsyncTask<String, Integer, Integer> {
         private llenarLista(){}
-        boolean resul = true;
+        int ResponseEstado;
 
         @Override
-        protected Boolean doInBackground(String... strings) {
+        protected Integer doInBackground(String... strings) {
 
             try {
                 HttpClient httpclient;
@@ -134,7 +136,9 @@ public class Mostrar_Usuarios extends AppCompatActivity {
                 httppost = new HttpPost(ip.getIp()+"todosUsuarios");
                 parametros.add(new BasicNameValuePair("Authorization",SharedPrefManager.getInstance(Mostrar_Usuarios.this).getUSUARIO_LOGUEADO().getToken()));
                 httppost.setEntity(new UrlEncodedFormEntity(parametros, "UTF-8"));
-                JSONObject jsonObject = new JSONObject(EntityUtils.toString(httpclient.execute(httppost).getEntity()));
+                HttpResponse httpResponse=httpclient.execute(httppost);
+                ResponseEstado = httpResponse.getStatusLine().getStatusCode();
+                JSONObject jsonObject = new JSONObject(EntityUtils.toString(httpResponse.getEntity()));
                 JSONArray jsonArray = jsonObject.getJSONArray("content");
 
                 for (int i = 0; i < jsonArray.length(); i++) {
@@ -147,9 +151,8 @@ public class Mostrar_Usuarios extends AppCompatActivity {
                 }
             } catch (Exception ex) {
                 Log.e("ServicioRest", "Error!", ex);
-                resul = false;
             }
-            return Boolean.valueOf(resul);
+            return ResponseEstado;
 
         }
 
@@ -159,15 +162,24 @@ public class Mostrar_Usuarios extends AppCompatActivity {
             barra.setProgress(values[0]);
         }
 
-        protected void onPostExecute(Boolean result) {
+        protected void onPostExecute(Integer responseEstado) {
 
-            if (result.booleanValue()) {
+            if (responseEstado==200) {
                 barra.setVisibility(View.INVISIBLE);
                 adaptador = new Adaptador_mostrarusuarios( mostrar_usuarios,getApplicationContext());
                 lista.setAdapter(adaptador);
                 return;
+            }else if(responseEstado==500){
+
+            }else if(responseEstado==401){
+                Toast.makeText(getApplicationContext(), "Token de autenticación inválido o expirado, por favor inicie sesión nuevamente", Toast.LENGTH_SHORT).show();
+                cs.cerrarsesion();
+                SharedPrefManager.getInstance(getApplicationContext()).limpiar();
+                startActivity(new Intent(Mostrar_Usuarios.this, Login.class)
+                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK));
+            }else if(responseEstado==400){
+
             }
-            Toast.makeText(getApplicationContext(), "Problemas de conexión", Toast.LENGTH_SHORT).show();
         }
 
 
