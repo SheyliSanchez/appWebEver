@@ -2,8 +2,8 @@ package unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVASheyli;
 
 public class ipLocalhost {
 
-    private static final String ip = "http://192.168.0.105:8090/WebEver/public/";
-    private static final  String BASE_URL=ip.substring(0,24);
+    private static final String ip = "http://aeo.web-hn.com/public/";
+    private static final  String BASE_URL="http://aeo.web-hn.com";
     public String getIp() {
         return ip;
     }

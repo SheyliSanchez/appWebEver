@@ -218,8 +218,9 @@ public class FormularioRegistroLogin extends AppCompatActivity {
                 HttpPost httppost;
                 httpclient = new DefaultHttpClient();
                 httppost = new HttpPost(ip.getIp()+"roles");
-                httppost.setHeader("Authorization",SharedPrefManager.getInstance(FormularioRegistroLogin.this).getUSUARIO_LOGUEADO().getToken());
-
+                ArrayList<NameValuePair> parametros=new ArrayList<>();
+                parametros.add(new BasicNameValuePair("Authorization",SharedPrefManager.getInstance(FormularioRegistroLogin.this).getUSUARIO_LOGUEADO().getToken()));
+                httppost.setEntity(new UrlEncodedFormEntity(parametros,"UTF-8"));
                 JSONObject jsonObject = new JSONObject(EntityUtils.toString(httpclient.execute(httppost).getEntity()));
                 JSONArray respJSON = jsonObject.getJSONArray("content");
                  for (int i = 0; i < respJSON.length(); i++) {

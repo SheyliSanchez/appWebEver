@@ -46,7 +46,7 @@ public class AdaptadorPerfilBreve extends RecyclerView.Adapter<AdaptadorPerfilBr
     /**********************************************************************************************
      *                                       DECLARACIÓN DE VARIABLES
      **********************************************************************************************/
-    private  String BASE_URL=new ipLocalhost().getIp().substring(0,19);
+    private  String BASE_URL=new ipLocalhost().getBASE_URL();
     Cursor dataCursor;
     Context context;
     private static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE=1;

@@ -482,8 +482,6 @@ public class FormularioNuevaOrganizacion extends AppCompatActivity {
                 multipartEntity.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
                 httpclient = new DefaultHttpClient();
                 httppost = new HttpPost(ip.getIp() + "crearPerfil");
-                httppost.setHeader("Authorization", SharedPrefManager.getInstance(FormularioNuevaOrganizacion.this).getUSUARIO_LOGUEADO().getToken());
-
                 multipartEntity.addPart("nomborg_rec", new StringBody(nombreOrganizacion.getText().toString()));
                 multipartEntity.addPart("numtel_rec", new StringBody(telefonoFijo.getText().toString()));
                 multipartEntity.addPart("numcel_rec", new StringBody(telefonoCelular.getText().toString()));
@@ -496,6 +494,8 @@ public class FormularioNuevaOrganizacion extends AppCompatActivity {
                 multipartEntity.addPart("id_region", new StringBody(String.valueOf(id_region)));
                 multipartEntity.addPart("id_usuario", new StringBody(String.valueOf(id_usuario)));
                 multipartEntity.addPart("id_estado", new StringBody(String.valueOf(1)));
+                multipartEntity.addPart("Authorization", new StringBody(SharedPrefManager.getInstance(FormularioNuevaOrganizacion.this).getUSUARIO_LOGUEADO().getToken()));
+
                 if(editarFoto){
                     File img = new File(getPath(imageUri));
                     multipartEntity.addPart("imagen", new FileBody(img));

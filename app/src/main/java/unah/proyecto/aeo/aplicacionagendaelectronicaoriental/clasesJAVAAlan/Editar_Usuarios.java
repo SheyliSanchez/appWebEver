@@ -188,7 +188,7 @@ public class Editar_Usuarios extends AppCompatActivity {
                 httpclient = new DefaultHttpClient();
                 httppost = new HttpPost(ip.getIp()+"eliminarUsuario");
                 parametros = new ArrayList<NameValuePair>();
-                httppost.setHeader("Authorization",SharedPrefManager.getInstance(Editar_Usuarios.this).getUSUARIO_LOGUEADO().getToken());
+                parametros.add(new BasicNameValuePair("Authorization",SharedPrefManager.getInstance(Editar_Usuarios.this).getUSUARIO_LOGUEADO().getToken()));
                 parametros.add(new BasicNameValuePair("usuario",String.valueOf(usuarioEditar)));
                 httppost.setEntity(new UrlEncodedFormEntity(parametros, "UTF-8"));
 
@@ -272,12 +272,12 @@ public class Editar_Usuarios extends AppCompatActivity {
                 ArrayList<NameValuePair> parametros;
                 httpclient = new DefaultHttpClient();
                 httppost = new HttpPost(ip.getIp()+"actualizarUsuario");
-                httppost.setHeader("Authorization",SharedPrefManager.getInstance(Editar_Usuarios.this).getUSUARIO_LOGUEADO().getToken());
                 parametros = new ArrayList<NameValuePair>();
                 parametros.add(new BasicNameValuePair("usuario",String.valueOf(usuarioEditar)));
                 parametros.add(new BasicNameValuePair("usuarionombre",nombreusuario.getText().toString()));
                 parametros.add(new BasicNameValuePair("usuariopropio",nombrepropio.getText().toString()));
                 parametros.add(new BasicNameValuePair("usuarioemail",correo.getText().toString()));
+                parametros.add(new BasicNameValuePair("Authorization",SharedPrefManager.getInstance(Editar_Usuarios.this).getUSUARIO_LOGUEADO().getToken()));
 
                 httppost.setEntity(new UrlEncodedFormEntity(parametros, "UTF-8"));
 
@@ -328,9 +328,10 @@ public class Editar_Usuarios extends AppCompatActivity {
                 ArrayList<NameValuePair> parametros;
                 httpclient = new DefaultHttpClient();
                 httppost = new HttpPost(ip.getIp()+"obtenerUsuario");
-                httppost.setHeader("Authorization",SharedPrefManager.getInstance(Editar_Usuarios.this).getUSUARIO_LOGUEADO().getToken());
                 parametros = new ArrayList<NameValuePair>();
                 parametros.add(new BasicNameValuePair("usuario",String.valueOf(usuarioEditar) ));
+                parametros.add(new BasicNameValuePair("Authorization",SharedPrefManager.getInstance(Editar_Usuarios.this).getUSUARIO_LOGUEADO().getToken()));
+
                 httppost.setEntity(new UrlEncodedFormEntity(parametros, "UTF-8"));
 
                 JSONObject respJSON = new JSONObject(EntityUtils.toString(( httpclient.execute(httppost)).getEntity()));

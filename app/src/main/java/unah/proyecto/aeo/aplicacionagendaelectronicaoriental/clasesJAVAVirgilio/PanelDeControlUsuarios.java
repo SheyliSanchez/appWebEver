@@ -223,9 +223,9 @@ public class PanelDeControlUsuarios extends AppCompatActivity implements Navigat
                 ArrayList<NameValuePair> parametros;
                 httpclient = new DefaultHttpClient();
                 httppost = new HttpPost(ip.getIp()+"obtenerPerfilesCliente");
-                httppost.setHeader("Authorization",SharedPrefManager.getInstance(PanelDeControlUsuarios.this).getUSUARIO_LOGUEADO().getToken());
                 parametros = new ArrayList<NameValuePair>();
                 parametros.add(new BasicNameValuePair("id",String.valueOf(id_usu)));
+                parametros.add(new BasicNameValuePair("Authorization",SharedPrefManager.getInstance(PanelDeControlUsuarios.this).getUSUARIO_LOGUEADO().getToken()));
                 httppost.setEntity(new UrlEncodedFormEntity(parametros, "UTF-8"));
 
                 JSONObject jsonObject = new JSONObject(EntityUtils.toString(( httpclient.execute(httppost)).getEntity()));

@@ -129,11 +129,11 @@ public class Mostrar_Usuarios extends AppCompatActivity {
             try {
                 HttpClient httpclient;
                 HttpPost httppost;
-                //ArrayList<NameValuePair> parametros;
+                ArrayList<NameValuePair> parametros=new ArrayList<NameValuePair>();
                 httpclient = new DefaultHttpClient();
                 httppost = new HttpPost(ip.getIp()+"todosUsuarios");
-                httppost.setHeader("Authorization",SharedPrefManager.getInstance(Mostrar_Usuarios.this).getUSUARIO_LOGUEADO().getToken());
-
+                parametros.add(new BasicNameValuePair("Authorization",SharedPrefManager.getInstance(Mostrar_Usuarios.this).getUSUARIO_LOGUEADO().getToken()));
+                httppost.setEntity(new UrlEncodedFormEntity(parametros, "UTF-8"));
                 JSONObject jsonObject = new JSONObject(EntityUtils.toString(httpclient.execute(httppost).getEntity()));
                 JSONArray jsonArray = jsonObject.getJSONArray("content");
 

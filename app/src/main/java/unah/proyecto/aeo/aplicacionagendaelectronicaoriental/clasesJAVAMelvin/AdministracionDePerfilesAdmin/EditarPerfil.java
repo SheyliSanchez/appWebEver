@@ -600,8 +600,6 @@ public class EditarPerfil extends AppCompatActivity {
                 multipartEntity.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
                 httpclient = new DefaultHttpClient();
                 httppost = new HttpPost(ip.getIp()+"actualizarPerfil");
-                httppost.setHeader("Authorization",SharedPrefManager.getInstance(EditarPerfil.this).getUSUARIO_LOGUEADO().getToken());
-
                 multipartEntity.addPart("cto",new StringBody(String.valueOf(id_perfilEditar)));
                 multipartEntity.addPart("nomborg_rec", new StringBody(etnombreeorganizacion.getText().toString()));
                 multipartEntity.addPart("numtel_rec",new StringBody(etnumerofijo.getText().toString()));
@@ -613,6 +611,8 @@ public class EditarPerfil extends AppCompatActivity {
                 multipartEntity.addPart("longitud_rec",new StringBody(etlongitud.getText().toString()));
                 multipartEntity.addPart("id_categoria",new StringBody(String.valueOf(id_categoria)));
                 multipartEntity.addPart("id_region",new StringBody(String.valueOf(id_region)));
+                multipartEntity.addPart("Authorization",new StringBody(SharedPrefManager.getInstance(EditarPerfil.this).getUSUARIO_LOGUEADO().getToken()));
+
                 if(editarFoto){
                     File img=new File(getPath(imageUri));
                     multipartEntity.addPart("imagen", new FileBody(img));
@@ -673,8 +673,7 @@ public class EditarPerfil extends AppCompatActivity {
                 HttpClient httpclient;
                 HttpGet httppost;
                 httpclient = new DefaultHttpClient();
-                httppost = new HttpGet(ip.getIp()+"regiones");
-                httppost.setHeader("Authorization",SharedPrefManager.getInstance(EditarPerfil.this).getUSUARIO_LOGUEADO().getToken());
+                httppost = new HttpGet(ip.getIp()+"regiones?Authorization="+SharedPrefManager.getInstance(EditarPerfil.this).getUSUARIO_LOGUEADO().getToken());
 
                 JSONObject regionesWS = new JSONObject(EntityUtils.toString(( httpclient.execute(httppost)).getEntity()));
                 JSONArray jsonArrayRegion = regionesWS.getJSONArray("content");
@@ -747,9 +746,9 @@ public class EditarPerfil extends AppCompatActivity {
                 ArrayList<NameValuePair> parametros;
                 httpclient = new DefaultHttpClient();
                 httppost = new HttpPost(ip.getIp()+"eliminarPerfil");
-                httppost.setHeader("Authorization",SharedPrefManager.getInstance(EditarPerfil.this).getUSUARIO_LOGUEADO().getToken());
                 parametros = new ArrayList<NameValuePair>();
                 parametros.add(new BasicNameValuePair("cto",String.valueOf(id_perfilEditar)));
+                parametros.add(new BasicNameValuePair("Authorization",SharedPrefManager.getInstance(EditarPerfil.this).getUSUARIO_LOGUEADO().getToken()));
                 httppost.setEntity(new UrlEncodedFormEntity(parametros, "UTF-8"));
                 httpclient.execute(httppost);
 

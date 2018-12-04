@@ -290,10 +290,10 @@ public class NuevasSolicitudes extends AppCompatActivity
                 ArrayList<NameValuePair> parametros;
                 httpclient = new DefaultHttpClient();
                 httppost = new HttpPost(ip.getIp()+"gestionarSolicitud");
-                httppost.setHeader("Authorization",SharedPrefManager.getInstance(NuevasSolicitudes.this).getUSUARIO_LOGUEADO().getToken());
                 parametros = new ArrayList<NameValuePair>();
                 parametros.add(new BasicNameValuePair("cto",String.valueOf(idperf)));
                 parametros.add(new BasicNameValuePair("opr","aceptar"));
+                parametros.add(new BasicNameValuePair("Authorization",SharedPrefManager.getInstance(NuevasSolicitudes.this).getUSUARIO_LOGUEADO().getToken()));
                 httppost.setEntity(new UrlEncodedFormEntity(parametros, "UTF-8"));
                 httpclient.execute(httppost);
 
@@ -339,10 +339,11 @@ public class NuevasSolicitudes extends AppCompatActivity
                 ArrayList<NameValuePair> parametros;
                 httpclient = new DefaultHttpClient();
                 httppost = new HttpPost(ip.getIp()+"gestionarSolicitud");
-                httppost.setHeader("Authorization",SharedPrefManager.getInstance(NuevasSolicitudes.this).getUSUARIO_LOGUEADO().getToken());
                 parametros = new ArrayList<NameValuePair>();
                 parametros.add(new BasicNameValuePair("cto",String.valueOf(idperf)));
                 parametros.add(new BasicNameValuePair("opr","rechazar"));
+                parametros.add(new BasicNameValuePair("Authorization",SharedPrefManager.getInstance(NuevasSolicitudes.this).getUSUARIO_LOGUEADO().getToken()));
+
                 httppost.setEntity(new UrlEncodedFormEntity(parametros, "UTF-8"));
                 httpclient.execute(httppost);
 

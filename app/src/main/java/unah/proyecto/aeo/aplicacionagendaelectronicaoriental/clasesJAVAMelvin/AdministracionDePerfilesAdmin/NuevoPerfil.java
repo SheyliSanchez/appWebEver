@@ -413,9 +413,10 @@ public class NuevoPerfil extends AppCompatActivity {
                 ArrayList<NameValuePair> parametros;
                 httpclient = new DefaultHttpClient();
                 httppost = new HttpPost(ip.getIp()+"todosUsuarios");
-                httppost.setHeader("Authorization",SharedPrefManager.getInstance(NuevoPerfil.this).getUSUARIO_LOGUEADO().getToken());
                 parametros = new ArrayList<NameValuePair>();
                 parametros.add(new BasicNameValuePair("ste","1"));
+                parametros.add(new BasicNameValuePair("Authorization",SharedPrefManager.getInstance(NuevoPerfil.this).getUSUARIO_LOGUEADO().getToken()));
+
                 httppost.setEntity(new UrlEncodedFormEntity(parametros, "UTF-8"));
 
                 JSONObject regionesWS = new JSONObject(EntityUtils.toString(httpclient.execute(regiones).getEntity()));
@@ -480,7 +481,6 @@ public class NuevoPerfil extends AppCompatActivity {
                 multipartEntity.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
                 httpclient = new DefaultHttpClient();
                 httppost = new HttpPost(ip.getIp()+"crearPerfil");
-                httppost.setHeader("Authorization",SharedPrefManager.getInstance(NuevoPerfil.this).getUSUARIO_LOGUEADO().getToken());
 
                 multipartEntity.addPart("nomborg_rec", new StringBody(etnombreeorganizacion.getText().toString()));
                 multipartEntity.addPart("numtel_rec",new StringBody(etnumerofijo.getText().toString()));
@@ -494,6 +494,8 @@ public class NuevoPerfil extends AppCompatActivity {
                 multipartEntity.addPart("id_region",new StringBody(String.valueOf(id_region)));
                 multipartEntity.addPart("id_usuario",new StringBody(String.valueOf(id_usuario)));
                 multipartEntity.addPart("id_estado",new StringBody(String.valueOf(2)));
+                multipartEntity.addPart("Authorization", new StringBody(SharedPrefManager.getInstance(NuevoPerfil.this).getUSUARIO_LOGUEADO().getToken()));
+
                 if(editarFoto){
                     File img=new File(getPath(imageUri));
                     multipartEntity.addPart("imagen", new FileBody(img));

@@ -231,12 +231,12 @@ public class EditarUsuario extends AppCompatActivity implements NavigationView.O
                 ArrayList<NameValuePair> parametros;
                 httpclient = new DefaultHttpClient();
                 httppost = new HttpPost(ip.getIp()+"actualizarUsuario");
-                httppost.setHeader("Authorization",SharedPrefManager.getInstance(EditarUsuario.this).getUSUARIO_LOGUEADO().getToken());
                 parametros = new ArrayList<NameValuePair>();
                 parametros.add(new BasicNameValuePair("usuario",String.valueOf(usuarioEditar)));
                 parametros.add(new BasicNameValuePair("usuarionombre",nombreusuario.getText().toString()));
                 parametros.add(new BasicNameValuePair("usuariopropio",nombrepropio.getText().toString()));
                 parametros.add(new BasicNameValuePair("usuarioemail",correo.getText().toString()));
+                parametros.add(new BasicNameValuePair("Authorization",SharedPrefManager.getInstance(EditarUsuario.this).getUSUARIO_LOGUEADO().getToken()));
 
                 httppost.setEntity(new UrlEncodedFormEntity(parametros, "UTF-8"));
 
@@ -285,9 +285,10 @@ public class EditarUsuario extends AppCompatActivity implements NavigationView.O
                 ArrayList<NameValuePair> parametros;
                 httpclient = new DefaultHttpClient();
                 httppost = new HttpPost(ip.getIp()+"obtenerUsuario");
-                httppost.setHeader("Authorization",SharedPrefManager.getInstance(EditarUsuario.this).getUSUARIO_LOGUEADO().getToken());
                 parametros = new ArrayList<NameValuePair>();
                 parametros.add(new BasicNameValuePair("usuario",String.valueOf(usuarioEditar) ));
+                parametros.add(new BasicNameValuePair("Authorization",SharedPrefManager.getInstance(EditarUsuario.this).getUSUARIO_LOGUEADO().getToken()));
+
                 httppost.setEntity(new UrlEncodedFormEntity(parametros, "UTF-8"));
 
 
@@ -338,9 +339,9 @@ public class EditarUsuario extends AppCompatActivity implements NavigationView.O
                 ArrayList<NameValuePair> parametros;
                 httpclient = new DefaultHttpClient();
                 httppost = new HttpPost(ip.getIp()+"eliminarUsuario");
-                httppost.setHeader("Authorization",SharedPrefManager.getInstance(EditarUsuario.this).getUSUARIO_LOGUEADO().getToken());
                 parametros = new ArrayList<NameValuePair>();
                 parametros.add(new BasicNameValuePair("usuario",String.valueOf(SharedPrefManager.getInstance(getApplicationContext()).getUSUARIO_LOGUEADO().getId_logueado())) );
+                parametros.add(new BasicNameValuePair("Authorization",SharedPrefManager.getInstance(EditarUsuario.this).getUSUARIO_LOGUEADO().getToken()));
                 httppost.setEntity(new UrlEncodedFormEntity(parametros, "UTF-8"));
                 httpclient.execute(httppost);
 
