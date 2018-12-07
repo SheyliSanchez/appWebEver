@@ -22,6 +22,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import cz.msebera.android.httpclient.HttpResponse;
 import cz.msebera.android.httpclient.NameValuePair;
 import cz.msebera.android.httpclient.client.HttpClient;
 import cz.msebera.android.httpclient.client.entity.UrlEncodedFormEntity;
@@ -172,12 +173,12 @@ public class Editar_Usuarios extends AppCompatActivity {
     }
 
     //ELIMINAR UN USUARIO DESDE EL WEB SERVISE.
-    private class eliminarUsuario extends AsyncTask<String, Integer, Boolean> {
+    private class eliminarUsuario extends AsyncTask<String, Integer, Integer> {
         private eliminarUsuario(){}
-        boolean resul = true;
+        int ResponseEstado;
 
         @Override
-        protected Boolean doInBackground(String... strings) {
+        protected Integer doInBackground(String... strings) {
 
             try {
 
@@ -191,29 +192,36 @@ public class Editar_Usuarios extends AppCompatActivity {
                 parametros.add(new BasicNameValuePair("Authorization",SharedPrefManager.getInstance(Editar_Usuarios.this).getUSUARIO_LOGUEADO().getToken()));
                 parametros.add(new BasicNameValuePair("usuario",String.valueOf(usuarioEditar)));
                 httppost.setEntity(new UrlEncodedFormEntity(parametros, "UTF-8"));
+                HttpResponse httpResponse=httpclient.execute(httppost);
+                ResponseEstado = httpResponse.getStatusLine().getStatusCode();
 
-                httpclient.execute(httppost);
-
-
-                resul = true;
             } catch (Exception ex) {
                 Log.e("ServicioRest", "Error!", ex);
-                resul = false;
             }
-            return resul;
+            return ResponseEstado;
 
         }
 
-        protected void onPostExecute(Boolean result) {
+        protected void onPostExecute(Integer responseEstado) {
 
-            if (resul) {
+            if (responseEstado==200) {
 
-                Toast.makeText(getApplicationContext(),"Usuario Eliminado",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Usuario Eliminado", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent();
-                setResult(Mostrar_Usuarios.RESULT_OK,intent);
+                setResult(Mostrar_Usuarios.RESULT_OK, intent);
                 finish();
 
-            }else {
+            }else if(responseEstado==500){
+                Toast.makeText(getApplicationContext(), "Ocurrió un error en la base de datos", Toast.LENGTH_SHORT).show();
+            }else if(responseEstado==401){
+                    Toast.makeText(getApplicationContext(), "Token de autenticación inválido o expirado, por favor inicie sesión nuevamente", Toast.LENGTH_SHORT).show();
+                    cs.cerrarsesion();
+                    SharedPrefManager.getInstance(getApplicationContext()).limpiar();
+                    startActivity(new Intent(Editar_Usuarios.this, Login.class)
+                            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK));
+                }else if(responseEstado==400){
+
+                }else {
                 Toast.makeText(getApplicationContext(), "Problemas de conexión", Toast.LENGTH_SHORT).show();
             }
         }
@@ -259,12 +267,12 @@ public class Editar_Usuarios extends AppCompatActivity {
         }
     }
     //ACTUALIZACION DE UN USUARIO DESDE EL WEB SERVER
-    private class actualizarUsuarios extends AsyncTask<String, Integer, Boolean> {
+    private class actualizarUsuarios extends AsyncTask<String, Integer, Integer> {
         private actualizarUsuarios(){}
-        boolean resul = true;
+        int ResponseEstado;
 
         @Override
-        protected Boolean doInBackground(String... strings) {
+        protected Integer doInBackground(String... strings) {
 
             try {
                 HttpClient httpclient;
@@ -278,49 +286,57 @@ public class Editar_Usuarios extends AppCompatActivity {
                 parametros.add(new BasicNameValuePair("usuariopropio",nombrepropio.getText().toString()));
                 parametros.add(new BasicNameValuePair("usuarioemail",correo.getText().toString()));
                 parametros.add(new BasicNameValuePair("Authorization",SharedPrefManager.getInstance(Editar_Usuarios.this).getUSUARIO_LOGUEADO().getToken()));
-
                 httppost.setEntity(new UrlEncodedFormEntity(parametros, "UTF-8"));
 
-                httpclient.execute(httppost);
+                HttpResponse httpResponse=httpclient.execute(httppost);
+                ResponseEstado = httpResponse.getStatusLine().getStatusCode();
 
 
-
-                resul = true;
             } catch (Exception ex) {
                 Log.e("ServicioRest", "Error!", ex);
-                resul = false;
+
             }
-            return resul;
+            return ResponseEstado;
 
         }
 
-        protected void onPostExecute(Boolean result) {
+        protected void onPostExecute(Integer responseEstado) {
             validar();
 
 
-            if (resul) {
+            if (responseEstado==200) {
                 if (nombreusuario.getError()==null && nombrepropio.getError()==null && correo.getError()==null){
                     Toast.makeText(getApplicationContext(),"Usuario Realizado Correctamente",Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent();
                     setResult(Mostrar_Usuarios.RESULT_OK,intent);
                     finish();
                 }
-
+            }else if(responseEstado==500){
+                Toast.makeText(getApplicationContext(), "Ocurrió un error en la base de datos", Toast.LENGTH_SHORT).show();
+            }else if(responseEstado==401){
+                Toast.makeText(getApplicationContext(), "Token de autenticación inválido o expirado, por favor inicie sesión nuevamente", Toast.LENGTH_SHORT).show();
+                cs.cerrarsesion();
+                SharedPrefManager.getInstance(getApplicationContext()).limpiar();
+                startActivity(new Intent(Editar_Usuarios.this, Login.class)
+                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK));
+            }else if(responseEstado==400){
+                Toast.makeText(getApplicationContext(), "El email ya existe.", Toast.LENGTH_SHORT).show();
+            }else if(responseEstado==403){
+                Toast.makeText(getApplicationContext(), "Este nombre de usuario ya existe.", Toast.LENGTH_SHORT).show();
             }else {
                 Toast.makeText(getApplicationContext(), "Problemas de conexión", Toast.LENGTH_SHORT).show();
-
             }
         }
 
 
     }
     //METODO PARA LLENAR CUANDO SE ACTUALIZARON LOS USUARIOS DESDE EL WEB SERVER.
-    private class llenarlosEditTextdelServer extends AsyncTask<String, Integer, Boolean> {
+    private class llenarlosEditTextdelServer extends AsyncTask<String, Integer, Integer> {
         private llenarlosEditTextdelServer(){}
-        boolean resul = true;
+        int ResponseEstado;
 
         @Override
-        protected Boolean doInBackground(String... strings) {
+        protected Integer doInBackground(String... strings) {
 
             try {
                 HttpClient httpclient;
@@ -331,10 +347,11 @@ public class Editar_Usuarios extends AppCompatActivity {
                 parametros = new ArrayList<NameValuePair>();
                 parametros.add(new BasicNameValuePair("usuario",String.valueOf(usuarioEditar) ));
                 parametros.add(new BasicNameValuePair("Authorization",SharedPrefManager.getInstance(Editar_Usuarios.this).getUSUARIO_LOGUEADO().getToken()));
-
                 httppost.setEntity(new UrlEncodedFormEntity(parametros, "UTF-8"));
+                HttpResponse httpResponse=httpclient.execute(httppost);
+                ResponseEstado = httpResponse.getStatusLine().getStatusCode();
 
-                JSONObject respJSON = new JSONObject(EntityUtils.toString(( httpclient.execute(httppost)).getEntity()));
+                JSONObject respJSON = new JSONObject(EntityUtils.toString(httpResponse.getEntity()));
                 JSONArray jsonArray = respJSON.getJSONArray("content");
 
                 for (int i = 0; i < jsonArray.length(); i++) {
@@ -343,28 +360,34 @@ public class Editar_Usuarios extends AppCompatActivity {
                     correoo = jsonArray.getJSONObject(i).getString("correo");
                 }
 
-                resul = true;
             } catch (Exception ex) {
                 Log.e("ServicioRest", "Error!", ex);
-                resul = false;
             }
-            return resul;
+            return ResponseEstado;
 
         }
 
-        protected void onPostExecute(Boolean result) {
+        protected void onPostExecute(Integer responseEstado) {
 
-            if (resul) {
+            if (responseEstado==200) {
                 nombreusuario.setText(nombre_usuario);
                 nombrepropio.setText(nombre_propio);
                 correo.setText(correoo);
+                return;
+            }else if(responseEstado==500){
+                Toast.makeText(getApplicationContext(), "Ocurrió un error en la base de datos", Toast.LENGTH_SHORT).show();
+            }else if(responseEstado==401){
+                Toast.makeText(getApplicationContext(), "Token de autenticación inválido o expirado, por favor inicie sesión nuevamente", Toast.LENGTH_SHORT).show();
+                cs.cerrarsesion();
+                SharedPrefManager.getInstance(getApplicationContext()).limpiar();
+                startActivity(new Intent(Editar_Usuarios.this, Login.class)
+                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK));
+            }else if(responseEstado==400){
+
             }else {
                 Toast.makeText(getApplicationContext(), "Problemas de conexión", Toast.LENGTH_SHORT).show();
             }
         }
-
-
     }
-
 }
 
