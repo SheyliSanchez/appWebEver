@@ -31,6 +31,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import cz.msebera.android.httpclient.HttpResponse;
 import cz.msebera.android.httpclient.NameValuePair;
 import cz.msebera.android.httpclient.client.HttpClient;
 import cz.msebera.android.httpclient.client.entity.UrlEncodedFormEntity;
@@ -50,9 +51,6 @@ public class PanelDeControlUsuarios extends AppCompatActivity implements Navigat
     //preferencia de imgadministrador o usuario
 
     //
-    private Button salir;
-    int id_usuario_resibido_usuario;
-    private int id;
     String estadoOrganizacion;
     private ListView lista;
     //
@@ -61,7 +59,6 @@ public class PanelDeControlUsuarios extends AppCompatActivity implements Navigat
     String nombre_organizacion;
     int id_contacto;
     int perfilselecionado=-1;
-    int idperf;
     String imagen;
 
     int id_usu=-1;
@@ -203,32 +200,30 @@ public class PanelDeControlUsuarios extends AppCompatActivity implements Navigat
     }
 
     //metodo de llenado de el listView
-    private class llenarLista extends AsyncTask<String, Integer, Boolean> {
+    private class llenarLista extends AsyncTask<String, Integer, Integer> {
         private llenarLista(){}
         //variable booleana para controlar el resultado de las ejecuciones
-        boolean resul = true;
 
         int progreso=0;
+        int ResponseEstado;
 
         @Override
-        protected Boolean doInBackground(String... strings) {
-
-
-
+        protected Integer doInBackground(String... strings) {
             //int prueba = preferences.getInt("usuario_ingreso",0);
-
             try {
                 HttpClient httpclient;
                 HttpPost httppost;
                 ArrayList<NameValuePair> parametros;
+                parametros = new ArrayList<NameValuePair>();
                 httpclient = new DefaultHttpClient();
                 httppost = new HttpPost(ip.getIp()+"obtenerPerfilesCliente");
-                parametros = new ArrayList<NameValuePair>();
                 parametros.add(new BasicNameValuePair("id",String.valueOf(id_usu)));
                 parametros.add(new BasicNameValuePair("Authorization",SharedPrefManager.getInstance(PanelDeControlUsuarios.this).getUSUARIO_LOGUEADO().getToken()));
                 httppost.setEntity(new UrlEncodedFormEntity(parametros, "UTF-8"));
+                HttpResponse httpResponse=httpclient.execute(httppost);
+                ResponseEstado = httpResponse.getStatusLine().getStatusCode();
 
-                JSONObject jsonObject = new JSONObject(EntityUtils.toString(( httpclient.execute(httppost)).getEntity()));
+                JSONObject jsonObject = new JSONObject(EntityUtils.toString(httpResponse.getEntity()));
                 JSONArray respJSON = jsonObject.getJSONArray("content");
 
                 //recorre el array para asignar los resultados a las variables
@@ -256,7 +251,7 @@ public class PanelDeControlUsuarios extends AppCompatActivity implements Navigat
                 }
             } catch (Exception ex) {
                 Log.e("ServicioRest", "Error!", ex);
-                resul = false;
+                //resul = false;
             }
             //barra de progreso
             while (progreso<100){
@@ -266,7 +261,7 @@ public class PanelDeControlUsuarios extends AppCompatActivity implements Navigat
             }
             //fin de barra de progreso
 
-            return resul;
+            return ResponseEstado;
 
         }
 
@@ -278,9 +273,9 @@ public class PanelDeControlUsuarios extends AppCompatActivity implements Navigat
 
         }//fin de barra de progreso
 
-        protected void onPostExecute(Boolean result) {
+        protected void onPostExecute(Integer responseEstado) {
 
-            if (result) {
+            if (responseEstado==200) {
 
                 //ingresa en el adapter cada uno de los campos que provienen de el json
                 adaptadorMostrarPerfiles = new AdaptadorOrganizacion(mostrar_perfiles,PanelDeControlUsuarios.this);
@@ -291,6 +286,17 @@ public class PanelDeControlUsuarios extends AppCompatActivity implements Navigat
                 //fin de barra de progreso
 
                 return;
+            }else if(responseEstado==500){
+                Toast.makeText(getApplicationContext(),"Ocurrió un error en la base de datos",Toast.LENGTH_SHORT).show();
+                barraProgreso.setVisibility(View.INVISIBLE);
+
+            }else if(responseEstado==401){
+                Toast.makeText(getApplicationContext(), "Token de autenticación inválido o expirado, por favor inicie sesión nuevamente", Toast.LENGTH_SHORT).show();
+                cs.cerrarsesion();
+                barraProgreso.setVisibility(View.INVISIBLE);
+                SharedPrefManager.getInstance(getApplicationContext()).limpiar();
+                startActivity(new Intent(PanelDeControlUsuarios.this, Login.class)
+                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK));
             }else{
                 //muestra mensaje si se produce un error al ejercutar la consulta al webservice
                 Toast.makeText(getApplicationContext(), "Problemas de conexión", Toast.LENGTH_SHORT).show();

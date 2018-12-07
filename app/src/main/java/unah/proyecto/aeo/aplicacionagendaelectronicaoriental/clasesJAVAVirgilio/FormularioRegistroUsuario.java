@@ -15,6 +15,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import cz.msebera.android.httpclient.HttpResponse;
 import cz.msebera.android.httpclient.NameValuePair;
 import cz.msebera.android.httpclient.client.HttpClient;
 import cz.msebera.android.httpclient.client.entity.UrlEncodedFormEntity;
@@ -134,13 +135,12 @@ public class FormularioRegistroUsuario extends AppCompatActivity {
     }
 
     //METODO PARA INSERTAR USUARIOS DIRECTAMENTE DESDE EL SERVER.
-    private class insertarUsuarios extends AsyncTask<String, Integer, Boolean> {
+    private class insertarUsuarios extends AsyncTask<String, Integer, Integer> {
         private insertarUsuarios(){}
 
-        boolean resul = true;
-
+        int ResponseEstado;
         @Override
-        protected Boolean doInBackground(String... strings) {
+        protected Integer doInBackground(String... strings) {
 
             try {
                 HttpClient httpclient;
@@ -153,35 +153,36 @@ public class FormularioRegistroUsuario extends AppCompatActivity {
                 parametros.add(new BasicNameValuePair("usuariopropio",nombrepropio_isertar_usuario.getText().toString()));
                 parametros.add(new BasicNameValuePair("usuarioemail",correo_insertar_usario.getText().toString()));
                 parametros.add(new BasicNameValuePair("usuariopassword",contrasena_insertar_usuario.getText().toString()));
-
-
                 httppost.setEntity(new UrlEncodedFormEntity(parametros, "UTF-8"));
-
-                httpclient.execute(httppost);
-
-
-
-                resul = true;
+                HttpResponse httpResponse=httpclient.execute(httppost);
+                ResponseEstado = httpResponse.getStatusLine().getStatusCode();
+                //httpclient.execute(httppost);
 
             } catch (Exception ex) {
                 Log.e("ServicioRest", "Error!", ex);
-                resul = false;
+               // resul = false;
             }
-            return resul;
+            return ResponseEstado;
 
         }
 
-        protected void onPostExecute(Boolean result) {
+        protected void onPostExecute(Integer responseEstado) {
             validar();
-            if (resul) {
+            if (responseEstado==200) {
                 //VALIDACION DE QUE LOS CAMPOS NO ESTEN VACIOS ANTES DE INGRESAR UN USUARIO
-
                     Toast.makeText(getApplicationContext(),"Usuario agregado Correctamente",Toast.LENGTH_SHORT).show();
                     finish();
-
-
-
-            }else {
+            }else if(responseEstado==500){
+                Toast.makeText(getApplicationContext(),"Ocurrió un error en la base de datos",Toast.LENGTH_SHORT).show();
+            }else if(responseEstado==400){
+                //Toast.makeText(getApplicationContext(),"El email ya existe.",Toast.LENGTH_SHORT).show();
+                correo_insertar_usario.setError("Email ya existe");
+                //correo_insertar_usario.setText("");
+                correo_insertar_usario.requestFocus();
+            }else if(responseEstado==403){
+                nombreusuario_insertar_usuario.setError("Usuario ya existe");
+                nombreusuario_insertar_usuario.requestFocus();
+            } else {
                 Toast.makeText(getApplicationContext(), "Problemas de conexión", Toast.LENGTH_SHORT).show();
             }
         }

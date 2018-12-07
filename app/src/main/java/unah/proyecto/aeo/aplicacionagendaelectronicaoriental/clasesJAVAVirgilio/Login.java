@@ -310,9 +310,9 @@ public class Login extends AppCompatActivity implements NavigationView.OnNavigat
                     acceder.revertAnimation();
                 }
 
-            }//fin de onPostExecute
+            }//fin result
 
-        }//fin boolean result
+        }//fin de onPostExecute
         public boolean compruebaConexion() {
 
             Runtime runtime = Runtime.getRuntime();
