@@ -48,6 +48,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 import cz.msebera.android.httpclient.HttpEntity;
+import cz.msebera.android.httpclient.HttpResponse;
 import cz.msebera.android.httpclient.NameValuePair;
 import cz.msebera.android.httpclient.client.HttpClient;
 import cz.msebera.android.httpclient.client.entity.UrlEncodedFormEntity;
@@ -65,6 +66,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.R;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAAlan.Editar_Usuarios;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVABessy.Ingresar_Ubicacion;
+import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVASheyli.FuncionCerrarSesion;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVASheyli.ipLocalhost;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAVirgilio.EditarPerfilOrganizacion;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAVirgilio.Login;
@@ -92,6 +94,7 @@ public class EditarPerfil extends AppCompatActivity {
     ProgressBar progressBar;
 
     ipLocalhost ip = new ipLocalhost();
+    FuncionCerrarSesion cs = new FuncionCerrarSesion();
 
 
     /**********************************************************************************************
@@ -505,15 +508,21 @@ public class EditarPerfil extends AppCompatActivity {
      *         CLASE ASÍNCRONA PARA LLENAR LOS EDITTEXT CON LOS DATOS DESDE WEBSERVICE
      **********************************************************************************************/
 
-    private class llenarEditTexEditarPerfil extends AsyncTask<String, Integer, Boolean> {
+    private class llenarEditTexEditarPerfil extends AsyncTask<String, Integer, Integer> {
         private llenarEditTexEditarPerfil(){}
-        boolean resul = true;
+        int ResponseEstado;
 
         @Override
-        protected Boolean doInBackground(String... strings) {
+        protected Integer doInBackground(String... strings) {
 
             try {
-                JSONObject respJSON = new JSONObject(EntityUtils.toString(new DefaultHttpClient().execute(new HttpGet(ip.getIp()+"obtenerPerfil?cto="+id_perfilEditar)).getEntity()));
+
+                HttpClient httpClient = new DefaultHttpClient();
+                HttpGet httpGet = new HttpGet(ip.getIp()+"obtenerPerfil?cto="+id_perfilEditar);
+                HttpResponse httpResponse=httpClient.execute(httpGet);
+                ResponseEstado = httpResponse.getStatusLine().getStatusCode();
+
+                JSONObject respJSON = new JSONObject(EntityUtils.toString(httpResponse.getEntity()));
                 JSONArray jsonArray = respJSON.getJSONArray("content");
 
                 for (int i = 0; i < jsonArray.length(); i++) {
@@ -536,18 +545,18 @@ public class EditarPerfil extends AppCompatActivity {
                     idcategoria_rec = jsonArray.getJSONObject(i).getInt("id_categoria");
                 }
 
-                resul = true;
+
             } catch (Exception ex) {
                 Log.e("ServicioRest", "Error!", ex);
-                resul = false;
+
             }
-            return resul;
+            return ResponseEstado;
 
         }
 
-        protected void onPostExecute(Boolean result) {
+        protected void onPostExecute(Integer responseEstado) {
 
-            if (resul) {
+            if (responseEstado==200) {
                 if(tieneImagen==true){
 
                     Picasso.get().
@@ -570,9 +579,17 @@ public class EditarPerfil extends AppCompatActivity {
                 etlatitud.setText(lati_rec);
                 etlongitud.setText(longitud_rec);
 
-
-
-            }else {
+            }else if(responseEstado==500){
+                Toast.makeText(getApplicationContext(),"Ocurrió un error en la base de datos",Toast.LENGTH_SHORT).show();
+            }else if(responseEstado==401){
+                Toast.makeText(getApplicationContext(), "Token de autenticación inválido o expirado, por favor inicie sesión nuevamente", Toast.LENGTH_SHORT).show();
+                cs.cerrarsesion();
+                //barra.setVisibility(View.INVISIBLE);
+                SharedPrefManager.getInstance(getApplicationContext()).limpiar();
+                startActivity(new Intent(EditarPerfil.this, Login.class)
+                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK));
+            }else{
+                //muestra mensaje si se produce un error al ejercutar la consulta al webservice
                 Toast.makeText(getApplicationContext(), "Problemas de conexión", Toast.LENGTH_SHORT).show();
             }
         }
@@ -584,12 +601,12 @@ public class EditarPerfil extends AppCompatActivity {
 
 
 
-    private class actualizarPerfil extends AsyncTask<String, Integer, Boolean> {
+    private class actualizarPerfil extends AsyncTask<String, Integer, Integer> {
         private actualizarPerfil(){}
-        boolean resul = true;
+        int ResponseEstado;
 
         @Override
-        protected Boolean doInBackground(String... strings) {
+        protected Integer doInBackground(String... strings) {
 
             try {
 
@@ -618,17 +635,17 @@ public class EditarPerfil extends AppCompatActivity {
                     multipartEntity.addPart("imagen", new FileBody(img));
                 }
 
-
                 HttpEntity entity = multipartEntity.build();
                 httppost.setEntity(entity);
-                httpclient.execute(httppost);
 
-                resul = true;
+                HttpResponse httpResponse=httpclient.execute(httppost);
+                ResponseEstado = httpResponse.getStatusLine().getStatusCode();
+
             } catch (Exception ex) {
                 Log.e("ServicioRest", "Error!", ex);
-                resul = false;
+
             }
-            return resul;
+            return ResponseEstado;
 
         }
 
@@ -640,19 +657,27 @@ public class EditarPerfil extends AppCompatActivity {
 
         }
 
-        protected void onPostExecute(Boolean result) {
-            if (resul) {
+        protected void onPostExecute(Integer responseEstado) {
+                if (responseEstado==200) {
                 Intent data = new Intent();
                 data.putExtra("msg","update");
                 setResult(AdministracionDePerfiles.RESULT_OK, data);
                 finish();
-
-            }else {
+            }else if(responseEstado==500){
+                Toast.makeText(getApplicationContext(),"Ocurrió un error en la base de datos",Toast.LENGTH_SHORT).show();
+            }else if(responseEstado==401){
+                Toast.makeText(getApplicationContext(), "Token de autenticación inválido o expirado, por favor inicie sesión nuevamente", Toast.LENGTH_SHORT).show();
+                cs.cerrarsesion();
+                progressBar.setVisibility(View.INVISIBLE);
+                SharedPrefManager.getInstance(getApplicationContext()).limpiar();
+                startActivity(new Intent(EditarPerfil.this, Login.class)
+                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK));
+            }else{
+                //muestra mensaje si se produce un error al ejercutar la consulta al webservice
                 Toast.makeText(getApplicationContext(), "Problemas de conexión", Toast.LENGTH_SHORT).show();
-                botonGuardar.setClickable(true);
+                    botonGuardar.setClickable(true);
             }
         }
-
     }
 
     /**********************************************************************************************
@@ -732,12 +757,12 @@ public class EditarPerfil extends AppCompatActivity {
 
     //clase AsyncTask que se conecta al webservice que ejecuta la consulta para borrar el perfil
 
-    private class eliminarPerfil extends AsyncTask<String, Integer, Boolean> {
+    private class eliminarPerfil extends AsyncTask<String, Integer, Integer> {
         private eliminarPerfil(){}
-        boolean resul = true;
+        int ResponseEstado;
 
         @Override
-        protected Boolean doInBackground(String... strings) {
+        protected Integer doInBackground(String... strings) {
 
             try {
                 //se ejecuta la consulta al webservice y se pasa el id del perfil seleccionado
@@ -750,29 +775,39 @@ public class EditarPerfil extends AppCompatActivity {
                 parametros.add(new BasicNameValuePair("cto",String.valueOf(id_perfilEditar)));
                 parametros.add(new BasicNameValuePair("Authorization",SharedPrefManager.getInstance(EditarPerfil.this).getUSUARIO_LOGUEADO().getToken()));
                 httppost.setEntity(new UrlEncodedFormEntity(parametros, "UTF-8"));
-                httpclient.execute(httppost);
+                HttpResponse httpResponse=httpclient.execute(httppost);
+                ResponseEstado = httpResponse.getStatusLine().getStatusCode();
 
-                resul = true;
+
             } catch (Exception ex) {
                 Log.e("ServicioRest", "Error!", ex);
-                resul = false;
+
             }
-            return resul;
+            return ResponseEstado;
 
         }
 
-        protected void onPostExecute(Boolean result) {
+        protected void onPostExecute(Integer responseEstado) {
 
-            if (resul) {
+            if (responseEstado == 200) {
                 Intent data = new Intent();
-                data.putExtra("msg","delete");
+                data.putExtra("msg", "delete");
                 setResult(AdministracionDePerfiles.RESULT_OK, data);
                 finish();
-            }else {
+            } else if (responseEstado == 500) {
+                Toast.makeText(getApplicationContext(), "Ocurrió un error en la base de datos", Toast.LENGTH_SHORT).show();
+            } else if (responseEstado == 401) {
+                Toast.makeText(getApplicationContext(), "Token de autenticación inválido o expirado, por favor inicie sesión nuevamente", Toast.LENGTH_SHORT).show();
+                cs.cerrarsesion();
+                //barra.setVisibility(View.INVISIBLE);
+                SharedPrefManager.getInstance(getApplicationContext()).limpiar();
+                startActivity(new Intent(EditarPerfil.this, Login.class)
+                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+            } else {
+                //muestra mensaje si se produce un error al ejercutar la consulta al webservice
                 Toast.makeText(getApplicationContext(), "Problemas de conexión", Toast.LENGTH_SHORT).show();
             }
+
         }
-
-
     }
 }

@@ -24,6 +24,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import cz.msebera.android.httpclient.HttpResponse;
 import cz.msebera.android.httpclient.NameValuePair;
 import cz.msebera.android.httpclient.client.HttpClient;
 import cz.msebera.android.httpclient.client.entity.UrlEncodedFormEntity;
@@ -32,6 +33,7 @@ import cz.msebera.android.httpclient.client.methods.HttpPost;
 import cz.msebera.android.httpclient.impl.client.DefaultHttpClient;
 import cz.msebera.android.httpclient.message.BasicNameValuePair;
 import cz.msebera.android.httpclient.util.EntityUtils;
+import okhttp3.Response;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.R;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAAlan.ActivityCategorias;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAAlan.Panel_de_Control;
@@ -178,15 +180,21 @@ public class PerfilesEliminados extends AppCompatActivity  implements Navigation
         return connected;
     }
 
-    private class llenarListaEliminados extends AsyncTask<String, Integer, Boolean> {
+    private class llenarListaEliminados extends AsyncTask<String, Integer, Integer> {
         private llenarListaEliminados(){}
-        boolean resul = true;
+        int ResponseEstado;
 
         @Override
-        protected Boolean doInBackground(String... strings) {
+        protected Integer doInBackground(String... strings) {
 
             try {
-                JSONObject jsonObject = new JSONObject(EntityUtils.toString(new DefaultHttpClient().execute(new HttpGet(ip.getIp()+"listarPerfiles?ste=4")).getEntity()));
+
+                HttpClient httpClient = new DefaultHttpClient();
+                HttpGet httpGet = new HttpGet(ip.getIp()+"listarPerfiles?ste=4");
+                HttpResponse httpResponse=httpClient.execute(httpGet);
+                ResponseEstado = httpResponse.getStatusLine().getStatusCode();
+
+                JSONObject jsonObject = new JSONObject(EntityUtils.toString(httpResponse.getEntity()));
                 JSONArray respJSON = jsonObject.getJSONArray("content");
 
                 for (int i = 0; i < respJSON.length(); i++) {
@@ -200,9 +208,9 @@ public class PerfilesEliminados extends AppCompatActivity  implements Navigation
 
             } catch (Exception ex) {
                 Log.e("ServicioRest", "Error!", ex);
-                resul = false;
+
             }
-            return Boolean.valueOf(resul);
+            return ResponseEstado;
 
         }
 
@@ -212,12 +220,21 @@ public class PerfilesEliminados extends AppCompatActivity  implements Navigation
             barra.setProgress(values[0]);
         }
 
-        protected void onPostExecute(Boolean result) {
+        protected void onPostExecute(Integer responseEstado) {
 
-            if (resul) {
+            if (responseEstado==200) {
                 barra.setVisibility(View.INVISIBLE);
                 adaptadorMostrarPerfiles = new AdaptadorMostrarPerfiles(mostrar_perfiles,getApplicationContext());
                 lista.setAdapter(adaptadorMostrarPerfiles);
+            }else if(responseEstado==500){
+                Toast.makeText(getApplicationContext(),"Ocurrió un error en la base de datos",Toast.LENGTH_SHORT).show();
+            }else if(responseEstado==401){
+                Toast.makeText(getApplicationContext(), "Token de autenticación inválido o expirado, por favor inicie sesión nuevamente", Toast.LENGTH_SHORT).show();
+                cs.cerrarsesion();
+                barra.setVisibility(View.INVISIBLE);
+                SharedPrefManager.getInstance(getApplicationContext()).limpiar();
+                startActivity(new Intent(PerfilesEliminados.this, Login.class)
+                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK));
             }else {
                 barra.setVisibility(View.INVISIBLE);
                 if(compruebaConexion(getApplicationContext())){

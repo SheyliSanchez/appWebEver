@@ -23,6 +23,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import cz.msebera.android.httpclient.HttpResponse;
 import cz.msebera.android.httpclient.NameValuePair;
 import cz.msebera.android.httpclient.client.HttpClient;
 import cz.msebera.android.httpclient.client.entity.UrlEncodedFormEntity;
@@ -33,6 +34,7 @@ import cz.msebera.android.httpclient.util.EntityUtils;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.R;
 
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAAlan.Mostrar_Usuarios;
+import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVASheyli.FuncionCerrarSesion;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVASheyli.ipLocalhost;
 
 public class FormularioRegistroLogin extends AppCompatActivity {
@@ -50,6 +52,7 @@ public class FormularioRegistroLogin extends AppCompatActivity {
     ArrayList lista = new ArrayList<>();
 
     ipLocalhost ip = new ipLocalhost();
+    FuncionCerrarSesion cs = new FuncionCerrarSesion();
 
 
     @Override
@@ -252,12 +255,12 @@ public class FormularioRegistroLogin extends AppCompatActivity {
 
     }
 
-    private class insertarUsuarios extends AsyncTask<String, Integer, Boolean> {
+    private class insertarUsuarios extends AsyncTask<String, Integer, Integer> {
         private insertarUsuarios(){}
-        boolean resul = true;
+        int ResponseEstado;
 
         @Override
-        protected Boolean doInBackground(String... strings) {
+        protected Integer doInBackground(String... strings) {
 
             try {
                 HttpClient httpclient;
@@ -273,22 +276,20 @@ public class FormularioRegistroLogin extends AppCompatActivity {
                 parametros.add(new BasicNameValuePair("usuariosroles",String.valueOf(id_rol)));
 
                 httppost.setEntity(new UrlEncodedFormEntity(parametros, "UTF-8"));
+                HttpResponse httpResponse=httpclient.execute(httppost);
+                ResponseEstado = httpResponse.getStatusLine().getStatusCode();
 
-                httpclient.execute(httppost);
-
-                resul = true;
 
             } catch (Exception ex) {
                 Log.e("ServicioRest", "Error!", ex);
-                resul = false;
             }
-            return resul;
+            return ResponseEstado;
 
         }
 
-        protected void onPostExecute(Boolean result) {
+        protected void onPostExecute(Integer responseEstado) {
 
-            if (resul) {
+            if (responseEstado==200) {
                 //VALIDACION DE QUE LOS CAMPOS NO ESTEN VACIOS ANTES DE INGRESAR UN USUARIO
                    Toast.makeText(getApplicationContext(),"Usuario agregado Correctamente",Toast.LENGTH_SHORT).show();
 
@@ -296,7 +297,24 @@ public class FormularioRegistroLogin extends AppCompatActivity {
                     setResult(Mostrar_Usuarios.RESULT_OK, data);
                     finish();
 
-            }else {
+            }else if(responseEstado==500){
+                Toast.makeText(getApplicationContext(),"Ocurrió un error en la base de datos",Toast.LENGTH_SHORT).show();
+            }else if(responseEstado==400){
+                //Toast.makeText(getApplicationContext(),"El email ya existe.",Toast.LENGTH_SHORT).show();
+                correo_insertar.setError("Email ya existe");
+                //correo_insertar_usario.setText("");
+                correo_insertar.requestFocus();
+            }else if(responseEstado==401){
+                Toast.makeText(getApplicationContext(), "Token de autenticación inválido o expirado, por favor inicie sesión nuevamente", Toast.LENGTH_SHORT).show();
+                cs.cerrarsesion();
+                //barraProgreso.setVisibility(View.INVISIBLE);
+                SharedPrefManager.getInstance(getApplicationContext()).limpiar();
+                startActivity(new Intent(FormularioRegistroLogin.this, Login.class)
+                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK));
+            }else if(responseEstado==403){
+                nombreusuario_insertar.setError("Usuario ya existe");
+                nombreusuario_insertar.requestFocus();
+            } else {
                 Toast.makeText(getApplicationContext(), "Problemas de conexión", Toast.LENGTH_SHORT).show();
             }
         }

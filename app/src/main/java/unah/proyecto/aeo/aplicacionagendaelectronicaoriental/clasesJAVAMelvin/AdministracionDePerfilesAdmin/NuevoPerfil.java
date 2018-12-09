@@ -40,6 +40,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 import cz.msebera.android.httpclient.HttpEntity;
+import cz.msebera.android.httpclient.HttpResponse;
 import cz.msebera.android.httpclient.NameValuePair;
 import cz.msebera.android.httpclient.client.HttpClient;
 import cz.msebera.android.httpclient.client.entity.UrlEncodedFormEntity;
@@ -55,6 +56,7 @@ import cz.msebera.android.httpclient.util.EntityUtils;
 import de.hdodenhof.circleimageview.CircleImageView;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.R;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVABessy.Ingresar_Ubicacion;
+import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVASheyli.FuncionCerrarSesion;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVASheyli.ipLocalhost;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAVirgilio.Login;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAVirgilio.SharedPrefManager;
@@ -80,6 +82,7 @@ public class NuevoPerfil extends AppCompatActivity {
 
 
     ipLocalhost ip = new ipLocalhost();
+    FuncionCerrarSesion cs = new FuncionCerrarSesion();
     //
 
 
@@ -464,19 +467,17 @@ public class NuevoPerfil extends AppCompatActivity {
 
     }
 
-    private class crearPerfil extends AsyncTask<String, Integer, Boolean> {
+    private class crearPerfil extends AsyncTask<String, Integer, Integer> {
         private crearPerfil(){}
-        boolean resul = true;
+        int ResponseEstado;
 
         @Override
-        protected Boolean doInBackground(String... strings) {
+        protected Integer doInBackground(String... strings) {
 
             try {
 
                 HttpClient httpclient;
                 HttpPost httppost;
-
-
                 MultipartEntityBuilder multipartEntity = MultipartEntityBuilder.create();
                 multipartEntity.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
                 httpclient = new DefaultHttpClient();
@@ -504,31 +505,37 @@ public class NuevoPerfil extends AppCompatActivity {
 
                 HttpEntity entity = multipartEntity.build();
                 httppost.setEntity(entity);
-                httpclient.execute(httppost);
+                HttpResponse httpResponse=httpclient.execute(httppost);
+                ResponseEstado = httpResponse.getStatusLine().getStatusCode();
 
-                resul = true;
             } catch (Exception ex) {
                 Log.e("ServicioRest", "Error!", ex);
-                resul = false;
             }
-            return resul;
+            return ResponseEstado;
 
         }
 
 
-        protected void onPostExecute(Boolean result) {
-            if (resul) {
-
+        protected void onPostExecute(Integer responseEstado) {
+            if (responseEstado==200) {
                 Toast.makeText(getApplicationContext(),"Perfil Creado Correctamente",Toast.LENGTH_SHORT).show();
                 Intent data = new Intent();
                 setResult(AdministracionDePerfiles.RESULT_OK, data);
                 finish();
 
+            }else if(responseEstado==500){
+                Toast.makeText(getApplicationContext(),"Ocurrió un error en la base de datos",Toast.LENGTH_SHORT).show();
+            }else if(responseEstado==401){
+                Toast.makeText(getApplicationContext(), "Token de autenticación inválido o expirado, por favor inicie sesión nuevamente", Toast.LENGTH_SHORT).show();
+                cs.cerrarsesion();
+                //progressBar.setVisibility(View.INVISIBLE);
+                SharedPrefManager.getInstance(getApplicationContext()).limpiar();
+                startActivity(new Intent(NuevoPerfil.this, Login.class)
+                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK));
             }else {
                 Toast.makeText(getApplicationContext(), "Problemas de conexión", Toast.LENGTH_SHORT).show();
                 botonGuardar.setClickable(true);
             }
         }
-
     }
 }

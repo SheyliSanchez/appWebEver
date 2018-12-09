@@ -28,6 +28,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import cz.msebera.android.httpclient.HttpResponse;
 import cz.msebera.android.httpclient.NameValuePair;
 import cz.msebera.android.httpclient.client.HttpClient;
 import cz.msebera.android.httpclient.client.entity.UrlEncodedFormEntity;
@@ -43,6 +44,7 @@ import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAAlan.Pane
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVASheyli.FuncionCerrarSesion;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVASheyli.ipLocalhost;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAVirgilio.AcercaDe;
+import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAVirgilio.FormularioRegistroLogin;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAVirgilio.Login;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAVirgilio.PanelDeControlUsuarios;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAVirgilio.SharedPrefManager;
@@ -255,16 +257,21 @@ public class AdministracionDePerfiles extends AppCompatActivity
 
 
     //clase que se conecta al webservice y trae los registros solicitados
-    private class llenarLista extends AsyncTask<String, Integer, Boolean> {
+    private class llenarLista extends AsyncTask<String, Integer, Integer> {
         private llenarLista(){}
         //variable booleana para controlar el resultado de las ejecuciones
-        boolean resul = true;
+        int ResponseEstado;
 
         @Override
-        protected Boolean doInBackground(String... strings) {
+        protected Integer doInBackground(String... strings) {
 
             try {
-                JSONObject jsonObject = new JSONObject(EntityUtils.toString(new DefaultHttpClient().execute(new HttpGet(ip.getIp()+"listarPerfiles?ste=2")).getEntity()));
+                HttpClient httpClient = new DefaultHttpClient();
+                HttpGet httpGet = new HttpGet(ip.getIp()+"listarPerfiles?ste=2");
+                HttpResponse httpResponse=httpClient.execute(httpGet);
+                ResponseEstado = httpResponse.getStatusLine().getStatusCode();
+
+                JSONObject jsonObject = new JSONObject(EntityUtils.toString(httpResponse.getEntity()));
                 JSONArray respJSON = jsonObject.getJSONArray("content");
                 //recorre el array para asignar los resultados a las variables
                 for (int i = 0; i < respJSON.length(); i++) {
@@ -277,9 +284,9 @@ public class AdministracionDePerfiles extends AppCompatActivity
                 }
             } catch (Exception ex) {
                 Log.e("ServicioRest", "Error!", ex);
-                resul = false;
+
             }
-            return resul;
+            return ResponseEstado;
 
         }
 
@@ -291,9 +298,9 @@ public class AdministracionDePerfiles extends AppCompatActivity
 
         }
 
-        protected void onPostExecute(Boolean result) {
+        protected void onPostExecute(Integer responseEstado) {
 
-            if (result) {
+            if (responseEstado==200) {
                 //hace invisible la barra
                 barra.setVisibility(View.INVISIBLE);
                 //inicializa el adaptador
@@ -301,6 +308,14 @@ public class AdministracionDePerfiles extends AppCompatActivity
                 //establece el adaptador al listview
                 lista.setAdapter(adaptadorMostrarPerfiles);
                 return;
+            }else if(responseEstado==500){
+                Toast.makeText(getApplicationContext(),"Ocurrió un error en la base de datos",Toast.LENGTH_SHORT).show();
+            }else if(responseEstado==401){
+                Toast.makeText(getApplicationContext(), "Token de autenticación inválido o expirado, por favor inicie sesión nuevamente", Toast.LENGTH_SHORT).show();
+                cs.cerrarsesion();
+                SharedPrefManager.getInstance(getApplicationContext()).limpiar();
+                startActivity(new Intent(AdministracionDePerfiles.this, Login.class)
+                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK));
             }else{
                 //muestra mensaje si se produce un error al ejercutar la consulta al webservice
                 Toast.makeText(getApplicationContext(), "Problemas de conexión", Toast.LENGTH_SHORT).show();
