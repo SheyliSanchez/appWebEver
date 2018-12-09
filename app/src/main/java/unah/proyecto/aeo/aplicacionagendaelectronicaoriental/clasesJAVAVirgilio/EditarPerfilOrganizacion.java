@@ -49,6 +49,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 import cz.msebera.android.httpclient.HttpEntity;
+import cz.msebera.android.httpclient.HttpResponse;
 import cz.msebera.android.httpclient.NameValuePair;
 import cz.msebera.android.httpclient.client.HttpClient;
 import cz.msebera.android.httpclient.client.entity.UrlEncodedFormEntity;
@@ -69,6 +70,7 @@ import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVABessy.Ing
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAMelvin.AdministracionDePerfilesAdmin.AdaptadorPersonalizadoSpinner;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAMelvin.AdministracionDePerfilesAdmin.EditarPerfil;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAMelvin.AdministracionDePerfilesAdmin.ModeloSpinner;
+import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVASheyli.FuncionCerrarSesion;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVASheyli.ipLocalhost;
 
 public class EditarPerfilOrganizacion extends AppCompatActivity {
@@ -100,25 +102,16 @@ public class EditarPerfilOrganizacion extends AppCompatActivity {
     boolean editarfoto=false;
     //
     ArrayList<ModeloSpinner> listaCategorias, listaRegiones;
-
     int id_categoria, id_region;
-
     private static final int PICK_IMAGE = 100;
     Uri imageUri;
-
     String encodeImagen;
-    int id_usuario_resibido_usuario;
-    String numero;
-
-    //preferencias
-
-    int id_usu=-1;
-    int nu;
 
     ipLocalhost ip = new ipLocalhost();
+    FuncionCerrarSesion cs = new FuncionCerrarSesion();
     private  String BASE_URL=new ipLocalhost().getBASE_URL();
 
-    Double lat,log;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -472,15 +465,19 @@ public class EditarPerfilOrganizacion extends AppCompatActivity {
 
     }
 
-    private class llenarEditTexEditarPerfil extends AsyncTask<String, Integer, Boolean> {
+    private class llenarEditTexEditarPerfil extends AsyncTask<String, Integer, Integer> {
         private llenarEditTexEditarPerfil(){}
-        boolean resul = true;
+        int ResponseEstado;
 
         @Override
-        protected Boolean doInBackground(String... strings) {
+        protected Integer doInBackground(String... strings) {
 
             try {
-                JSONObject respJSON = new JSONObject(EntityUtils.toString(new DefaultHttpClient().execute(new HttpGet(ip.getIp()+"obtenerPerfil?cto="+id_perfilEditar)).getEntity()));
+                HttpClient httpClient = new DefaultHttpClient();
+                HttpGet httpGet = new HttpGet(ip.getIp()+"obtenerPerfil?cto="+id_perfilEditar);
+                HttpResponse httpResponse=httpClient.execute(httpGet);
+                ResponseEstado = httpResponse.getStatusLine().getStatusCode();
+                JSONObject respJSON = new JSONObject(EntityUtils.toString(httpResponse.getEntity()));
                 JSONArray jsonArray = respJSON.getJSONArray("content");
 
                 for (int i = 0; i < jsonArray.length(); i++) {
@@ -503,18 +500,17 @@ public class EditarPerfilOrganizacion extends AppCompatActivity {
                     idcategoria_rec = jsonArray.getJSONObject(i).getInt("id_categoria");
                 }
 
-                resul = true;
+                //resul = true;
             } catch (Exception ex) {
                 Log.e("ServicioRest", "Error!", ex);
-                resul = false;
             }
-            return resul;
+            return ResponseEstado;
 
         }
 
-        protected void onPostExecute(Boolean result) {
+        protected void onPostExecute(Integer responseEstado) {
 
-            if (resul) {
+            if (responseEstado==200) {
                 if(tieneImagen==true){
 
                     Picasso.get().
@@ -537,8 +533,15 @@ public class EditarPerfilOrganizacion extends AppCompatActivity {
                 etlatitud.setText(lati_rec);
                 etlongitud.setText(longitud_rec);
 
-
-
+            }else if(responseEstado==500){
+                Toast.makeText(getApplicationContext(),"Ocurrió un error en la base de datos",Toast.LENGTH_SHORT).show();
+                // guardar.setClickable(true);
+            }else if(responseEstado==401){
+                Toast.makeText(getApplicationContext(), "Token de autenticación inválido o expirado, por favor inicie sesión nuevamente", Toast.LENGTH_SHORT).show();
+                cs.cerrarsesion();
+                SharedPrefManager.getInstance(getApplicationContext()).limpiar();
+                startActivity(new Intent(EditarPerfilOrganizacion.this, Login.class)
+                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK));
             }else {
                 Toast.makeText(getApplicationContext(), "Problemas de conexión", Toast.LENGTH_SHORT).show();
             }
@@ -547,12 +550,12 @@ public class EditarPerfilOrganizacion extends AppCompatActivity {
 
 
 
-    private class actualizarPerfil extends AsyncTask<String, Integer, Boolean> {
+    private class actualizarPerfil extends AsyncTask<String, Integer, Integer> {
         private actualizarPerfil(){}
-        boolean resul = true;
+        int ResponseEstado;
 
         @Override
-        protected Boolean doInBackground(String... strings) {
+        protected Integer doInBackground(String... strings) {
 
             try {
 
@@ -585,19 +588,20 @@ public class EditarPerfilOrganizacion extends AppCompatActivity {
 
                 HttpEntity entity = multipartEntity.build();
                 httppost.setEntity(entity);
-                httpclient.execute(httppost);
+                HttpResponse httpResponse=httpclient.execute(httppost);
+                ResponseEstado = httpResponse.getStatusLine().getStatusCode();
+                //httpclient.execute(httppost);
 
-                resul = true;
+                //resul = true;
             } catch (Exception ex) {
                 Log.e("ServicioRest", "Error!", ex);
-                resul = false;
             }
-            return resul;
+            return ResponseEstado;
 
         }
 
-        protected void onPostExecute(Boolean result) {
-            if (resul) {
+        protected void onPostExecute(Integer responseEstado) {
+            if (responseEstado==200) {
 
                 Toast.makeText(getApplicationContext(),"Perfil Actualizado Correctamente",Toast.LENGTH_SHORT).show();
                 //startActivity(new Intent(getApplicationContext(),AdministracionDePerfiles.class));
@@ -605,6 +609,15 @@ public class EditarPerfilOrganizacion extends AppCompatActivity {
                 finish();
 
 
+            }else if(responseEstado==500){
+                Toast.makeText(getApplicationContext(),"Ocurrió un error en la base de datos",Toast.LENGTH_SHORT).show();
+                // guardar.setClickable(true);
+            }else if(responseEstado==401){
+                Toast.makeText(getApplicationContext(), "Token de autenticación inválido o expirado, por favor inicie sesión nuevamente", Toast.LENGTH_SHORT).show();
+                cs.cerrarsesion();
+                SharedPrefManager.getInstance(getApplicationContext()).limpiar();
+                startActivity(new Intent(EditarPerfilOrganizacion.this, Login.class)
+                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK));
             }else {
                 Toast.makeText(getApplicationContext(), "Problemas de conexión", Toast.LENGTH_SHORT).show();
                 botonGuardar.setClickable(true);
@@ -687,12 +700,12 @@ public class EditarPerfilOrganizacion extends AppCompatActivity {
 
     //clase AsyncTask que se conecta al webservice que ejecuta la consulta para borrar el perfil
 
-    private class eliminarPerfil extends AsyncTask<String, Integer, Boolean> {
+    private class eliminarPerfil extends AsyncTask<String, Integer, Integer> {
         private eliminarPerfil(){}
-        boolean resul = true;
+        int ResponseEstado;
 
         @Override
-        protected Boolean doInBackground(String... strings) {
+        protected Integer doInBackground(String... strings) {
 
             try {
 
@@ -707,25 +720,35 @@ public class EditarPerfilOrganizacion extends AppCompatActivity {
                 parametros.add(new BasicNameValuePair("Authorization",SharedPrefManager.getInstance(EditarPerfilOrganizacion.this).getUSUARIO_LOGUEADO().getToken()));
 
                 httppost.setEntity(new UrlEncodedFormEntity(parametros, "UTF-8"));
-                httpclient.execute(httppost);
+                HttpResponse httpResponse=httpclient.execute(httppost);
+                ResponseEstado = httpResponse.getStatusLine().getStatusCode();
+                //httpclient.execute(httppost);
 
-                resul = true;
+                //resul = true;
             } catch (Exception ex) {
                 Log.e("ServicioRest", "Error!", ex);
-                resul = false;
             }
-            return resul;
+            return ResponseEstado;
 
         }
 
-        protected void onPostExecute(Boolean result) {
+        protected void onPostExecute(Integer responseEstado) {
 
-            if (resul) {
+            if (responseEstado==200) {
                 //barra de progreso
                 //fin de barra de progreso
                 Toast.makeText(getApplicationContext(),"Perfil Eliminado",Toast.LENGTH_SHORT).show();
                 setResult(PanelDeControlUsuarios.RESULT_OK);
                 finish();
+            }else if(responseEstado==500){
+                Toast.makeText(getApplicationContext(),"Ocurrió un error en la base de datos",Toast.LENGTH_SHORT).show();
+                // guardar.setClickable(true);
+            }else if(responseEstado==401){
+                Toast.makeText(getApplicationContext(), "Token de autenticación inválido o expirado, por favor inicie sesión nuevamente", Toast.LENGTH_SHORT).show();
+                cs.cerrarsesion();
+                SharedPrefManager.getInstance(getApplicationContext()).limpiar();
+                startActivity(new Intent(EditarPerfilOrganizacion.this, Login.class)
+                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK));
             }else {
                 Toast.makeText(getApplicationContext(), "Problemas de conexión", Toast.LENGTH_SHORT).show();
             }

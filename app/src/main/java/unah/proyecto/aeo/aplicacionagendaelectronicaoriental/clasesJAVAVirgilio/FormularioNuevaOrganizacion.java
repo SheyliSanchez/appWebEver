@@ -50,6 +50,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import cz.msebera.android.httpclient.HttpEntity;
+import cz.msebera.android.httpclient.HttpResponse;
 import cz.msebera.android.httpclient.NameValuePair;
 import cz.msebera.android.httpclient.client.HttpClient;
 import cz.msebera.android.httpclient.client.entity.UrlEncodedFormEntity;
@@ -71,6 +72,7 @@ import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAMelvin.Ad
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAMelvin.AdministracionDePerfilesAdmin.AdministracionDePerfiles;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAMelvin.AdministracionDePerfilesAdmin.ModeloSpinner;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAMelvin.AdministracionDePerfilesAdmin.NuevoPerfil;
+import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVASheyli.FuncionCerrarSesion;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVASheyli.ipLocalhost;
 
 
@@ -81,38 +83,23 @@ public class FormularioNuevaOrganizacion extends AppCompatActivity {
     EditText direccionOrganizacion;
     EditText emailOrganizacion;
     EditText descrpcionOrganizacion;
-    EditText latitudOrganizacion;
-    EditText longitudOrganizacion;
-    //ImageView imagenOrganizacion,ubicacionOrganizacion;
     FloatingActionButton guardar;
     FloatingActionButton imageButton;
     CircleImageView imagenOrganizacion;
-    //int id_usuario;
     Button ubicacion;
     private static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1 ;
     Bitmap imagenBitmap;
     boolean editarFoto = false;
     ArrayList<ModeloSpinner> listaCategorias, listaRegiones, listaUsuarios;
     private Spinner  spinnerCategorias,spinnerRgiones;
-
     int id_categoria, id_region, id_usuario;
     private static final int PICK_IMAGE = 100;
     Uri imageUri;
-
     String encodeImagen,cantidadDigitos;
-
     TextView lo,lat;
     //preferencias
-
-    int id_usu=-1;
-    //
-
-
-    String correoIgual;
-    //
-
     ipLocalhost ip = new ipLocalhost();
-
+    FuncionCerrarSesion cs = new FuncionCerrarSesion();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,8 +119,6 @@ public class FormularioNuevaOrganizacion extends AppCompatActivity {
         descrpcionOrganizacion = (EditText) findViewById(R.id.txtDescripcion);
         lat =findViewById(R.id.latitiResibida);
         lo =findViewById(R.id.longitudResibida);
-        //latitudOrganizacion = (EditText) findViewById(R.id.txtlatitudOrganizacion);
-        //longitudOrganizacion = (EditText) findViewById(R.id.txtlongitudOrganizacion);
         spinnerCategorias = (Spinner) findViewById(R.id.spinercategoriaOrganizacion);
         spinnerRgiones = (Spinner) findViewById(R.id.spinerregionOrganizacion);
 
@@ -466,12 +451,13 @@ public class FormularioNuevaOrganizacion extends AppCompatActivity {
 
     }
 
-    private class crearPerfil extends AsyncTask<String, Integer, Boolean> {
+    private class crearPerfil extends AsyncTask<String, Integer, Integer> {
         private crearPerfil(){}
-        boolean resul = true;
+
+        int ResponseEstado;
 
         @Override
-        protected Boolean doInBackground(String... strings) {
+        protected Integer doInBackground(String... strings) {
 
             try {
 
@@ -502,26 +488,38 @@ public class FormularioNuevaOrganizacion extends AppCompatActivity {
                 }
                 HttpEntity entity = multipartEntity.build();
                 httppost.setEntity(entity);
-                httpclient.execute(httppost);
+                HttpResponse httpResponse=httpclient.execute(httppost);
+                ResponseEstado = httpResponse.getStatusLine().getStatusCode();
+               //httpclient.execute(httppost);
 
-                resul = true;
+                //resul = true;
             } catch (Exception ex) {
                 Log.e("ServicioRest", "Error!", ex);
-                resul = false;
+                //resul = false;
             }
-            return resul;
+            //return resul;
+            return ResponseEstado;
 
         }
 
 
-        protected void onPostExecute(Boolean result) {
-            if (resul) {
+        protected void onPostExecute(Integer responseEstado) {
+            if (responseEstado==200) {
 
                 Toast.makeText(getApplicationContext(),"Perfil Creado Correctamente",Toast.LENGTH_SHORT).show();
                 Intent data = new Intent();
                 setResult(AdministracionDePerfiles.RESULT_OK, data);
                 finish();
 
+            }else if(responseEstado==500){
+                Toast.makeText(getApplicationContext(),"Ocurrió un error en la base de datos",Toast.LENGTH_SHORT).show();
+               // guardar.setClickable(true);
+            }else if(responseEstado==401){
+                Toast.makeText(getApplicationContext(), "Token de autenticación inválido o expirado, por favor inicie sesión nuevamente", Toast.LENGTH_SHORT).show();
+                cs.cerrarsesion();
+                SharedPrefManager.getInstance(getApplicationContext()).limpiar();
+                startActivity(new Intent(FormularioNuevaOrganizacion.this, Login.class)
+                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK));
             }else {
                 Toast.makeText(getApplicationContext(), "Problemas de conexión", Toast.LENGTH_SHORT).show();
                 guardar.setClickable(true);
