@@ -68,6 +68,7 @@ import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAAlan.Acti
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAAlan.Panel_de_Control;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVABessy.Ingresar_Ubicacion;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAMelvin.AdministracionDePerfilesAdmin.AdaptadorPersonalizadoSpinner;
+import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAMelvin.AdministracionDePerfilesAdmin.AdministracionDePerfiles;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAMelvin.AdministracionDePerfilesAdmin.EditarPerfil;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAMelvin.AdministracionDePerfilesAdmin.ModeloSpinner;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVASheyli.FuncionCerrarSesion;
@@ -537,12 +538,10 @@ public class EditarPerfilOrganizacion extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(),"Ocurrió un error en la base de datos",Toast.LENGTH_SHORT).show();
                 // guardar.setClickable(true);
             }else if(responseEstado==401){
-                Toast.makeText(getApplicationContext(), "Token de autenticación inválido o expirado, por favor inicie sesión nuevamente", Toast.LENGTH_SHORT).show();
-                cs.cerrarsesion();
-                SharedPrefManager.getInstance(getApplicationContext()).limpiar();
-                startActivity(new Intent(EditarPerfilOrganizacion.this, Login.class)
-                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK));
-            }else {
+                Intent data = new Intent();
+                data.putExtra("msg","Token de autenticación inválido o expirado, por favor inicie sesión nuevamente");
+                setResult(PanelDeControlUsuarios.RESULT_CANCELED, data);
+                finish();}else {
                 Toast.makeText(getApplicationContext(), "Problemas de conexión", Toast.LENGTH_SHORT).show();
             }
         }
@@ -613,12 +612,11 @@ public class EditarPerfilOrganizacion extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(),"Ocurrió un error en la base de datos",Toast.LENGTH_SHORT).show();
                 // guardar.setClickable(true);
             }else if(responseEstado==401){
-                Toast.makeText(getApplicationContext(), "Token de autenticación inválido o expirado, por favor inicie sesión nuevamente", Toast.LENGTH_SHORT).show();
-                cs.cerrarsesion();
-                SharedPrefManager.getInstance(getApplicationContext()).limpiar();
-                startActivity(new Intent(EditarPerfilOrganizacion.this, Login.class)
-                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK));
-            }else {
+                Intent data = new Intent();
+                data.putExtra("msg","Token de autenticación inválido o expirado, por favor inicie sesión nuevamente");
+                setResult(PanelDeControlUsuarios.RESULT_CANCELED, data);
+                finish();
+            }else{
                 Toast.makeText(getApplicationContext(), "Problemas de conexión", Toast.LENGTH_SHORT).show();
                 botonGuardar.setClickable(true);
             }
@@ -744,11 +742,10 @@ public class EditarPerfilOrganizacion extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(),"Ocurrió un error en la base de datos",Toast.LENGTH_SHORT).show();
                 // guardar.setClickable(true);
             }else if(responseEstado==401){
-                Toast.makeText(getApplicationContext(), "Token de autenticación inválido o expirado, por favor inicie sesión nuevamente", Toast.LENGTH_SHORT).show();
-                cs.cerrarsesion();
-                SharedPrefManager.getInstance(getApplicationContext()).limpiar();
-                startActivity(new Intent(EditarPerfilOrganizacion.this, Login.class)
-                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK));
+                Intent data = new Intent();
+                data.putExtra("msg","Token de autenticación inválido o expirado, por favor inicie sesión nuevamente");
+                setResult(PanelDeControlUsuarios.RESULT_CANCELED, data);
+                finish();
             }else {
                 Toast.makeText(getApplicationContext(), "Problemas de conexión", Toast.LENGTH_SHORT).show();
             }

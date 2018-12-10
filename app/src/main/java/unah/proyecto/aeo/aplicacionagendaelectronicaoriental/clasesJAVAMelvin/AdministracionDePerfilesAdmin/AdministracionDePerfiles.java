@@ -108,7 +108,7 @@ public class AdministracionDePerfiles extends AppCompatActivity
                 //se inicializa la variable con la posición del item seleccionado del listview
                 perfilselecionado = position;
                 Fuente_mostrarPerfiles per = mostrar_perfiles.get(perfilselecionado);
-                Intent in = new Intent(getApplicationContext(),EditarPerfil.class);
+                Intent in = new Intent(getApplicationContext(), EditarPerfil.class);
                 in.putExtra("id",per.getId());
                 startActivityForResult(in,PASAR_A_EDITAR);
             }
@@ -120,7 +120,7 @@ public class AdministracionDePerfiles extends AppCompatActivity
         botonNuevoPerfil.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               Intent i= new Intent(getApplicationContext(),NuevoPerfil.class);
+               Intent i= new Intent(getApplicationContext(), NuevoPerfil.class);
                 startActivityForResult(i,PASAR_A_NUEVO);
             }
         });
@@ -162,20 +162,41 @@ public class AdministracionDePerfiles extends AppCompatActivity
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == PASAR_A_EDITAR && resultCode == RESULT_OK){
-            if(data.getExtras().getString("msg").toString().equals("update")){
-                Toast.makeText(getApplicationContext(),"Perfil actualizado correctamente",Toast.LENGTH_SHORT).show();
-            }else if(data.getExtras().getString("msg").toString().equals("delete")){
-                Toast.makeText(getApplicationContext(),"Perfil eliminado correctamente",Toast.LENGTH_SHORT).show();
+        if(requestCode == PASAR_A_EDITAR){
+            if(resultCode==RESULT_OK){
+                if(data.getExtras().getString("msg").equals("update")){
+                    Toast.makeText(getApplicationContext(),"Perfil actualizado correctamente",Toast.LENGTH_SHORT).show();
+                }else if(data.getExtras().getString("msg").equals("delete")){
+                    Toast.makeText(getApplicationContext(),"Perfil eliminado correctamente",Toast.LENGTH_SHORT).show();
+                }
+
+                mostrar_perfiles.clear();
+                new llenarLista().execute();
+                adaptadorMostrarPerfiles.notifyDataSetChanged();
+            }else if(resultCode == RESULT_CANCELED){
+                Toast.makeText(getApplicationContext(),data.getExtras().getString("msg"),Toast.LENGTH_SHORT).show();
+                    cs.cerrarsesion();
+
+                    SharedPrefManager.getInstance(getApplicationContext()).limpiar();
+                    startActivity(new Intent(AdministracionDePerfiles.this, Login.class)
+                            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK));
+
             }
 
-            mostrar_perfiles.clear();
-            new llenarLista().execute();
-            adaptadorMostrarPerfiles.notifyDataSetChanged();
-        }else if(requestCode == PASAR_A_NUEVO && resultCode == RESULT_OK){
-            mostrar_perfiles.clear();
-            new llenarLista().execute();
-            adaptadorMostrarPerfiles.notifyDataSetChanged();
+        }else if(requestCode == PASAR_A_NUEVO ){
+            if(resultCode==RESULT_OK){
+                mostrar_perfiles.clear();
+                new llenarLista().execute();
+                adaptadorMostrarPerfiles.notifyDataSetChanged();
+            }else if(resultCode==RESULT_CANCELED){
+                Toast.makeText(getApplicationContext(),data.getExtras().getString("msg"),Toast.LENGTH_SHORT).show();
+                cs.cerrarsesion();
+
+                SharedPrefManager.getInstance(getApplicationContext()).limpiar();
+                startActivity(new Intent(AdministracionDePerfiles.this, Login.class)
+                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK));
+            }
+
         }
     }
 

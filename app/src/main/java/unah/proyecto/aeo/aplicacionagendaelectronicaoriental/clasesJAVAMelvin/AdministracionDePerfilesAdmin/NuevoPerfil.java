@@ -401,20 +401,24 @@ public class NuevoPerfil extends AppCompatActivity {
 
     }
 
-    private class llenarSpinnersNuevoPerfil extends AsyncTask<String, Integer, Boolean> {
+    private class llenarSpinnersNuevoPerfil extends AsyncTask<String, Integer, Integer> {
         private llenarSpinnersNuevoPerfil(){}
-        boolean resul = true;
+        int resul;
 
         @Override
-        protected Boolean doInBackground(String... strings) {
+        protected Integer doInBackground(String... strings) {
 
             try {
                 HttpClient httpclient;
+                HttpClient httpclient1;
+                HttpClient httpclient2;
                 HttpPost httppost;
                 HttpGet regiones= new HttpGet(ip.getIp()+"regiones");
                 HttpGet categorias= new HttpGet(ip.getIp()+"categorias");
                 ArrayList<NameValuePair> parametros;
                 httpclient = new DefaultHttpClient();
+                httpclient1 = new DefaultHttpClient();
+                httpclient2 = new DefaultHttpClient();
                 httppost = new HttpPost(ip.getIp()+"todosUsuarios");
                 parametros = new ArrayList<NameValuePair>();
                 parametros.add(new BasicNameValuePair("ste","1"));
@@ -422,36 +426,58 @@ public class NuevoPerfil extends AppCompatActivity {
 
                 httppost.setEntity(new UrlEncodedFormEntity(parametros, "UTF-8"));
 
-                JSONObject regionesWS = new JSONObject(EntityUtils.toString(httpclient.execute(regiones).getEntity()));
-                JSONArray jsonArrayRegion = regionesWS.getJSONArray("content");
-                JSONObject jsonObject = new JSONObject(EntityUtils.toString(httpclient.execute(httppost).getEntity()));
-                JSONArray usuariosWS = jsonObject.getJSONArray("content");
-                JSONObject categoriasWS = new JSONObject(EntityUtils.toString(httpclient.execute(categorias).getEntity()));
-                JSONArray jsonArrayCategoria = categoriasWS.getJSONArray("content");
-                //array regiones
-                for (int i = 0; i < jsonArrayRegion.length(); i++) {
-                    listaRegiones.add(new ModeloSpinner(jsonArrayRegion.getJSONObject(i).getString("nombre_region"),Integer.parseInt(jsonArrayRegion.getJSONObject(i).getString("id_region")))
-                    );                }
-                //array categorias
-                for (int i=0;i<jsonArrayCategoria.length();i++){
-                    listaCategorias.add(new ModeloSpinner(jsonArrayCategoria.getJSONObject(i).getString("nombre_categoria"), Integer.parseInt(jsonArrayCategoria.getJSONObject(i).getString("id_categoria"))));
-                }
-                //array usuarios
-                for (int i=0;i<usuariosWS.length();i++){
-                    listaUsuarios.add(new ModeloSpinner(usuariosWS.getJSONObject(i).getString("nombre_usuario"),Integer.parseInt(usuariosWS.getJSONObject(i).getString("id_usuario"))));
+                HttpResponse regionesResp=httpclient.execute(regiones);
+                HttpResponse categoriasResp=httpclient1.execute(categorias);
+                HttpResponse usuariosResp=httpclient2.execute(httppost);
+
+                if(regionesResp.getStatusLine().getStatusCode()==200) {
+                    JSONObject regionesWS = new JSONObject(EntityUtils.toString(regionesResp.getEntity()));
+                    JSONArray jsonArrayRegion = regionesWS.getJSONArray("content");
+                    //array regiones
+                    for (int i = 0; i < jsonArrayRegion.length(); i++) {
+                        listaRegiones.add(new ModeloSpinner(jsonArrayRegion.getJSONObject(i).getString("nombre_region"), Integer.parseInt(jsonArrayRegion.getJSONObject(i).getString("id_region")))
+                        );
+                    }
                 }
 
-                resul = true;
+                if(usuariosResp.getStatusLine().getStatusCode()==200){
+                    JSONObject jsonObject = new JSONObject(EntityUtils.toString(usuariosResp.getEntity()));
+                    JSONArray usuariosWS = jsonObject.getJSONArray("content");
+                    //array usuarios
+                    for (int i=0;i<usuariosWS.length();i++){
+                        listaUsuarios.add(new ModeloSpinner(usuariosWS.getJSONObject(i).getString("nombre_usuario"),Integer.parseInt(usuariosWS.getJSONObject(i).getString("id_usuario"))));
+                    }
+                }
+
+                if(categoriasResp.getStatusLine().getStatusCode()==200){
+                    JSONObject categoriasWS = new JSONObject(EntityUtils.toString(categoriasResp.getEntity()));
+                    JSONArray jsonArrayCategoria = categoriasWS.getJSONArray("content");
+                    //array categorias
+                    for (int i=0;i<jsonArrayCategoria.length();i++){
+                        listaCategorias.add(new ModeloSpinner(jsonArrayCategoria.getJSONObject(i).getString("nombre_categoria"), Integer.parseInt(jsonArrayCategoria.getJSONObject(i).getString("id_categoria"))));
+                    }
+                }
+
+                if(regionesResp.getStatusLine().getStatusCode()==200 && usuariosResp.getStatusLine().getStatusCode()==200 && categoriasResp.getStatusLine().getStatusCode()==200){
+                    resul = 200;
+                }else if(regionesResp.getStatusLine().getStatusCode()==500 && usuariosResp.getStatusLine().getStatusCode()==500 && categoriasResp.getStatusLine().getStatusCode()==500){
+                    resul=500;
+                }else if(usuariosResp.getStatusLine().getStatusCode()==401 ){
+                    resul=401;
+                }
+
+
+
             } catch (Exception ex) {
                 Log.e("ServicioRest", "Error!", ex);
-                resul = false;
+
             }
             return resul;
 
         }
 
-        protected void onPostExecute(Boolean result) {
-            if (resul) {
+        protected void onPostExecute(Integer result) {
+            if (result==200) {
                 AdaptadorPersonalizadoSpinner adaptadorCategorias = new AdaptadorPersonalizadoSpinner(NuevoPerfil.this,R.layout.plantilla_spiners_personalizados_id_nombre,R.id.item_id_spinner,listaCategorias);
                 AdaptadorPersonalizadoSpinner adaptadorRegiones = new AdaptadorPersonalizadoSpinner(NuevoPerfil.this,R.layout.plantilla_spiners_personalizados_id_nombre,R.id.item_id_spinner,listaRegiones);
                 AdaptadorPersonalizadoSpinner adaptadorUsuarios = new AdaptadorPersonalizadoSpinner(NuevoPerfil.this,R.layout.plantilla_spiners_personalizados_id_nombre,R.id.item_id_spinner,listaUsuarios);
@@ -459,7 +485,15 @@ public class NuevoPerfil extends AppCompatActivity {
                 spregiones.setAdapter(adaptadorRegiones);
                 spusuario.setAdapter(adaptadorUsuarios);
 
-            }else {
+            }else if(result==500) {
+                Toast.makeText(getApplicationContext(), "Ocurrió un error con la base de datos", Toast.LENGTH_SHORT).show();
+            }else if(result==401) {
+                Intent data = new Intent();
+                data.putExtra("msg","Token de autenticación inválido o expirado, por favor inicie sesión nuevamente");
+                data.putExtra("ste",401);
+                setResult(AdministracionDePerfiles.RESULT_CANCELED, data);
+                finish();
+            } else  {
                 Toast.makeText(getApplicationContext(), "Problemas de conexión", Toast.LENGTH_SHORT).show();
             }
         }
@@ -526,12 +560,10 @@ public class NuevoPerfil extends AppCompatActivity {
             }else if(responseEstado==500){
                 Toast.makeText(getApplicationContext(),"Ocurrió un error en la base de datos",Toast.LENGTH_SHORT).show();
             }else if(responseEstado==401){
-                Toast.makeText(getApplicationContext(), "Token de autenticación inválido o expirado, por favor inicie sesión nuevamente", Toast.LENGTH_SHORT).show();
-                cs.cerrarsesion();
-                //progressBar.setVisibility(View.INVISIBLE);
-                SharedPrefManager.getInstance(getApplicationContext()).limpiar();
-                startActivity(new Intent(NuevoPerfil.this, Login.class)
-                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK));
+                Intent data = new Intent();
+                data.putExtra("msg","Token de autenticación inválido o expirado, por favor inicie sesión nuevamente");
+                data.putExtra("ste",401);
+                setResult(AdministracionDePerfiles.RESULT_CANCELED, data);
             }else {
                 Toast.makeText(getApplicationContext(), "Problemas de conexión", Toast.LENGTH_SHORT).show();
                 botonGuardar.setClickable(true);

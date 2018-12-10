@@ -43,6 +43,7 @@ import cz.msebera.android.httpclient.util.EntityUtils;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.R;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAAlan.ActivityCategorias;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAAlan.Panel_de_Control;
+import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAMelvin.AdministracionDePerfilesAdmin.AdministracionDePerfiles;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVAMelvin.AdministracionDePerfilesAdmin.EditarPerfil;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVASheyli.FuncionCerrarSesion;
 import unah.proyecto.aeo.aplicacionagendaelectronicaoriental.clasesJAVASheyli.ipLocalhost;
@@ -64,6 +65,8 @@ public class PanelDeControlUsuarios extends AppCompatActivity implements Navigat
     int id_usu=-1;
     int id_usuario;
     ProgressBar barraProgreso;
+    private static final int PASAR_A_NUEVO=1000;
+    private static final int PASAR_A_EDITAR=2000;
 
 
     ipLocalhost  ip = new ipLocalhost();
@@ -99,7 +102,7 @@ public class PanelDeControlUsuarios extends AppCompatActivity implements Navigat
             public void onClick(View v) {
                 Intent intent = new Intent(PanelDeControlUsuarios.this, FormularioNuevaOrganizacion.class);
                 //se asegura que el extra no este vacio
-                startActivityForResult(intent,1000);
+                startActivityForResult(intent,PASAR_A_NUEVO);
                 //startActivity(intent);
             }
         });
@@ -113,7 +116,7 @@ public class PanelDeControlUsuarios extends AppCompatActivity implements Navigat
                 EntidadOrganizacion per = mostrar_perfiles.get(perfilselecionado);
                 Intent intent = new Intent(getApplicationContext(), EditarPerfilOrganizacion.class);
                 intent.putExtra("id", per.getId());
-                startActivityForResult(intent,1000);
+                startActivityForResult(intent,PASAR_A_EDITAR);
 
 
             }
@@ -136,11 +139,36 @@ public class PanelDeControlUsuarios extends AppCompatActivity implements Navigat
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(resultCode==RESULT_OK){
-            mostrar_perfiles.clear();
-            new PanelDeControlUsuarios.llenarLista().execute();
-            adaptadorMostrarPerfiles.notifyDataSetChanged();
+        if(requestCode==PASAR_A_NUEVO){
+            if(resultCode==RESULT_OK){
+                mostrar_perfiles.clear();
+                new PanelDeControlUsuarios.llenarLista().execute();
+                adaptadorMostrarPerfiles.notifyDataSetChanged();
+            }else if(resultCode==RESULT_CANCELED){
+                Toast.makeText(getApplicationContext(),data.getExtras().getString("msg"),Toast.LENGTH_SHORT).show();
+                cs.cerrarsesion();
+
+                SharedPrefManager.getInstance(getApplicationContext()).limpiar();
+                startActivity(new Intent(PanelDeControlUsuarios.this, Login.class)
+                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK));
+
+            }
+        }else if(requestCode==PASAR_A_EDITAR){
+            if(resultCode==RESULT_OK){
+                mostrar_perfiles.clear();
+                new PanelDeControlUsuarios.llenarLista().execute();
+                adaptadorMostrarPerfiles.notifyDataSetChanged();
+            }else if(resultCode==RESULT_CANCELED){
+                Toast.makeText(getApplicationContext(),data.getExtras().getString("msg"),Toast.LENGTH_SHORT).show();
+                cs.cerrarsesion();
+
+                SharedPrefManager.getInstance(getApplicationContext()).limpiar();
+                startActivity(new Intent(PanelDeControlUsuarios.this, Login.class)
+                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK));
+
+            }
         }
+
     }
 
     @Override

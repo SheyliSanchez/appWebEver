@@ -656,27 +656,27 @@ public class EditarPerfil extends AppCompatActivity {
             progressBar.setProgress(values[0]);
 
         }
-
         protected void onPostExecute(Integer responseEstado) {
-                if (responseEstado==200) {
+
+            if (responseEstado==200) {
                 Intent data = new Intent();
                 data.putExtra("msg","update");
                 setResult(AdministracionDePerfiles.RESULT_OK, data);
                 finish();
             }else if(responseEstado==500){
-                Toast.makeText(getApplicationContext(),"Ocurrió un error en la base de datos",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Ocurrió un error en la base de datos", Toast.LENGTH_SHORT).show();
+                botonGuardar.setClickable(true);
             }else if(responseEstado==401){
-                Toast.makeText(getApplicationContext(), "Token de autenticación inválido o expirado, por favor inicie sesión nuevamente", Toast.LENGTH_SHORT).show();
-                cs.cerrarsesion();
-                progressBar.setVisibility(View.INVISIBLE);
-                SharedPrefManager.getInstance(getApplicationContext()).limpiar();
-                startActivity(new Intent(EditarPerfil.this, Login.class)
-                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK));
+                Intent data = new Intent();
+                    data.putExtra("msg","Token de autenticación inválido o expirado, por favor inicie sesión nuevamente");
+                    setResult(AdministracionDePerfiles.RESULT_CANCELED, data);
+                finish();
             }else{
                 //muestra mensaje si se produce un error al ejercutar la consulta al webservice
                 Toast.makeText(getApplicationContext(), "Problemas de conexión", Toast.LENGTH_SHORT).show();
                     botonGuardar.setClickable(true);
             }
+
         }
     }
 
@@ -698,7 +698,7 @@ public class EditarPerfil extends AppCompatActivity {
                 HttpClient httpclient;
                 HttpGet httppost;
                 httpclient = new DefaultHttpClient();
-                httppost = new HttpGet(ip.getIp()+"regiones?Authorization="+SharedPrefManager.getInstance(EditarPerfil.this).getUSUARIO_LOGUEADO().getToken());
+                httppost = new HttpGet(ip.getIp()+"regiones");
 
                 JSONObject regionesWS = new JSONObject(EntityUtils.toString(( httpclient.execute(httppost)).getEntity()));
                 JSONArray jsonArrayRegion = regionesWS.getJSONArray("content");
@@ -797,12 +797,11 @@ public class EditarPerfil extends AppCompatActivity {
             } else if (responseEstado == 500) {
                 Toast.makeText(getApplicationContext(), "Ocurrió un error en la base de datos", Toast.LENGTH_SHORT).show();
             } else if (responseEstado == 401) {
-                Toast.makeText(getApplicationContext(), "Token de autenticación inválido o expirado, por favor inicie sesión nuevamente", Toast.LENGTH_SHORT).show();
-                cs.cerrarsesion();
-                //barra.setVisibility(View.INVISIBLE);
-                SharedPrefManager.getInstance(getApplicationContext()).limpiar();
-                startActivity(new Intent(EditarPerfil.this, Login.class)
-                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+
+                Intent data = new Intent();
+                data.putExtra("msg","Token de autenticación inválido o expirado, por favor inicie sesión nuevamente");
+                setResult(AdministracionDePerfiles.RESULT_CANCELED, data);
+                finish();
             } else {
                 //muestra mensaje si se produce un error al ejercutar la consulta al webservice
                 Toast.makeText(getApplicationContext(), "Problemas de conexión", Toast.LENGTH_SHORT).show();

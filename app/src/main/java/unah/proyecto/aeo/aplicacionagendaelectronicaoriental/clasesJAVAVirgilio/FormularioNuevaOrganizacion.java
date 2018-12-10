@@ -515,11 +515,10 @@ public class FormularioNuevaOrganizacion extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(),"Ocurrió un error en la base de datos",Toast.LENGTH_SHORT).show();
                // guardar.setClickable(true);
             }else if(responseEstado==401){
-                Toast.makeText(getApplicationContext(), "Token de autenticación inválido o expirado, por favor inicie sesión nuevamente", Toast.LENGTH_SHORT).show();
-                cs.cerrarsesion();
-                SharedPrefManager.getInstance(getApplicationContext()).limpiar();
-                startActivity(new Intent(FormularioNuevaOrganizacion.this, Login.class)
-                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK));
+                Intent data = new Intent();
+                data.putExtra("msg","Token de autenticación inválido o expirado, por favor inicie sesión nuevamente");
+                setResult(PanelDeControlUsuarios.RESULT_CANCELED, data);
+                finish();
             }else {
                 Toast.makeText(getApplicationContext(), "Problemas de conexión", Toast.LENGTH_SHORT).show();
                 guardar.setClickable(true);
