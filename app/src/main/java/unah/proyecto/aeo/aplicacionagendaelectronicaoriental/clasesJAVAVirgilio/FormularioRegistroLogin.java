@@ -305,17 +305,16 @@ public class FormularioRegistroLogin extends AppCompatActivity {
                 //correo_insertar_usario.setText("");
                 correo_insertar.requestFocus();
             }else if(responseEstado==401){
-                Toast.makeText(getApplicationContext(), "Token de autenticación inválido o expirado, por favor inicie sesión nuevamente", Toast.LENGTH_SHORT).show();
-                cs.cerrarsesion();
-                //barraProgreso.setVisibility(View.INVISIBLE);
-                SharedPrefManager.getInstance(getApplicationContext()).limpiar();
-                startActivity(new Intent(FormularioRegistroLogin.this, Login.class)
-                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK));
+                Intent data = new Intent();
+                setResult(Mostrar_Usuarios.RESULT_CANCELED, data);
+                data.putExtra("msg","Token de autenticación inválido o expirado, por favor inicie sesión nuevamente");
+                finish();
             }else if(responseEstado==403){
                 nombreusuario_insertar.setError("Usuario ya existe");
                 nombreusuario_insertar.requestFocus();
             } else {
                 Toast.makeText(getApplicationContext(), "Problemas de conexión", Toast.LENGTH_SHORT).show();
+                bottonvalidar.setClickable(true);
             }
         }
 

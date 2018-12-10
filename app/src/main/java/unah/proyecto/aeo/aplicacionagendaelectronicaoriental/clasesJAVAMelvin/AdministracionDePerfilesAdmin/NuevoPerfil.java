@@ -564,6 +564,8 @@ public class NuevoPerfil extends AppCompatActivity {
                 data.putExtra("msg","Token de autenticación inválido o expirado, por favor inicie sesión nuevamente");
                 data.putExtra("ste",401);
                 setResult(AdministracionDePerfiles.RESULT_CANCELED, data);
+                botonGuardar.setClickable(true);
+                finish();
             }else {
                 Toast.makeText(getApplicationContext(), "Problemas de conexión", Toast.LENGTH_SHORT).show();
                 botonGuardar.setClickable(true);
